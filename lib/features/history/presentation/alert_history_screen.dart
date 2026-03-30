@@ -150,7 +150,7 @@ class _AlertHistoryScreenState extends ConsumerState<AlertHistoryScreen> {
                           end: Alignment.bottomRight,
                           colors: [
                             AppTheme.normalColor.withOpacity(isDark ? 0.15 : 0.12),
-                            isDark ? const Color(0xFF0F0F0F) : AppTheme.backgroundLight,
+                            isDark ? AppTheme.backgroundDark : AppTheme.backgroundLight,
                           ],
                         ),
                       ),
@@ -212,9 +212,9 @@ class _AlertHistoryScreenState extends ConsumerState<AlertHistoryScreen> {
                     vertical: 12,
                   ),
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+                    color: isDark ? AppTheme.surfaceDark : Colors.white,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: isDark ? const Color(0xFF2D2D2D) : const Color(0xFFE0E4E9)),
+                    border: Border.all(color: isDark ? AppTheme.borderDark : AppTheme.borderLight),
                     boxShadow: [
                       if (!isDark) BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 4, offset: const Offset(0, 2)),
                     ],

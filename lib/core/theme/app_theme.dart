@@ -8,14 +8,14 @@ class AppTheme {
   static const Color normalColor = Color(0xFF2E7D32);
 
   // Surface colors - Refined for better contrast
-  static const Color backgroundLight = Color(0xFFEDF0F5); // Slightly deeper blue-gray
+  static const Color backgroundLight = Color(0xFFF0F2F5); // Soft blue-gray
   static const Color surfaceLight = Colors.white;
-  static const Color borderLight = Color(0xFFD1D9E0); // More defined border
-  static const Color shadowLight = Color(0x1A000000); // Soft but visible shadow
+  static const Color borderLight = Color(0xFFDDE1E6); // Defined border
+  static const Color shadowLight = Color(0x0D000000); // Very subtle shadow
 
-  static const Color backgroundDark = Color(0xFF0F0F0F);
-  static const Color surfaceDark = Color(0xFF1A1A1A);
-  static const Color borderDark = Color(0xFF2D2D2D);
+  static const Color backgroundDark = Color(0xFF0A0A0A); // Deeper black
+  static const Color surfaceDark = Color(0xFF161616); // Solid dark gray
+  static const Color borderDark = Color(0xFF262626); // Dark border
 
   static ThemeData get lightTheme {
     return ThemeData(
@@ -28,7 +28,6 @@ class AppTheme {
         surface: surfaceLight,
         onSurface: const Color(0xFF1A1C1E),
         outline: borderLight,
-        surfaceContainerLow: const Color(0xFFF8F9FB),
       ),
       appBarTheme: const AppBarTheme(
         backgroundColor: surfaceLight,
@@ -45,8 +44,7 @@ class AppTheme {
       ),
       cardTheme: CardThemeData(
         color: surfaceLight,
-        elevation: 2, // Added elevation for light mode depth
-        shadowColor: shadowLight,
+        elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
           side: const BorderSide(color: borderLight, width: 1),
@@ -87,7 +85,7 @@ class AppTheme {
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: const BorderSide(color: borderDark, width: 1.5),
+          side: const BorderSide(color: borderDark, width: 1),
         ),
       ),
       dividerTheme: const DividerThemeData(color: borderDark, thickness: 1),
@@ -101,9 +99,9 @@ class AppTheme {
       titleLarge: TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: baseColor, letterSpacing: -0.5),
       titleMedium: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: baseColor),
       bodyLarge: TextStyle(fontSize: 16, color: baseColor),
-      bodyMedium: TextStyle(fontSize: 14, color: baseColor.withOpacity(0.8)),
-      bodySmall: TextStyle(fontSize: 12, color: baseColor.withOpacity(0.6)),
-      labelLarge: TextStyle(fontSize: 12, fontWeight: FontWeight.w900, letterSpacing: 1.0, color: baseColor),
+      bodyMedium: TextStyle(fontSize: 14, color: baseColor.withOpacity(0.85)),
+      bodySmall: TextStyle(fontSize: 12, color: baseColor.withOpacity(0.65)),
+      labelLarge: TextStyle(fontSize: 12, fontWeight: FontWeight.w900, letterSpacing: 1.2, color: baseColor),
     );
   }
 

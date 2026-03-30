@@ -11,6 +11,20 @@ final activeAlertsProvider = StreamProvider<List<AlertModel>>((ref) {
   return repository.watchActiveAlerts();
 });
 
+final criticalAlertsProvider = Provider<AsyncValue<List<AlertModel>>>((ref) {
+  final activeAlertsAsync = ref.watch(activeAlertsProvider);
+  return activeAlertsAsync.whenData((alerts) => 
+    alerts.where((a) => a.severity.toLowerCase() == 'critical').toList()
+  );
+});
+
+final warningAlertsProvider = Provider<AsyncValue<List<AlertModel>>>((ref) {
+  final activeAlertsAsync = ref.watch(activeAlertsProvider);
+  return activeAlertsAsync.whenData((alerts) => 
+    alerts.where((a) => a.severity.toLowerCase() == 'warning').toList()
+  );
+});
+
 final alertByIdProvider = StreamProvider.family<AlertModel?, String>((
   ref,
   alertId,

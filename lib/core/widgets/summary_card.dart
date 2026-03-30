@@ -22,8 +22,8 @@ class SummaryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
-    final borderColor = isDark ? color.withOpacity(0.3) : const Color(0xFFE0E4E9);
+    final bgColor = isDark ? AppTheme.surfaceDark : Colors.white;
+    final borderColor = isDark ? color.withOpacity(0.3) : AppTheme.borderLight;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/providers/theme_provider.dart';
+import '../../../core/providers/settings_provider.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/services/audio_service.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -9,6 +11,8 @@ class SettingsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final settings = ref.watch(settingsProvider);
+    final settingsNotifier = ref.read(settingsProvider.notifier);
 
     return Scaffold(
       body: CustomScrollView(
@@ -101,14 +105,12 @@ class SettingsScreen extends ConsumerWidget {
                   icon: Icons.person_outline,
                   title: 'User',
                   subtitle: 'Mobile Operator',
-                  trailing: null,
                   isDark: isDark,
                 ),
                 _SettingsTile(
                   icon: Icons.badge_outlined,
                   title: 'Role',
                   subtitle: 'View & Acknowledge',
-                  trailing: null,
                   isDark: isDark,
                 ),
                 Padding(
@@ -122,18 +124,50 @@ class SettingsScreen extends ConsumerWidget {
                   subtitle: Text('Receive alerts on device', style: TextStyle(color: isDark ? Colors.white54 : Colors.black45, fontSize: 13, fontWeight: FontWeight.w500)),
                   value: true,
                   activeColor: AppTheme.infoColor,
-                  onChanged: null,
+                  onChanged: (val) {},
                   contentPadding: const EdgeInsets.symmetric(horizontal: 20),
                 ),
                 SwitchListTile(
                   secondary: Icon(Icons.vibration, color: isDark ? Colors.white70 : Colors.black54),
                   title: Text('Vibration', style: TextStyle(fontWeight: FontWeight.w700, color: isDark ? Colors.white : Colors.black87)),
                   subtitle: Text('Vibrate on critical alerts', style: TextStyle(color: isDark ? Colors.white54 : Colors.black45, fontSize: 13, fontWeight: FontWeight.w500)),
-                  value: true,
+                  value: settings.vibrationEnabled,
                   activeColor: AppTheme.infoColor,
-                  onChanged: null,
+                  onChanged: (val) => settingsNotifier.toggleVibration(val),
                   contentPadding: const EdgeInsets.symmetric(horizontal: 20),
                 ),
+                SwitchListTile(
+                  secondary: Icon(Icons.volume_up_outlined, color: isDark ? Colors.white70 : Colors.black54),
+                  title: Text('Sound', style: TextStyle(fontWeight: FontWeight.w700, color: isDark ? Colors.white : Colors.black87)),
+                  subtitle: Text('Alert sound on notifications', style: TextStyle(color: isDark ? Colors.white54 : Colors.black45, fontSize: 13, fontWeight: FontWeight.w500)),
+                  value: settings.soundEnabled,
+                  activeColor: AppTheme.infoColor,
+                  onChanged: (val) => settingsNotifier.toggleSound(val),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+                ),
+                if (settings.soundEnabled) ...[
+                  _SettingsTile(
+                    icon: Icons.error_outline,
+                    title: 'Critical Alert Sound',
+                    subtitle: settings.criticalSound,
+                    isDark: isDark,
+                    onTap: () => _showSoundPicker(context, ref, 'Critical', settings.criticalSound, (s) => settingsNotifier.setCriticalSound(s)),
+                  ),
+                  _SettingsTile(
+                    icon: Icons.warning_amber_rounded,
+                    title: 'Warning Alert Sound',
+                    subtitle: settings.warningSound,
+                    isDark: isDark,
+                    onTap: () => _showSoundPicker(context, ref, 'Warning', settings.warningSound, (s) => settingsNotifier.setWarningSound(s)),
+                  ),
+                  _SettingsTile(
+                    icon: Icons.info_outline,
+                    title: 'Info Alert Sound',
+                    subtitle: settings.infoSound,
+                    isDark: isDark,
+                    onTap: () => _showSoundPicker(context, ref, 'Info', settings.infoSound, (s) => settingsNotifier.setInfoSound(s)),
+                  ),
+                ],
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                   child: Divider(color: Colors.transparent),
@@ -166,7 +200,6 @@ class SettingsScreen extends ConsumerWidget {
                   icon: Icons.storage_outlined,
                   title: 'Firestore Collections',
                   subtitle: 'alerts_active, alerts_history',
-                  trailing: null,
                   isDark: isDark,
                 ),
                 Padding(
@@ -242,6 +275,41 @@ class SettingsScreen extends ConsumerWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  void _showSoundPicker(BuildContext context, WidgetRef ref, String type, String current, Function(String) onSelect) {
+    final sounds = ['Industrial Siren', 'Digital Beep', 'Subtle Chime', 'Electronic Pulse', 'Mechanical Alarm'];
+    
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 12),
+            Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.white24, borderRadius: BorderRadius.circular(2))),
+            const SizedBox(height: 20),
+            Text('Select $type Sound', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 12),
+            ...sounds.map((sound) => ListTile(
+              title: Text(sound, style: TextStyle(fontWeight: sound == current ? FontWeight.bold : FontWeight.normal)),
+              trailing: sound == current ? const Icon(Icons.check_circle, color: AppTheme.infoColor) : null,
+              onTap: () {
+                onSelect(sound);
+                ref.read(audioServiceProvider).testSound(sound);
+                Navigator.pop(context);
+              },
+            )),
+            const SizedBox(height: 24),
+          ],
+        ),
       ),
     );
   }
@@ -341,18 +409,21 @@ class _SettingsTile extends StatelessWidget {
   final String subtitle;
   final Widget? trailing;
   final bool isDark;
+  final VoidCallback? onTap;
 
   const _SettingsTile({
     required this.icon,
     required this.title,
     required this.subtitle,
-    required this.trailing,
+    this.trailing,
     required this.isDark,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      onTap: onTap,
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
       leading: Container(
         padding: const EdgeInsets.all(10),
@@ -378,7 +449,8 @@ class _SettingsTile extends StatelessWidget {
           fontWeight: FontWeight.w500,
         ),
       ),
-      trailing: trailing,
+      trailing: trailing ?? (onTap != null ? const Icon(Icons.chevron_right, size: 20) : null),
     );
   }
 }
+

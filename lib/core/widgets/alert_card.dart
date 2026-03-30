@@ -41,8 +41,8 @@ class _AlertCardState extends State<AlertCard> with SingleTickerProviderStateMix
     final isAck = widget.alert.isAcknowledged;
     
     // Solid background colors based on theme
-    final bgColor = isDark ? const Color(0xFF1A1A1A) : Colors.white;
-    final borderColor = isDark ? const Color(0xFF2D2D2D) : const Color(0xFFD1D9E0);
+    final bgColor = isDark ? AppTheme.surfaceDark : AppTheme.surfaceLight;
+    final borderColor = isDark ? AppTheme.borderDark : AppTheme.borderLight;
     final secondaryTextColor = isDark ? Colors.white30 : Colors.black45;
 
     return GestureDetector(
