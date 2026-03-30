@@ -1,12 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-enum AlertSound {
-  critical,
-  warning,
-  info,
-  none,
-}
+enum AlertSound { critical, warning, info, none }
 
 class AudioService {
   bool _isMuted = false;
@@ -27,7 +22,7 @@ class AudioService {
     if (_isMuted) return;
 
     final sound = _getSoundForSeverity(severity);
-    
+
     switch (sound) {
       case AlertSound.critical:
         await _playCriticalSound();

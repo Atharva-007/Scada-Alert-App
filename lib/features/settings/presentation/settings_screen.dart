@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/providers/theme_provider.dart';
 import '../../../core/theme/app_theme.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -7,25 +8,26 @@ class SettingsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: const Color(0xFF0F0F0F),
       body: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [
           SliverAppBar(
-            expandedHeight: 120.0,
+            expandedHeight: 140.0,
             floating: true,
             pinned: true,
-            backgroundColor: const Color(0xFF0F0F0F),
             surfaceTintColor: Colors.transparent,
             flexibleSpace: FlexibleSpaceBar(
               titlePadding: const EdgeInsets.only(left: 20, bottom: 16),
-              title: const Text(
+              title: Text(
                 'Settings',
                 style: TextStyle(
-                  fontWeight: FontWeight.w800,
-                  fontSize: 22,
-                  letterSpacing: -0.5,
+                  fontWeight: FontWeight.w900,
+                  fontSize: 24,
+                  letterSpacing: -0.8,
+                  color: isDark ? Colors.white : Colors.black87,
                 ),
               ),
               background: Stack(
@@ -34,13 +36,22 @@ class SettingsScreen extends ConsumerWidget {
                   Container(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                         colors: [
-                          AppTheme.infoColor.withOpacity(0.05),
-                          const Color(0xFF0F0F0F),
+                          AppTheme.infoColor.withOpacity(isDark ? 0.15 : 0.05),
+                          Theme.of(context).scaffoldBackgroundColor,
                         ],
                       ),
+                    ),
+                  ),
+                  Positioned(
+                    right: -20,
+                    bottom: -20,
+                    child: Icon(
+                      Icons.settings_outlined,
+                      size: 160,
+                      color: isDark ? Colors.white.withOpacity(0.03) : Colors.black.withOpacity(0.02),
                     ),
                   ),
                 ],
@@ -51,60 +62,88 @@ class SettingsScreen extends ConsumerWidget {
             padding: const EdgeInsets.only(bottom: 100),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
-                _SectionHeader(title: 'USER INFORMATION'),
+                _SectionHeader(title: 'APPEARANCE', isDark: isDark),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: isDark ? const Color(0xFF1E1E1E) : Colors.black.withOpacity(0.03),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: _ThemeOption(
+                            label: 'Light',
+                            icon: Icons.light_mode_outlined,
+                            isSelected: ref.watch(themeModeProvider) == ThemeMode.light,
+                            onTap: () => ref.read(themeModeProvider.notifier).state = ThemeMode.light,
+                            isDark: isDark,
+                          ),
+                        ),
+                        Expanded(
+                          child: _ThemeOption(
+                            label: 'Dark',
+                            icon: Icons.dark_mode_outlined,
+                            isSelected: ref.watch(themeModeProvider) == ThemeMode.dark,
+                            onTap: () => ref.read(themeModeProvider.notifier).state = ThemeMode.dark,
+                            isDark: isDark,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                _SectionHeader(title: 'USER INFORMATION', isDark: isDark),
                 _SettingsTile(
                   icon: Icons.person_outline,
                   title: 'User',
                   subtitle: 'Mobile Operator',
                   trailing: null,
+                  isDark: isDark,
                 ),
                 _SettingsTile(
                   icon: Icons.badge_outlined,
                   title: 'Role',
                   subtitle: 'View & Acknowledge',
                   trailing: null,
+                  isDark: isDark,
                 ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                  child: Divider(color: Color(0xFF1E1E1E)),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                  child: Divider(color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE0E4E9)),
                 ),
-                _SectionHeader(title: 'NOTIFICATIONS'),
+                _SectionHeader(title: 'NOTIFICATIONS', isDark: isDark),
                 SwitchListTile(
-                  secondary: const Icon(Icons.notifications_none, color: Colors.white70),
-                  title: const Text('Push Notifications', style: TextStyle(fontWeight: FontWeight.w600)),
-                  subtitle: const Text('Receive alerts on device', style: TextStyle(color: Colors.white54, fontSize: 13)),
+                  secondary: Icon(Icons.notifications_none, color: isDark ? Colors.white70 : Colors.black54),
+                  title: Text('Push Notifications', style: TextStyle(fontWeight: FontWeight.w700, color: isDark ? Colors.white : Colors.black87)),
+                  subtitle: Text('Receive alerts on device', style: TextStyle(color: isDark ? Colors.white54 : Colors.black45, fontSize: 13, fontWeight: FontWeight.w500)),
                   value: true,
                   activeColor: AppTheme.infoColor,
                   onChanged: null,
                   contentPadding: const EdgeInsets.symmetric(horizontal: 20),
                 ),
                 SwitchListTile(
-                  secondary: const Icon(Icons.vibration, color: Colors.white70),
-                  title: const Text('Vibration', style: TextStyle(fontWeight: FontWeight.w600)),
-                  subtitle: const Text('Vibrate on critical alerts', style: TextStyle(color: Colors.white54, fontSize: 13)),
+                  secondary: Icon(Icons.vibration, color: isDark ? Colors.white70 : Colors.black54),
+                  title: Text('Vibration', style: TextStyle(fontWeight: FontWeight.w700, color: isDark ? Colors.white : Colors.black87)),
+                  subtitle: Text('Vibrate on critical alerts', style: TextStyle(color: isDark ? Colors.white54 : Colors.black45, fontSize: 13, fontWeight: FontWeight.w500)),
                   value: true,
-                  activeColor: AppTheme.infoColor,
-                  onChanged: null,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-                ),
-                SwitchListTile(
-                  secondary: const Icon(Icons.volume_up_outlined, color: Colors.white70),
-                  title: const Text('Sound', style: TextStyle(fontWeight: FontWeight.w600)),
-                  subtitle: const Text('Alert sound on notifications', style: TextStyle(color: Colors.white54, fontSize: 13)),
-                  value: false,
                   activeColor: AppTheme.infoColor,
                   onChanged: null,
                   contentPadding: const EdgeInsets.symmetric(horizontal: 20),
                 ),
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                  child: Divider(color: Color(0xFF1E1E1E)),
+                  child: Divider(color: Colors.transparent),
                 ),
-                _SectionHeader(title: 'BACKEND CONFIGURATION'),
+                _SectionHeader(title: 'BACKEND CONFIGURATION', isDark: isDark),
                 _SettingsTile(
                   icon: Icons.cloud_outlined,
                   title: 'Firebase Project',
                   subtitle: 'scada-alarm-system',
+                  isDark: isDark,
                   trailing: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
@@ -117,7 +156,7 @@ class SettingsScreen extends ConsumerWidget {
                       style: TextStyle(
                         color: AppTheme.normalColor,
                         fontSize: 10,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w900,
                         letterSpacing: 0.5,
                       ),
                     ),
@@ -128,89 +167,67 @@ class SettingsScreen extends ConsumerWidget {
                   title: 'Firestore Collections',
                   subtitle: 'alerts_active, alerts_history',
                   trailing: null,
+                  isDark: isDark,
                 ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                  child: Divider(color: Color(0xFF1E1E1E)),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                  child: Divider(color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE0E4E9)),
                 ),
-                _SectionHeader(title: 'APPLICATION'),
-                _SettingsTile(
-                  icon: Icons.info_outline,
-                  title: 'App Version',
-                  subtitle: '1.0.0+1',
-                  trailing: null,
-                ),
-                _SettingsTile(
-                  icon: Icons.build_outlined,
-                  title: 'Backend Version',
-                  subtitle: '2.1.0',
-                  trailing: null,
-                ),
-                _SettingsTile(
-                  icon: Icons.code,
-                  title: 'ISA-18.2 Compliance',
-                  subtitle: 'Enabled',
-                  trailing: const Icon(
-                    Icons.verified,
-                    color: AppTheme.normalColor,
-                    size: 18,
-                  ),
-                ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                  child: Divider(color: Color(0xFF1E1E1E)),
-                ),
-                _SectionHeader(title: 'ABOUT'),
+                _SectionHeader(title: 'ABOUT', isDark: isDark),
                 Padding(
                   padding: const EdgeInsets.all(24),
                   child: Container(
                     padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF151515),
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: const Color(0xFF252525)),
+                      color: isDark ? const Color(0xFF151515) : Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: isDark ? const Color(0xFF252525) : const Color(0xFFE0E4E9)),
+                      boxShadow: [
+                        if (!isDark) BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4)),
+                      ],
                     ),
                     child: Column(
                       children: [
-                        const Text(
+                        Text(
                           'SCADA Alarm Client',
                           style: TextStyle(
                             fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            fontWeight: FontWeight.w900,
+                            color: isDark ? Colors.white : Colors.black87,
                           ),
                         ),
                         const SizedBox(height: 12),
-                        const Text(
+                        Text(
                           'Industrial alarm monitoring system\nRead-only mobile client for operators',
                           style: TextStyle(
-                            color: Colors.white54,
+                            color: isDark ? Colors.white54 : Colors.black45,
                             fontSize: 13,
-                            height: 1.5,
+                            height: 1.6,
+                            fontWeight: FontWeight.w600,
                           ),
                           textAlign: TextAlign.center,
                         ),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 24),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                           decoration: BoxDecoration(
                             color: AppTheme.normalColor.withOpacity(0.05),
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                          child: Row(
+                          child: const Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.security_outlined,
-                                size: 16,
+                                size: 18,
                                 color: AppTheme.normalColor,
                               ),
-                              const SizedBox(width: 8),
-                              const Text(
+                              SizedBox(width: 10),
+                              Text(
                                 'View & Acknowledge Only',
                                 style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w800,
                                   color: AppTheme.normalColor,
                                 ),
                               ),
@@ -230,10 +247,76 @@ class SettingsScreen extends ConsumerWidget {
   }
 }
 
+class _ThemeOption extends StatelessWidget {
+  final String label;
+  final IconData icon;
+  final bool isSelected;
+  final VoidCallback onTap;
+  final bool isDark;
+
+  const _ThemeOption({
+    required this.label,
+    required this.icon,
+    required this.isSelected,
+    required this.onTap,
+    required this.isDark,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final selectedColor = isSelected ? AppTheme.infoColor : Colors.transparent;
+    final contentColor = isSelected 
+        ? Colors.white 
+        : (isDark ? Colors.white54 : Colors.black45);
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeInOut,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(8),
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            decoration: BoxDecoration(
+              color: selectedColor,
+              borderRadius: BorderRadius.circular(8),
+              boxShadow: [
+                if (isSelected)
+                  BoxShadow(
+                    color: AppTheme.infoColor.withOpacity(0.3),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+              ],
+            ),
+            child: Column(
+              children: [
+                Icon(icon, color: contentColor, size: 20),
+                const SizedBox(height: 4),
+                Text(
+                  label,
+                  style: TextStyle(
+                    color: contentColor,
+                    fontSize: 12,
+                    fontWeight: isSelected ? FontWeight.w900 : FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _SectionHeader extends StatelessWidget {
   final String title;
+  final bool isDark;
 
-  const _SectionHeader({required this.title});
+  const _SectionHeader({required this.title, required this.isDark});
 
   @override
   Widget build(BuildContext context) {
@@ -243,7 +326,7 @@ class _SectionHeader extends StatelessWidget {
         title,
         style: const TextStyle(
           color: AppTheme.infoColor,
-          fontWeight: FontWeight.w800,
+          fontWeight: FontWeight.w900,
           letterSpacing: 1.5,
           fontSize: 11,
         ),
@@ -257,12 +340,14 @@ class _SettingsTile extends StatelessWidget {
   final String title;
   final String subtitle;
   final Widget? trailing;
+  final bool isDark;
 
   const _SettingsTile({
     required this.icon,
     required this.title,
     required this.subtitle,
     required this.trailing,
+    required this.isDark,
   });
 
   @override
@@ -270,25 +355,27 @@ class _SettingsTile extends StatelessWidget {
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
       leading: Container(
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: const Color(0xFF1E1E1E),
-          borderRadius: BorderRadius.circular(8),
+          color: isDark ? const Color(0xFF1E1E1E) : Colors.black.withOpacity(0.03),
+          borderRadius: BorderRadius.circular(10),
         ),
-        child: Icon(icon, color: Colors.white70, size: 20),
+        child: Icon(icon, color: isDark ? Colors.white70 : Colors.black54, size: 20),
       ),
       title: Text(
         title,
-        style: const TextStyle(
-          fontWeight: FontWeight.w600,
+        style: TextStyle(
+          fontWeight: FontWeight.w700,
           fontSize: 15,
+          color: isDark ? Colors.white : Colors.black87,
         ),
       ),
       subtitle: Text(
         subtitle,
-        style: const TextStyle(
-          color: Colors.white54,
+        style: TextStyle(
+          color: isDark ? Colors.white54 : Colors.black45,
           fontSize: 13,
+          fontWeight: FontWeight.w500,
         ),
       ),
       trailing: trailing,

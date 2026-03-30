@@ -44,11 +44,13 @@ class AlertStatistics {
         .toList();
     final avgResponse = responseTimes.isNotEmpty
         ? Duration(
-            microseconds: (responseTimes
-                        .map((d) => d.inMicroseconds)
-                        .reduce((a, b) => a + b) /
-                    responseTimes.length)
-                .round())
+            microseconds:
+                (responseTimes
+                            .map((d) => d.inMicroseconds)
+                            .reduce((a, b) => a + b) /
+                        responseTimes.length)
+                    .round(),
+          )
         : Duration.zero;
 
     // Group by source

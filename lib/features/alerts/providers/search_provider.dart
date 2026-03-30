@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/widgets/alert_card.dart';
+import '../../../core/theme/app_theme.dart';
 import '../../../data/models/alert_model.dart';
 
 class SearchProvider extends StateNotifier<String> {
@@ -14,39 +16,52 @@ class SearchProvider extends StateNotifier<String> {
   }
 }
 
-final searchQueryProvider = StateNotifierProvider<SearchProvider, String>((ref) {
+final searchQueryProvider = StateNotifierProvider<SearchProvider, String>((
+  ref,
+) {
   return SearchProvider();
 });
 
-final filteredAlertsProvider = Provider.family<List<AlertModel>, List<AlertModel>>((ref, alerts) {
-  final query = ref.watch(searchQueryProvider);
-  
-  if (query.isEmpty) {
-    return alerts;
-  }
+final filteredAlertsProvider =
+    Provider.family<List<AlertModel>, List<AlertModel>>((ref, alerts) {
+      final query = ref.watch(searchQueryProvider);
 
-  final lowerQuery = query.toLowerCase();
-  
-  return alerts.where((alert) {
-    return alert.name.toLowerCase().contains(lowerQuery) ||
-           alert.description.toLowerCase().contains(lowerQuery) ||
-           alert.source.toLowerCase().contains(lowerQuery) ||
-           alert.tagName.toLowerCase().contains(lowerQuery) ||
-           alert.severity.toLowerCase().contains(lowerQuery);
-  }).toList();
-});
+      if (query.isEmpty) {
+        return alerts;
+      }
+
+      final lowerQuery = query.toLowerCase();
+
+      return alerts.where((alert) {
+        return alert.name.toLowerCase().contains(lowerQuery) ||
+            alert.description.toLowerCase().contains(lowerQuery) ||
+            alert.source.toLowerCase().contains(lowerQuery) ||
+            alert.tagName.toLowerCase().contains(lowerQuery) ||
+            alert.severity.toLowerCase().contains(lowerQuery);
+      }).toList();
+    });
 
 class AlertSearchDelegate extends SearchDelegate<AlertModel?> {
   final List<AlertModel> alerts;
-  
+
   AlertSearchDelegate(this.alerts);
+
+  @override
+  ThemeData appBarTheme(BuildContext context) {
+    return AppTheme.darkTheme.copyWith(
+      inputDecorationTheme: const InputDecorationTheme(
+        hintStyle: TextStyle(color: Colors.white38),
+        border: InputBorder.none,
+      ),
+    );
+  }
 
   @override
   List<Widget> buildActions(BuildContext context) {
     return [
       if (query.isNotEmpty)
         IconButton(
-          icon: Icon(Icons.clear),
+          icon: const Icon(Icons.close_rounded),
           onPressed: () {
             query = '';
           },
@@ -57,7 +72,7 @@ class AlertSearchDelegate extends SearchDelegate<AlertModel?> {
   @override
   Widget buildLeading(BuildContext context) {
     return IconButton(
-      icon: Icon(Icons.arrow_back),
+      icon: const Icon(Icons.arrow_back_ios_new_rounded),
       onPressed: () {
         close(context, null);
       },
@@ -76,19 +91,32 @@ class AlertSearchDelegate extends SearchDelegate<AlertModel?> {
 
   Widget _buildSearchResults(BuildContext context) {
     if (query.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.search, size: 64, color: Colors.grey),
-            SizedBox(height: 16),
-            Text(
-              'Search alerts by name, source, or tag',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Colors.grey,
+      return Container(
+        color: const Color(0xFF0F0F0F),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white.withOpacity(0.03),
+                ),
+                child: const Icon(Icons.search_rounded, size: 64, color: Colors.white24),
               ),
-            ),
-          ],
+              const SizedBox(height: 24),
+              const Text(
+                'Search Alerts',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white70),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'Type machine name, tag, or severity',
+                style: TextStyle(color: Colors.white38),
+              ),
+            ],
+          ),
         ),
       );
     }
@@ -96,97 +124,59 @@ class AlertSearchDelegate extends SearchDelegate<AlertModel?> {
     final lowerQuery = query.toLowerCase();
     final results = alerts.where((alert) {
       return alert.name.toLowerCase().contains(lowerQuery) ||
-             alert.description.toLowerCase().contains(lowerQuery) ||
-             alert.source.toLowerCase().contains(lowerQuery) ||
-             alert.tagName.toLowerCase().contains(lowerQuery) ||
-             alert.severity.toLowerCase().contains(lowerQuery);
+          alert.description.toLowerCase().contains(lowerQuery) ||
+          alert.source.toLowerCase().contains(lowerQuery) ||
+          alert.tagName.toLowerCase().contains(lowerQuery) ||
+          alert.severity.toLowerCase().contains(lowerQuery);
     }).toList();
 
     if (results.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.search_off, size: 64, color: Colors.grey),
-            SizedBox(height: 16),
-            Text(
-              'No alerts found',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            SizedBox(height: 8),
-            Text(
-              'Try different keywords',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Colors.grey,
+      return Container(
+        color: const Color(0xFF0F0F0F),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppTheme.criticalColor.withOpacity(0.05),
+                ),
+                child: const Icon(Icons.search_off_rounded, size: 64, color: AppTheme.criticalColor),
               ),
-            ),
-          ],
+              const SizedBox(height: 24),
+              const Text(
+                'No Results Found',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white70),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'No matches for "$query"',
+                style: const TextStyle(color: Colors.white38),
+              ),
+            ],
+          ),
         ),
       );
     }
 
-    return ListView.separated(
-      itemCount: results.length,
-      separatorBuilder: (context, index) => Divider(height: 1),
-      itemBuilder: (context, index) {
-        final alert = results[index];
-        return ListTile(
-          leading: Icon(
-            _getSeverityIcon(alert.severity),
-            color: _getSeverityColor(alert.severity),
-          ),
-          title: Text(
-            alert.name,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-          subtitle: Text(
-            '${alert.source} • ${alert.tagName}',
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-          trailing: Container(
-            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: _getSeverityColor(alert.severity).withOpacity(0.2),
-              borderRadius: BorderRadius.circular(4),
-            ),
-            child: Text(
-              alert.severity.toUpperCase(),
-              style: TextStyle(
-                color: _getSeverityColor(alert.severity),
-                fontSize: 10,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          onTap: () {
-            close(context, alert);
-          },
-        );
-      },
+    return Container(
+      color: const Color(0xFF0F0F0F),
+      child: ListView.builder(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        itemCount: results.length,
+        itemBuilder: (context, index) {
+          final alert = results[index];
+          return AlertCard(
+            alert: alert,
+            onTap: () {
+              close(context, alert);
+            },
+          );
+        },
+      ),
     );
   }
-
-  IconData _getSeverityIcon(String severity) {
-    switch (severity.toLowerCase()) {
-      case 'critical':
-        return Icons.error;
-      case 'warning':
-        return Icons.warning;
-      default:
-        return Icons.info;
-    }
-  }
-
-  Color _getSeverityColor(String severity) {
-    switch (severity.toLowerCase()) {
-      case 'critical':
-        return Color(0xFFEF5350);
-      case 'warning':
-        return Color(0xFFFFA726);
-      default:
-        return Color(0xFF42A5F5);
-    }
-  }
 }
+

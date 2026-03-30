@@ -8,39 +8,39 @@ class FirebaseSyncService {
   final FirebaseFirestore _firestore;
   final FirebaseMessaging _messaging;
   final Connectivity _connectivity = Connectivity();
-  
+
   bool _isOnline = false;
   bool get isOnline => _isOnline;
-  
+
   StreamSubscription? _connectivitySubscription;
   Timer? _heartbeatTimer;
-  
+
   final _syncStatusController = StreamController<SyncStatus>.broadcast();
   Stream<SyncStatus> get syncStatus => _syncStatusController.stream;
-  
+
   FirebaseSyncService({
     FirebaseFirestore? firestore,
     FirebaseMessaging? messaging,
-  })  : _firestore = firestore ?? FirebaseFirestore.instance,
-        _messaging = messaging ?? FirebaseMessaging.instance;
+  }) : _firestore = firestore ?? FirebaseFirestore.instance,
+       _messaging = messaging ?? FirebaseMessaging.instance;
 
   Future<void> initialize() async {
     print('🔄 Initializing Firebase Sync Service...');
-    
+
     // Check initial connectivity
     await _checkConnectivity();
-    
+
     // Monitor connectivity changes
     _connectivitySubscription = _connectivity.onConnectivityChanged.listen(
       _handleConnectivityChange,
     );
-    
+
     // Configure FCM
     await _configureFCM();
-    
+
     // Start heartbeat
     _startHeartbeat();
-    
+
     print('✅ Firebase Sync Service initialized');
   }
 
@@ -50,17 +50,24 @@ class FirebaseSyncService {
     _updateSyncStatus();
   }
 
-  void _handleConnectivityChange(List<ConnectivityResult> results) {
+  void _handleConnectivityChange(dynamic results) {
+    // Cast to List<ConnectivityResult> safely for Web/Mobile compatibility
+    final List<ConnectivityResult> connectivityResults = results is List 
+        ? List<ConnectivityResult>.from(results)
+        : [ConnectivityResult.none];
+        
     final wasOnline = _isOnline;
-    _isOnline = !results.contains(ConnectivityResult.none);
-    
+    _isOnline = !connectivityResults.contains(ConnectivityResult.none);
+
     if (!wasOnline && _isOnline) {
       _updateSyncStatus(message: 'Connected to network - syncing data...');
       _performFullSync();
     } else if (wasOnline && !_isOnline) {
-      _updateSyncStatus(message: 'Network disconnected - switching to offline mode');
+      _updateSyncStatus(
+        message: 'Network disconnected - switching to offline mode',
+      );
     }
-    
+
     _updateSyncStatus();
   }
 
@@ -76,17 +83,21 @@ class FirebaseSyncService {
 
       if (settings.authorizationStatus == AuthorizationStatus.authorized) {
         print('✅ FCM notifications authorized');
-        
-        // Get FCM token
-        final token = await _messaging.getToken();
-        if (token != null) {
-          print('📱 FCM Token: ${token.substring(0, 20)}...');
-          await _saveFCMToken(token);
+
+        // Get FCM token - wrapped in try catch for Web Offline/Installation errors
+        try {
+          final token = await _messaging.getToken();
+          if (token != null) {
+            print('📱 FCM Token retrieved');
+            await _saveFCMToken(token);
+          }
+        } catch (e) {
+          print('ℹ️ FCM Token retrieval skipped (likely offline or local dev): $e');
         }
-        
+
         // Handle token refresh
         _messaging.onTokenRefresh.listen(_saveFCMToken);
-        
+
         // Configure message handlers
         FirebaseMessaging.onMessage.listen(_handleForegroundMessage);
         FirebaseMessaging.onMessageOpenedApp.listen(_handleMessageTap);
@@ -111,11 +122,13 @@ class FirebaseSyncService {
 
   void _handleForegroundMessage(RemoteMessage message) {
     print('📨 Foreground message: ${message.notification?.title}');
-    _syncStatusController.add(SyncStatus(
-      isOnline: _isOnline,
-      lastSync: DateTime.now(),
-      message: 'New alert: ${message.notification?.title}',
-    ));
+    _syncStatusController.add(
+      SyncStatus(
+        isOnline: _isOnline,
+        lastSync: DateTime.now(),
+        message: 'New alert: ${message.notification?.title}',
+      ),
+    );
   }
 
   void _handleMessageTap(RemoteMessage message) {
@@ -133,12 +146,15 @@ class FirebaseSyncService {
 
   Future<void> _sendHeartbeat() async {
     try {
-      await _firestore.collection('client_heartbeats').doc('windows_client').set({
-        'timestamp': FieldValue.serverTimestamp(),
-        'status': 'online',
-        'version': '1.2.0',
-        'platform': 'windows',
-      }, SetOptions(merge: true));
+      await _firestore
+          .collection('client_heartbeats')
+          .doc('windows_client')
+          .set({
+            'timestamp': FieldValue.serverTimestamp(),
+            'status': 'online',
+            'version': '1.2.0',
+            'platform': 'windows',
+          }, SetOptions(merge: true));
     } catch (e) {
       print('⚠️ Heartbeat error: $e');
       _isOnline = false;
@@ -148,13 +164,13 @@ class FirebaseSyncService {
 
   Future<void> _performFullSync() async {
     if (!_isOnline) return;
-    
+
     try {
       _updateSyncStatus(message: 'Starting full sync...');
-      
+
       // Sync active alerts
       await _syncActiveAlerts();
-      
+
       _updateSyncStatus(message: 'Full sync completed');
     } catch (e) {
       _updateSyncStatus(message: 'Sync error: $e');
@@ -168,7 +184,7 @@ class FirebaseSyncService {
         .orderBy('raisedAt', descending: true)
         .limit(100)
         .get();
-    
+
     _updateSyncStatus(message: 'Synced ${snapshot.docs.length} active alerts');
   }
 
@@ -227,7 +243,7 @@ class FirebaseSyncService {
       'raisedAt': Timestamp.fromDate(alert.raisedAt),
       'archivedAt': FieldValue.serverTimestamp(),
     };
-    
+
     if (alert.acknowledgedAt != null) {
       alertData['acknowledgedAt'] = Timestamp.fromDate(alert.acknowledgedAt!);
     }
@@ -243,7 +259,7 @@ class FirebaseSyncService {
     if (alert.escalatedAt != null) {
       alertData['escalatedAt'] = Timestamp.fromDate(alert.escalatedAt!);
     }
-    
+
     await _firestore.collection('alerts_history').add(alertData);
   }
 
@@ -276,11 +292,13 @@ class FirebaseSyncService {
   }
 
   void _updateSyncStatus({String? message}) {
-    _syncStatusController.add(SyncStatus(
-      isOnline: _isOnline,
-      lastSync: DateTime.now(),
-      message: message,
-    ));
+    _syncStatusController.add(
+      SyncStatus(
+        isOnline: _isOnline,
+        lastSync: DateTime.now(),
+        message: message,
+      ),
+    );
   }
 
   void dispose() {
@@ -290,17 +308,12 @@ class FirebaseSyncService {
   }
 }
 
-
 class SyncStatus {
   final bool isOnline;
   final DateTime lastSync;
   final String? message;
 
-  SyncStatus({
-    required this.isOnline,
-    required this.lastSync,
-    this.message,
-  });
+  SyncStatus({required this.isOnline, required this.lastSync, this.message});
 
   @override
   String toString() {

@@ -5,11 +5,7 @@ class OfflineBanner extends StatelessWidget {
   final bool isOnline;
   final VoidCallback? onRetry;
 
-  const OfflineBanner({
-    super.key,
-    required this.isOnline,
-    this.onRetry,
-  });
+  const OfflineBanner({super.key, required this.isOnline, this.onRetry});
 
   @override
   Widget build(BuildContext context) {
@@ -34,11 +30,7 @@ class OfflineBanner extends StatelessWidget {
           bottom: false,
           child: Row(
             children: [
-              Icon(
-                Icons.cloud_off,
-                color: Colors.white,
-                size: 20,
-              ),
+              Icon(Icons.cloud_off, color: Colors.white, size: 20),
               SizedBox(width: 12),
               Expanded(
                 child: Column(
@@ -77,10 +69,7 @@ class OfflineBanner extends StatelessWidget {
                   ),
                   child: Text(
                     'Retry',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                   ),
                 ),
               ],

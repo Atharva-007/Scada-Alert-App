@@ -11,8 +11,7 @@ class AlertHistoryScreen extends ConsumerStatefulWidget {
   const AlertHistoryScreen({super.key});
 
   @override
-  ConsumerState<AlertHistoryScreen> createState() =>
-      _AlertHistoryScreenState();
+  ConsumerState<AlertHistoryScreen> createState() => _AlertHistoryScreenState();
 }
 
 class _AlertHistoryScreenState extends ConsumerState<AlertHistoryScreen> {
@@ -96,8 +95,9 @@ class _AlertHistoryScreenState extends ConsumerState<AlertHistoryScreen> {
       lastDate: DateTime.now(),
       initialDateRange: _dateRange,
       builder: (context, child) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
         return Theme(
-          data: AppTheme.darkTheme,
+          data: isDark ? AppTheme.darkTheme : AppTheme.lightTheme,
           child: child!,
         );
       },
@@ -113,28 +113,31 @@ class _AlertHistoryScreenState extends ConsumerState<AlertHistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: const Color(0xFF0F0F0F),
       body: RefreshIndicator(
         onRefresh: () => _loadAlerts(refresh: true),
         child: CustomScrollView(
           controller: _scrollController,
-          physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+          physics: const BouncingScrollPhysics(
+            parent: AlwaysScrollableScrollPhysics(),
+          ),
           slivers: [
             SliverAppBar(
-              expandedHeight: 120.0,
+              expandedHeight: 140.0,
               floating: true,
               pinned: true,
-              backgroundColor: const Color(0xFF0F0F0F),
               surfaceTintColor: Colors.transparent,
               flexibleSpace: FlexibleSpaceBar(
                 titlePadding: const EdgeInsets.only(left: 20, bottom: 16),
-                title: const Text(
+                title: Text(
                   'Alert History',
                   style: TextStyle(
-                    fontWeight: FontWeight.w800,
-                    fontSize: 22,
-                    letterSpacing: -0.5,
+                    fontWeight: FontWeight.w900,
+                    fontSize: 24,
+                    letterSpacing: -0.8,
+                    color: isDark ? Colors.white : Colors.black87,
                   ),
                 ),
                 background: Stack(
@@ -143,13 +146,22 @@ class _AlertHistoryScreenState extends ConsumerState<AlertHistoryScreen> {
                     Container(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
                           colors: [
-                            AppTheme.normalColor.withOpacity(0.1),
-                            const Color(0xFF0F0F0F),
+                            AppTheme.normalColor.withOpacity(isDark ? 0.15 : 0.12),
+                            isDark ? const Color(0xFF0F0F0F) : AppTheme.backgroundLight,
                           ],
                         ),
+                      ),
+                    ),
+                    Positioned(
+                      right: -10,
+                      bottom: -10,
+                      child: Icon(
+                        Icons.history_rounded,
+                        size: 140,
+                        color: isDark ? Colors.white.withOpacity(0.03) : Colors.black.withOpacity(0.04),
                       ),
                     ),
                   ],
@@ -157,12 +169,18 @@ class _AlertHistoryScreenState extends ConsumerState<AlertHistoryScreen> {
               ),
               actions: [
                 IconButton(
-                  icon: const Icon(Icons.date_range_rounded),
+                  icon: Icon(
+                    Icons.date_range_rounded,
+                    color: isDark ? Colors.white70 : Colors.black54,
+                  ),
                   tooltip: 'Date Range',
                   onPressed: _selectDateRange,
                 ),
                 PopupMenuButton<String>(
-                  icon: const Icon(Icons.filter_list_rounded),
+                  icon: Icon(
+                    Icons.filter_list_rounded,
+                    color: isDark ? Colors.white70 : Colors.black54,
+                  ),
                   tooltip: 'Filter Severity',
                   onSelected: (value) {
                     setState(() {
@@ -171,38 +189,52 @@ class _AlertHistoryScreenState extends ConsumerState<AlertHistoryScreen> {
                     _loadAlerts(refresh: true);
                   },
                   itemBuilder: (context) => [
-                    const PopupMenuItem(value: 'all', child: Text('All Severities')),
-                    const PopupMenuItem(value: 'critical', child: Text('Critical')),
-                    const PopupMenuItem(value: 'warning', child: Text('Warning')),
-                    const PopupMenuItem(value: 'info', child: Text('Info')),
+                    _buildPopupItem('all', 'All Severities', Icons.list_alt, isDark ? Colors.white : Colors.black87),
+                    const PopupMenuDivider(),
+                    _buildPopupItem('critical', 'Critical', Icons.error_outline, AppTheme.criticalColor),
+                    _buildPopupItem('warning', 'Warning', Icons.warning_amber_rounded, AppTheme.warningColor),
+                    _buildPopupItem('info', 'Info', Icons.info_outline, AppTheme.infoColor),
                   ],
                 ),
                 const SizedBox(width: 8),
               ],
             ),
-            
+
             if (_selectedSeverity != null || _dateRange != null)
               SliverToBoxAdapter(
                 child: Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF1E1E1E),
+                    color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: const Color(0xFF2D2D2D)),
+                    border: Border.all(color: isDark ? const Color(0xFF2D2D2D) : const Color(0xFFE0E4E9)),
+                    boxShadow: [
+                      if (!isDark) BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 4, offset: const Offset(0, 2)),
+                    ],
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.filter_alt_outlined, size: 18, color: AppTheme.infoColor),
+                      const Icon(
+                        Icons.filter_alt_outlined,
+                        size: 18,
+                        color: AppTheme.infoColor,
+                      ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           'Filters: ${_selectedSeverity?.toUpperCase() ?? "ALL"}'
                           '${_dateRange != null ? " • Date Range Active" : ""}',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
+                            color: isDark ? Colors.white : Colors.black87,
                           ),
                         ),
                       ),
@@ -216,7 +248,10 @@ class _AlertHistoryScreenState extends ConsumerState<AlertHistoryScreen> {
                         },
                         borderRadius: BorderRadius.circular(20),
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
                           decoration: BoxDecoration(
                             color: AppTheme.infoColor.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(20),
@@ -225,7 +260,7 @@ class _AlertHistoryScreenState extends ConsumerState<AlertHistoryScreen> {
                             'CLEAR',
                             style: TextStyle(
                               fontSize: 10,
-                              fontWeight: FontWeight.w800,
+                              fontWeight: FontWeight.w900,
                               color: AppTheme.infoColor,
                               letterSpacing: 0.5,
                             ),
@@ -239,84 +274,112 @@ class _AlertHistoryScreenState extends ConsumerState<AlertHistoryScreen> {
 
             if (_alerts.isEmpty && !_isLoading)
               SliverFillRemaining(
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(24),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: const Color(0xFF2D2D2D).withOpacity(0.5),
-                        ),
-                        child: const Icon(
-                          Icons.history_rounded,
-                          size: 64,
-                          color: Color(0xFF757575),
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      const Text(
-                        'No History Available',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w800,
-                          color: Colors.white,
-                          letterSpacing: -0.5,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      const Text(
-                        'Try adjusting your filters or date range.',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.white54,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                child: _buildEmptyState(isDark),
               )
             else
               SliverPadding(
                 padding: const EdgeInsets.only(bottom: 100),
                 sliver: SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      if (index == _alerts.length) {
-                        return const Padding(
-                          padding: EdgeInsets.all(32),
-                          child: Center(child: CircularProgressIndicator()),
-                        );
-                      }
-
-                      final alert = _alerts[index];
-                      return AlertCard(
-                        alert: alert,
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            PageRouteBuilder(
-                              pageBuilder: (context, animation, secondaryAnimation) => AlertDetailsScreen(alertId: alert.id),
-                              transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                const begin = Offset(1.0, 0.0);
-                                const end = Offset.zero;
-                                const curve = Curves.easeOutCubic;
-                                var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-                                return SlideTransition(position: animation.drive(tween), child: child);
-                              },
-                            ),
-                          );
-                        },
+                  delegate: SliverChildBuilderDelegate((context, index) {
+                    if (index == _alerts.length) {
+                      return const Padding(
+                        padding: EdgeInsets.all(32),
+                        child: Center(child: CircularProgressIndicator()),
                       );
-                    },
-                    childCount: _alerts.length + (_hasMore ? 1 : 0),
-                  ),
+                    }
+
+                    final alert = _alerts[index];
+                    return AlertCard(
+                      alert: alert,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          PageRouteBuilder(
+                            pageBuilder:
+                                (context, animation, secondaryAnimation) =>
+                                    AlertDetailsScreen(alertId: alert.id),
+                            transitionsBuilder:
+                                (
+                                  context,
+                                  animation,
+                                  secondaryAnimation,
+                                  child,
+                                ) {
+                                  const begin = Offset(1.0, 0.0);
+                                  const end = Offset.zero;
+                                  const curve = Curves.easeOutCubic;
+                                  var tween = Tween(
+                                    begin: begin,
+                                    end: end,
+                                  ).chain(CurveTween(curve: curve));
+                                  return SlideTransition(
+                                    position: animation.drive(tween),
+                                    child: child,
+                                  );
+                                },
+                          ),
+                        );
+                      },
+                    );
+                  }, childCount: _alerts.length + (_hasMore ? 1 : 0)),
                 ),
               ),
           ],
         ),
+      ),
+    );
+  }
+
+  PopupMenuItem<T> _buildPopupItem<T>(T value, String text, IconData icon, Color color) {
+    return PopupMenuItem<T>(
+      value: value,
+      child: Row(
+        children: [
+          Icon(icon, color: color, size: 20),
+          const SizedBox(width: 12),
+          Text(text, style: const TextStyle(fontWeight: FontWeight.w600)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyState(bool isDark) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: isDark ? const Color(0xFF2D2D2D).withOpacity(0.5) : Colors.black.withOpacity(0.03),
+            ),
+            child: Icon(
+              Icons.history_rounded,
+              size: 64,
+              color: isDark ? const Color(0xFF757575) : Colors.black26,
+            ),
+          ),
+          const SizedBox(height: 24),
+          Text(
+            'No History Available',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.w900,
+              color: isDark ? Colors.white : Colors.black87,
+              letterSpacing: -0.5,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Try adjusting your filters or date range.',
+            style: TextStyle(
+              fontSize: 14,
+              color: isDark ? Colors.white54 : Colors.black45,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
       ),
     );
   }

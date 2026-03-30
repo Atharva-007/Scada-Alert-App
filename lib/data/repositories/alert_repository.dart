@@ -7,7 +7,8 @@ class AlertRepository {
   final bool useMockData;
 
   AlertRepository({FirebaseFirestore? firestore, this.useMockData = false})
-      : _firestore = firestore ?? (useMockData ? null : FirebaseFirestore.instance);
+    : _firestore =
+          firestore ?? (useMockData ? null : FirebaseFirestore.instance);
 
   Stream<List<AlertModel>> watchActiveAlerts() {
     if (useMockData || _firestore == null) {
@@ -16,7 +17,7 @@ class AlertRepository {
         return MockData.mockActiveAlerts;
       }).asBroadcastStream();
     }
-    
+
     try {
       return _firestore!
           .collection('alerts_active')
@@ -33,7 +34,7 @@ class AlertRepository {
             if (snapshot.metadata.isFromCache) {
               print('📦 Loading alerts from cache (offline mode)');
             }
-            
+
             return snapshot.docs
                 .map((doc) => AlertModel.fromFirestore(doc))
                 .toList();
@@ -51,14 +52,16 @@ class AlertRepository {
     if (useMockData || _firestore == null) {
       return Stream.periodic(Duration(seconds: 1), (_) {
         try {
-          return [...MockData.mockActiveAlerts, ...MockData.mockHistoryAlerts]
-              .firstWhere((alert) => alert.id == alertId);
+          return [
+            ...MockData.mockActiveAlerts,
+            ...MockData.mockHistoryAlerts,
+          ].firstWhere((alert) => alert.id == alertId);
         } catch (e) {
           return null;
         }
       }).asBroadcastStream();
     }
-    
+
     // First, try watching active collection
     final activeStream = _firestore!
         .collection('alerts_active')
@@ -74,7 +77,7 @@ class AlertRepository {
             .collection('alerts_history')
             .doc(alertId)
             .get();
-        
+
         if (historyDoc.exists) {
           return AlertModel.fromFirestore(historyDoc);
         }
@@ -98,16 +101,20 @@ class AlertRepository {
       }
       return filtered;
     }
-    
+
     Query query = _firestore!.collection('alerts_history');
 
     if (startDate != null) {
-      query = query.where('raisedAt',
-          isGreaterThanOrEqualTo: Timestamp.fromDate(startDate));
+      query = query.where(
+        'raisedAt',
+        isGreaterThanOrEqualTo: Timestamp.fromDate(startDate),
+      );
     }
     if (endDate != null) {
-      query = query.where('raisedAt',
-          isLessThanOrEqualTo: Timestamp.fromDate(endDate));
+      query = query.where(
+        'raisedAt',
+        isLessThanOrEqualTo: Timestamp.fromDate(endDate),
+      );
     }
     if (severity != null && severity.isNotEmpty) {
       query = query.where('severity', isEqualTo: severity);
@@ -123,45 +130,58 @@ class AlertRepository {
     return snapshot.docs.map((doc) => AlertModel.fromFirestore(doc)).toList();
   }
 
-  Future<void> acknowledgeAlert(String alertId, String acknowledgedBy, {String? comment}) async {
+  Future<void> acknowledgeAlert(
+    String alertId,
+    String acknowledgedBy, {
+    String? comment,
+  }) async {
     if (useMockData || _firestore == null) {
       // Mock data acknowledgment
       await Future.delayed(Duration(milliseconds: 500));
-      final index = MockData.mockActiveAlerts.indexWhere((a) => a.id == alertId);
+      final index = MockData.mockActiveAlerts.indexWhere(
+        (a) => a.id == alertId,
+      );
       if (index != -1) {
-        MockData.mockActiveAlerts[index] = MockData.mockActiveAlerts[index].copyWith(
-          isAcknowledged: true,
-          acknowledgedAt: DateTime.now(),
-          acknowledgedBy: acknowledgedBy,
-          acknowledgedComment: comment,
-        );
+        MockData.mockActiveAlerts[index] = MockData.mockActiveAlerts[index]
+            .copyWith(
+              isAcknowledged: true,
+              acknowledgedAt: DateTime.now(),
+              acknowledgedBy: acknowledgedBy,
+              acknowledgedComment: comment,
+            );
       }
       return;
     }
-    
+
     try {
       final updateData = {
         'isAcknowledged': true,
         'acknowledgedAt': FieldValue.serverTimestamp(),
         'acknowledgedBy': acknowledgedBy,
       };
-      
+
       if (comment != null && comment.isNotEmpty) {
         updateData['acknowledgedComment'] = comment;
       }
-      
-      await _firestore!.collection('alerts_active').doc(alertId).update(updateData);
+
+      await _firestore!
+          .collection('alerts_active')
+          .doc(alertId)
+          .update(updateData);
     } catch (e) {
       // If Firebase fails, update mock data
       await Future.delayed(Duration(milliseconds: 500));
-      final index = MockData.mockActiveAlerts.indexWhere((a) => a.id == alertId);
+      final index = MockData.mockActiveAlerts.indexWhere(
+        (a) => a.id == alertId,
+      );
       if (index != -1) {
-        MockData.mockActiveAlerts[index] = MockData.mockActiveAlerts[index].copyWith(
-          isAcknowledged: true,
-          acknowledgedAt: DateTime.now(),
-          acknowledgedBy: acknowledgedBy,
-          acknowledgedComment: comment,
-        );
+        MockData.mockActiveAlerts[index] = MockData.mockActiveAlerts[index]
+            .copyWith(
+              isAcknowledged: true,
+              acknowledgedAt: DateTime.now(),
+              acknowledgedBy: acknowledgedBy,
+              acknowledgedComment: comment,
+            );
       }
     }
   }
@@ -172,9 +192,11 @@ class AlertRepository {
       if (severity == null) {
         return MockData.mockActiveAlerts.length;
       }
-      return MockData.mockActiveAlerts.where((a) => a.severity == severity).length;
+      return MockData.mockActiveAlerts
+          .where((a) => a.severity == severity)
+          .length;
     }
-    
+
     try {
       Query query = _firestore!
           .collection('alerts_active')
@@ -192,7 +214,9 @@ class AlertRepository {
       if (severity == null) {
         return MockData.mockActiveAlerts.length;
       }
-      return MockData.mockActiveAlerts.where((a) => a.severity == severity).length;
+      return MockData.mockActiveAlerts
+          .where((a) => a.severity == severity)
+          .length;
     }
   }
 
@@ -201,7 +225,7 @@ class AlertRepository {
       await Future.delayed(Duration(milliseconds: 200));
       return MockData.mockActiveAlerts.where((a) => a.isAcknowledged).length;
     }
-    
+
     try {
       final snapshot = await _firestore!
           .collection('alerts_active')
@@ -221,13 +245,15 @@ class AlertRepository {
       await Future.delayed(Duration(milliseconds: 200));
       return MockData.mockHistoryAlerts.length;
     }
-    
+
     try {
       final yesterday = DateTime.now().subtract(Duration(hours: 24));
       final snapshot = await _firestore!
           .collection('alerts_history')
-          .where('clearedAt',
-              isGreaterThanOrEqualTo: Timestamp.fromDate(yesterday))
+          .where(
+            'clearedAt',
+            isGreaterThanOrEqualTo: Timestamp.fromDate(yesterday),
+          )
           .count()
           .get();
       return snapshot.count ?? 0;

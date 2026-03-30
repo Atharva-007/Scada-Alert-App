@@ -3,11 +3,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'dart:async';
 
 /// Network connectivity status
-enum NetworkStatus {
-  online,
-  offline,
-  unknown,
-}
+enum NetworkStatus { online, offline, unknown }
 
 /// Network connectivity provider
 class NetworkConnectivity extends StateNotifier<NetworkStatus> {
@@ -16,7 +12,9 @@ class NetworkConnectivity extends StateNotifier<NetworkStatus> {
 
   NetworkConnectivity() : super(NetworkStatus.unknown) {
     _initConnectivity();
-    _subscription = _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
+    _subscription = _connectivity.onConnectivityChanged.listen(
+      _updateConnectionStatus,
+    );
   }
 
   Future<void> _initConnectivity() async {
@@ -55,8 +53,8 @@ class NetworkConnectivity extends StateNotifier<NetworkStatus> {
 /// Provider for network connectivity
 final networkConnectivityProvider =
     StateNotifierProvider<NetworkConnectivity, NetworkStatus>((ref) {
-  return NetworkConnectivity();
-});
+      return NetworkConnectivity();
+    });
 
 /// Simple boolean provider for offline status
 final isOfflineProvider = Provider<bool>((ref) {

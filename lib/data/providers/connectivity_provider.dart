@@ -31,7 +31,7 @@ class ConnectivityNotifier extends StateNotifier<ConnectivityState> {
   final FirebaseFirestore _firestore;
 
   ConnectivityNotifier(this._firestore)
-      : super(ConnectivityState(isOnline: true, lastCheck: DateTime.now())) {
+    : super(ConnectivityState(isOnline: true, lastCheck: DateTime.now())) {
     _checkConnectivity();
   }
 
@@ -66,5 +66,5 @@ class ConnectivityNotifier extends StateNotifier<ConnectivityState> {
 // Provider
 final connectivityProvider =
     StateNotifierProvider<ConnectivityNotifier, ConnectivityState>((ref) {
-  return ConnectivityNotifier(FirebaseFirestore.instance);
-});
+      return ConnectivityNotifier(FirebaseFirestore.instance);
+    });

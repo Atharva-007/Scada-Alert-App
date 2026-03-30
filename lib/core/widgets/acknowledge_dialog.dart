@@ -68,16 +68,16 @@ class _AcknowledgeDialogState extends State<AcknowledgeDialog> {
                       Text(
                         'Acknowledge Alert',
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFFFFFFFF),
-                            ),
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFFFFFFFF),
+                        ),
                       ),
                       SizedBox(height: 4),
                       Text(
                         'Confirm operator acknowledgement',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Color(0xFF9E9E9E),
-                            ),
+                          color: Color(0xFF9E9E9E),
+                        ),
                       ),
                     ],
                   ),
@@ -92,10 +92,7 @@ class _AcknowledgeDialogState extends State<AcknowledgeDialog> {
               decoration: BoxDecoration(
                 color: AppTheme.surfaceVariantDark,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: Color(0xFF3F3F3F),
-                  width: 1,
-                ),
+                border: Border.all(color: Color(0xFF3F3F3F), width: 1),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -127,7 +124,10 @@ class _AcknowledgeDialogState extends State<AcknowledgeDialog> {
                   SizedBox(height: 6),
                   _buildInfoRow('Tag', widget.alert.tagName),
                   SizedBox(height: 6),
-                  _buildInfoRow('Raised', widget.alert.timeSinceRaised + ' ago'),
+                  _buildInfoRow(
+                    'Raised',
+                    widget.alert.timeSinceRaised + ' ago',
+                  ),
                 ],
               ),
             ),
@@ -210,7 +210,9 @@ class _AcknowledgeDialogState extends State<AcknowledgeDialog> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 OutlinedButton(
-                  onPressed: _isSubmitting ? null : () => Navigator.pop(context),
+                  onPressed: _isSubmitting
+                      ? null
+                      : () => Navigator.pop(context),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: Color(0xFFFFFFFF),
                     side: BorderSide(color: Color(0xFF616161), width: 1),

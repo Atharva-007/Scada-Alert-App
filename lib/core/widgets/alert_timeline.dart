@@ -5,10 +5,7 @@ import '../../data/models/alert_model.dart';
 class AlertTimeline extends StatelessWidget {
   final AlertModel alert;
 
-  const AlertTimeline({
-    super.key,
-    required this.alert,
-  });
+  const AlertTimeline({super.key, required this.alert});
 
   @override
   Widget build(BuildContext context) {
@@ -49,69 +46,81 @@ class AlertTimeline extends StatelessWidget {
     final events = <_TimelineEventData>[];
 
     // Raised
-    events.add(_TimelineEventData(
-      icon: Icons.notification_important,
-      iconColor: AppTheme.criticalColor,
-      title: 'Alert Raised',
-      subtitle: 'System detected condition violation',
-      timestamp: alert.raisedAt,
-      isCompleted: true,
-    ));
+    events.add(
+      _TimelineEventData(
+        icon: Icons.notification_important,
+        iconColor: AppTheme.criticalColor,
+        title: 'Alert Raised',
+        subtitle: 'System detected condition violation',
+        timestamp: alert.raisedAt,
+        isCompleted: true,
+      ),
+    );
 
     // Escalated
     if (alert.escalatedAt != null && alert.escalationLevel > 0) {
-      events.add(_TimelineEventData(
-        icon: Icons.trending_up,
-        iconColor: AppTheme.warningColor,
-        title: 'Escalated (Level ${alert.escalationLevel})',
-        subtitle: 'Auto-escalated due to no acknowledgement',
-        timestamp: alert.escalatedAt!,
-        isCompleted: true,
-      ));
+      events.add(
+        _TimelineEventData(
+          icon: Icons.trending_up,
+          iconColor: AppTheme.warningColor,
+          title: 'Escalated (Level ${alert.escalationLevel})',
+          subtitle: 'Auto-escalated due to no acknowledgement',
+          timestamp: alert.escalatedAt!,
+          isCompleted: true,
+        ),
+      );
     }
 
     // Acknowledged
     if (alert.acknowledgedAt != null) {
-      events.add(_TimelineEventData(
-        icon: Icons.task_alt,
-        iconColor: AppTheme.normalColor,
-        title: 'Acknowledged',
-        subtitle: alert.acknowledgedBy != null
-            ? 'By: ${alert.acknowledgedBy}'
-            : 'Operator acknowledged',
-        timestamp: alert.acknowledgedAt!,
-        isCompleted: true,
-      ));
+      events.add(
+        _TimelineEventData(
+          icon: Icons.task_alt,
+          iconColor: AppTheme.normalColor,
+          title: 'Acknowledged',
+          subtitle: alert.acknowledgedBy != null
+              ? 'By: ${alert.acknowledgedBy}'
+              : 'Operator acknowledged',
+          timestamp: alert.acknowledgedAt!,
+          isCompleted: true,
+        ),
+      );
     } else {
-      events.add(_TimelineEventData(
-        icon: Icons.radio_button_unchecked,
-        iconColor: Color(0xFF616161),
-        title: 'Pending Acknowledgement',
-        subtitle: 'Awaiting operator action',
-        timestamp: null,
-        isCompleted: false,
-      ));
+      events.add(
+        _TimelineEventData(
+          icon: Icons.radio_button_unchecked,
+          iconColor: Color(0xFF616161),
+          title: 'Pending Acknowledgement',
+          subtitle: 'Awaiting operator action',
+          timestamp: null,
+          isCompleted: false,
+        ),
+      );
     }
 
     // Cleared
     if (alert.clearedAt != null) {
-      events.add(_TimelineEventData(
-        icon: Icons.check_circle,
-        iconColor: AppTheme.normalColor,
-        title: 'Cleared',
-        subtitle: 'Condition returned to normal',
-        timestamp: alert.clearedAt!,
-        isCompleted: true,
-      ));
+      events.add(
+        _TimelineEventData(
+          icon: Icons.check_circle,
+          iconColor: AppTheme.normalColor,
+          title: 'Cleared',
+          subtitle: 'Condition returned to normal',
+          timestamp: alert.clearedAt!,
+          isCompleted: true,
+        ),
+      );
     } else if (alert.isActive) {
-      events.add(_TimelineEventData(
-        icon: Icons.radio_button_unchecked,
-        iconColor: Color(0xFF616161),
-        title: 'Awaiting Clearance',
-        subtitle: 'Alert still active',
-        timestamp: null,
-        isCompleted: false,
-      ));
+      events.add(
+        _TimelineEventData(
+          icon: Icons.radio_button_unchecked,
+          iconColor: Color(0xFF616161),
+          title: 'Awaiting Clearance',
+          subtitle: 'Alert still active',
+          timestamp: null,
+          isCompleted: false,
+        ),
+      );
     }
 
     return events;
@@ -154,18 +163,18 @@ class _TimelineEvent extends StatelessWidget {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: event.iconColor.withOpacity(event.isCompleted ? 0.15 : 0.08),
+                  color: event.iconColor.withOpacity(
+                    event.isCompleted ? 0.15 : 0.08,
+                  ),
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: event.iconColor.withOpacity(event.isCompleted ? 0.4 : 0.2),
+                    color: event.iconColor.withOpacity(
+                      event.isCompleted ? 0.4 : 0.2,
+                    ),
                     width: 2,
                   ),
                 ),
-                child: Icon(
-                  event.icon,
-                  color: event.iconColor,
-                  size: 20,
-                ),
+                child: Icon(event.icon, color: event.iconColor, size: 20),
               ),
               Expanded(
                 child: Container(
@@ -176,7 +185,9 @@ class _TimelineEvent extends StatelessWidget {
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: [
-                        event.iconColor.withOpacity(event.isCompleted ? 0.3 : 0.1),
+                        event.iconColor.withOpacity(
+                          event.isCompleted ? 0.3 : 0.1,
+                        ),
                         Colors.transparent,
                       ],
                     ),
@@ -199,7 +210,9 @@ class _TimelineEvent extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
-                      color: event.isCompleted ? Color(0xFFFFFFFF) : Color(0xFF9E9E9E),
+                      color: event.isCompleted
+                          ? Color(0xFFFFFFFF)
+                          : Color(0xFF9E9E9E),
                     ),
                   ),
                   SizedBox(height: 4),
@@ -207,7 +220,9 @@ class _TimelineEvent extends StatelessWidget {
                     event.subtitle,
                     style: TextStyle(
                       fontSize: 13,
-                      color: event.isCompleted ? Color(0xFFB0B0B0) : Color(0xFF757575),
+                      color: event.isCompleted
+                          ? Color(0xFFB0B0B0)
+                          : Color(0xFF757575),
                     ),
                   ),
                   if (event.timestamp != null) ...[

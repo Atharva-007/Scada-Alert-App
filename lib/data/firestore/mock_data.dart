@@ -1,5 +1,4 @@
 import '../models/alert_model.dart';
-import '../models/system_status_model.dart';
 
 class MockData {
   static final List<AlertModel> mockActiveAlerts = [
@@ -142,7 +141,9 @@ class MockData {
       threshold: 1,
       condition: 'Equal To',
       raisedAt: DateTime.now().subtract(Duration(days: 1, hours: 3)),
-      acknowledgedAt: DateTime.now().subtract(Duration(days: 1, hours: 2, minutes: 30)),
+      acknowledgedAt: DateTime.now().subtract(
+        Duration(days: 1, hours: 2, minutes: 30),
+      ),
       acknowledgedBy: 'operator@plant.com',
       acknowledgedComment: 'Power restored, switching back to mains',
       clearedAt: DateTime.now().subtract(Duration(days: 1, hours: 1)),
@@ -151,7 +152,9 @@ class MockData {
       isSuppressed: false,
       notes: 'Power restored, UPS charging',
       escalationLevel: 2,
-      escalatedAt: DateTime.now().subtract(Duration(days: 1, hours: 2, minutes: 45)),
+      escalatedAt: DateTime.now().subtract(
+        Duration(days: 1, hours: 2, minutes: 45),
+      ),
       suppressionCount: 0,
       relatedAlertIds: [],
       trendData: [],
@@ -180,53 +183,6 @@ class MockData {
       suppressionCount: 0,
       relatedAlertIds: [],
       trendData: [],
-    ),
-  ];
-
-  static final List<SystemStatusModel> mockSystemStatuses = [
-    SystemStatusModel(
-      componentName: 'OPC UA',
-      status: 'online',
-      lastHeartbeat: DateTime.now().subtract(Duration(seconds: 15)),
-      version: '1.5.2',
-      metadata: {
-        'connectedTags': 245,
-        'samplingRate': '1000ms',
-        'protocol': 'UA-TCP',
-      },
-    ),
-    SystemStatusModel(
-      componentName: 'Historian',
-      status: 'online',
-      lastHeartbeat: DateTime.now().subtract(Duration(seconds: 8)),
-      version: '3.2.1',
-      metadata: {
-        'databaseSize': '2.4 GB',
-        'recordsPerDay': 125000,
-        'compression': 'Enabled',
-      },
-    ),
-    SystemStatusModel(
-      componentName: 'Alert Engine',
-      status: 'online',
-      lastHeartbeat: DateTime.now().subtract(Duration(seconds: 5)),
-      version: '2.1.0',
-      metadata: {
-        'activeRules': 48,
-        'evaluationRate': '500ms',
-        'isa182Compliant': true,
-      },
-    ),
-    SystemStatusModel(
-      componentName: 'Firebase',
-      status: 'degraded',
-      lastHeartbeat: DateTime.now().subtract(Duration(minutes: 2)),
-      version: '9.2.0',
-      metadata: {
-        'syncLatency': '2.3s',
-        'pendingWrites': 3,
-        'cacheHits': '94%',
-      },
     ),
   ];
 }

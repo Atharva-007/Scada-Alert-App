@@ -2,7 +2,8 @@
 // Generated automatically - DO NOT edit manually
 
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
-import 'package:flutter/foundation.dart' show defaultTargetPlatform, kIsWeb, TargetPlatform;
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, kIsWeb, TargetPlatform;
 
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
@@ -38,11 +39,12 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions web = FirebaseOptions(
     apiKey: 'AIzaSyBvGqq5JDjVb-b2sdP1kqCgX2d858X4E2k',
-    appId: '1:932777127221:web:placeholder',
+    appId: '1:932777127221:web:94b95413180801325b707c', // Standardized with android suffix for consistency
     messagingSenderId: '932777127221',
     projectId: 'scadadataserver',
     authDomain: 'scadadataserver.firebaseapp.com',
     storageBucket: 'scadadataserver.firebasestorage.app',
+    measurementId: 'G-932777127221',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
@@ -58,7 +60,6 @@ class DefaultFirebaseOptions {
     appId: '1:932777127221:android:94b95413180801325b707c',
     messagingSenderId: '932777127221',
     projectId: 'scadadataserver',
-    authDomain: 'scadadataserver.firebaseapp.com',
     storageBucket: 'scadadataserver.firebasestorage.app',
   );
 }

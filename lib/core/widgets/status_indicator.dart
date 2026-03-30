@@ -25,10 +25,7 @@ class StatusIndicator extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppTheme.cardDark,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: Color(0xFF3F3F3F),
-          width: 1,
-        ),
+        border: Border.all(color: Color(0xFF3F3F3F), width: 1),
       ),
       child: Row(
         children: [
@@ -42,11 +39,7 @@ class StatusIndicator extends StatelessWidget {
                 width: 1,
               ),
             ),
-            child: Icon(
-              icon ?? statusIcon,
-              size: 24,
-              color: statusColor,
-            ),
+            child: Icon(icon ?? statusIcon, size: 24, color: statusColor),
           ),
           SizedBox(width: 14),
           Expanded(
@@ -57,18 +50,18 @@ class StatusIndicator extends StatelessWidget {
                 Text(
                   label,
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFFFFFFFF),
-                      ),
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFFFFFFFF),
+                  ),
                 ),
                 if (subtitle != null) ...[
                   SizedBox(height: 4),
                   Text(
                     subtitle!,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Color(0xFF9E9E9E),
-                          fontSize: 12,
-                        ),
+                      color: Color(0xFF9E9E9E),
+                      fontSize: 12,
+                    ),
                   ),
                 ],
               ],
@@ -79,10 +72,7 @@ class StatusIndicator extends StatelessWidget {
             decoration: BoxDecoration(
               color: statusColor.withOpacity(0.15),
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(
-                color: statusColor.withOpacity(0.3),
-                width: 1,
-              ),
+              border: Border.all(color: statusColor.withOpacity(0.3), width: 1),
             ),
             child: Text(
               status.toUpperCase(),

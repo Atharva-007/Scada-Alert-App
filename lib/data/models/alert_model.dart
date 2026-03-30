@@ -32,7 +32,7 @@ class AlertModel with _$AlertModel {
     @Default(0) int suppressionCount,
     @Default([]) List<String> relatedAlertIds,
     @Default([]) List<Map<String, dynamic>> trendData,
-    
+
     // Diagnostic additions for Deep Analysis
     String? alertType,
     @Default(0) int escalationCount,
@@ -46,7 +46,7 @@ class AlertModel with _$AlertModel {
 
   factory AlertModel.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
-    
+
     // Handle both field naming conventions (camelCase from Flutter side, snake_case from C# side)
     return AlertModel(
       id: doc.id,
@@ -55,11 +55,16 @@ class AlertModel with _$AlertModel {
       severity: data['severity'] ?? 'info',
       source: data['source'] ?? 'Unknown',
       tagName: data['tagName'] ?? data['nodeId'] ?? 'N/A',
-      currentValue: (data['currentValue'] ?? data['triggerValue'] ?? 0).toDouble(),
+      currentValue: (data['currentValue'] ?? data['triggerValue'] ?? 0)
+          .toDouble(),
       threshold: (data['threshold'] ?? 0).toDouble(),
       condition: data['condition'] ?? data['alertType'] ?? '',
-      raisedAt: _parseTimestamp(data['raisedAt'] ?? data['timestamp'] ?? data['created_at']),
-      acknowledgedAt: _parseTimestamp(data['acknowledgedAt'] ?? data['acknowledged_at']),
+      raisedAt: _parseTimestamp(
+        data['raisedAt'] ?? data['timestamp'] ?? data['created_at'],
+      ),
+      acknowledgedAt: _parseTimestamp(
+        data['acknowledgedAt'] ?? data['acknowledged_at'],
+      ),
       acknowledgedBy: data['acknowledgedBy'] ?? data['acknowledged_by'],
       acknowledgedComment: data['acknowledgedComment'] ?? data['notes'],
       clearedAt: _parseTimestamp(data['clearedAt'] ?? data['clearedTime']),
@@ -72,17 +77,20 @@ class AlertModel with _$AlertModel {
       suppressionCount: data['suppressionCount'] ?? 0,
       relatedAlertIds: List<String>.from(data['relatedAlertIds'] ?? []),
       trendData: List<Map<String, dynamic>>.from(data['trendData'] ?? []),
-      
+
       alertType: data['alertType'] ?? data['condition'],
       escalationCount: data['escalationCount'] ?? 0,
-      lastUpdatedTime: _parseTimestamp(data['lastUpdatedTime'] ?? data['updated_at']),
+      lastUpdatedTime: _parseTimestamp(
+        data['lastUpdatedTime'] ?? data['updated_at'],
+      ),
       equipment: data['equipment'],
       location: data['location'],
     );
   }
 
   static DateTime _parseTimestamp(dynamic ts) {
-    if (ts == null) return DateTime.now(); // Fallback but usually handled by nullable types
+    if (ts == null)
+      return DateTime.now(); // Fallback but usually handled by nullable types
     if (ts is Timestamp) return ts.toDate();
     if (ts is String) return DateTime.tryParse(ts) ?? DateTime.now();
     return DateTime.now();
@@ -99,12 +107,15 @@ class AlertModel with _$AlertModel {
       'threshold': threshold,
       'condition': condition,
       'raisedAt': Timestamp.fromDate(raisedAt),
-      'acknowledgedAt':
-          acknowledgedAt != null ? Timestamp.fromDate(acknowledgedAt!) : null,
+      'acknowledgedAt': acknowledgedAt != null
+          ? Timestamp.fromDate(acknowledgedAt!)
+          : null,
       'acknowledgedBy': acknowledgedBy,
       'acknowledgedComment': acknowledgedComment,
       'clearedAt': clearedAt != null ? Timestamp.fromDate(clearedAt!) : null,
-      'escalatedAt': escalatedAt != null ? Timestamp.fromDate(escalatedAt!) : null,
+      'escalatedAt': escalatedAt != null
+          ? Timestamp.fromDate(escalatedAt!)
+          : null,
       'isActive': isActive,
       'isAcknowledged': isAcknowledged,
       'isSuppressed': isSuppressed,
@@ -115,7 +126,9 @@ class AlertModel with _$AlertModel {
       'trendData': trendData,
       'alertType': alertType,
       'escalationCount': escalationCount,
-      'lastUpdatedTime': lastUpdatedTime != null ? Timestamp.fromDate(lastUpdatedTime!) : null,
+      'lastUpdatedTime': lastUpdatedTime != null
+          ? Timestamp.fromDate(lastUpdatedTime!)
+          : null,
       'equipment': equipment,
       'location': location,
     };
@@ -149,7 +162,7 @@ class AlertModel with _$AlertModel {
       default:
         severityPriority = 0;
     }
-    
+
     return severityPriority + (isAcknowledged ? 0 : 10000);
   }
 }

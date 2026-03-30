@@ -21,19 +21,20 @@ class SummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bgColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+    final borderColor = isDark ? color.withOpacity(0.3) : const Color(0xFFE0E4E9);
+
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeOutCubic,
       decoration: BoxDecoration(
-        color: const Color(0xFF1E1E1E),
+        color: bgColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: color.withOpacity(0.3),
-          width: 1.5,
-        ),
+        border: Border.all(color: borderColor, width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.05),
+            color: Colors.black.withOpacity(isDark ? 0.2 : 0.05),
             blurRadius: 15,
             offset: const Offset(0, 8),
           ),
@@ -57,7 +58,7 @@ class SummaryCard extends StatelessWidget {
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                         colors: [
-                          color.withOpacity(0.1),
+                          color.withOpacity(isDark ? 0.1 : 0.05),
                           Colors.transparent,
                         ],
                       ),
@@ -71,7 +72,7 @@ class SummaryCard extends StatelessWidget {
                   child: Icon(
                     icon,
                     size: 80,
-                    color: color.withOpacity(0.05),
+                    color: color.withOpacity(isDark ? 0.05 : 0.03),
                   ),
                 ),
                 Padding(
@@ -92,17 +93,15 @@ class SummaryCard extends StatelessWidget {
                                 width: 1,
                               ),
                             ),
-                            child: Icon(
-                              icon,
-                              color: color,
-                              size: 20,
-                            ),
+                            child: Icon(icon, color: color, size: 20),
                           ),
                           const Spacer(),
                           if (onTap != null)
                             Icon(
                               Icons.arrow_forward_ios,
-                              color: Colors.white.withOpacity(0.3),
+                              color: isDark
+                                  ? Colors.white.withOpacity(0.3)
+                                  : Colors.black.withOpacity(0.2),
                               size: 14,
                             ),
                         ],
@@ -137,8 +136,8 @@ class SummaryCard extends StatelessWidget {
                       const SizedBox(height: 6),
                       Text(
                         title,
-                        style: const TextStyle(
-                          color: Colors.white,
+                        style: TextStyle(
+                          color: isDark ? Colors.white : Colors.black87,
                           fontWeight: FontWeight.w600,
                           fontSize: 13,
                           letterSpacing: 0.3,
@@ -151,7 +150,9 @@ class SummaryCard extends StatelessWidget {
                         Text(
                           subtitle!,
                           style: TextStyle(
-                            color: Colors.white.withOpacity(0.5),
+                            color: isDark
+                                ? Colors.white.withOpacity(0.5)
+                                : Colors.black.withOpacity(0.4),
                             fontSize: 11,
                           ),
                           maxLines: 1,

@@ -80,7 +80,7 @@ class _AppNavigationState extends State<AppNavigation> {
               },
               labelType: NavigationRailLabelType.all,
               destinations: _railDestinations,
-              backgroundColor: const Color(0xFF151515),
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
               selectedIconTheme: const IconThemeData(color: AppTheme.infoColor),
             ),
           Expanded(
@@ -163,6 +163,16 @@ class _FloatingNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    // Theme adaptive colors
+    final bgColor =
+        isDark
+            ? const Color(0xFF1E1E1E).withOpacity(0.95)
+            : Colors.white.withOpacity(0.95);
+    final unselectedColor = isDark ? const Color(0xFF9E9E9E) : Colors.black38;
+    final shadowColor = isDark ? Colors.black45 : Colors.black12;
+
     return Padding(
       padding: const EdgeInsets.only(left: 20, right: 20, bottom: 24),
       child: ClipRRect(
@@ -172,15 +182,18 @@ class _FloatingNavBar extends StatelessWidget {
           child: Container(
             height: 64,
             decoration: BoxDecoration(
-              color: const Color(0xFF1E1E1E).withOpacity(0.75),
+              color: bgColor,
               borderRadius: BorderRadius.circular(32),
               border: Border.all(
-                color: Colors.white.withOpacity(0.1),
+                color:
+                    isDark
+                        ? Colors.white.withOpacity(0.1)
+                        : Colors.black.withOpacity(0.05),
                 width: 1,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
+                  color: shadowColor,
                   blurRadius: 20,
                   offset: const Offset(0, 10),
                 ),
@@ -191,7 +204,7 @@ class _FloatingNavBar extends StatelessWidget {
               children: List.generate(items.length, (index) {
                 final item = items[index];
                 final isSelected = selectedIndex == index;
-                
+
                 return Expanded(
                   child: Material(
                     color: Colors.transparent,
@@ -211,14 +224,18 @@ class _FloatingNavBar extends StatelessWidget {
                             AnimatedSwitcher(
                               duration: const Duration(milliseconds: 200),
                               transitionBuilder: (child, animation) {
-                                return ScaleTransition(scale: animation, child: child);
+                                return ScaleTransition(
+                                  scale: animation,
+                                  child: child,
+                                );
                               },
                               child: Icon(
                                 isSelected ? item.selectedIcon : item.icon,
                                 key: ValueKey<bool>(isSelected),
-                                color: isSelected
-                                    ? AppTheme.infoColor
-                                    : const Color(0xFF9E9E9E),
+                                color:
+                                    isSelected
+                                        ? AppTheme.infoColor
+                                        : unselectedColor,
                                 size: isSelected ? 26 : 24,
                               ),
                             ),
@@ -227,10 +244,14 @@ class _FloatingNavBar extends StatelessWidget {
                               item.label,
                               style: TextStyle(
                                 fontSize: 10,
-                                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                                color: isSelected
-                                    ? AppTheme.infoColor
-                                    : const Color(0xFF9E9E9E),
+                                fontWeight:
+                                    isSelected
+                                        ? FontWeight.w900
+                                        : FontWeight.w600,
+                                color:
+                                    isSelected
+                                        ? AppTheme.infoColor
+                                        : unselectedColor,
                                 letterSpacing: 0.2,
                               ),
                               maxLines: 1,

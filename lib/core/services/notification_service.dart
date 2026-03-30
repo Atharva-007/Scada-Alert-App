@@ -14,10 +14,10 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 class NotificationService {
   final FirebaseMessaging _messaging = FirebaseMessaging.instance;
-  
+
   // Use dynamic for the plugin to avoid web compilation issues with missing platform methods
   late final dynamic _localNotifications;
-  
+
   NotificationService() {
     if (!kIsWeb) {
       _localNotifications = FlutterLocalNotificationsPlugin();
@@ -41,14 +41,16 @@ class NotificationService {
     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
       // 2. Initialize Local Notifications (Mobile Only)
       if (!kIsWeb) {
-        const initializationSettingsAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
+        const initializationSettingsAndroid = AndroidInitializationSettings(
+          '@mipmap/ic_launcher',
+        );
         const initializationSettingsIOS = DarwinInitializationSettings(
           requestAlertPermission: true,
           requestBadgePermission: true,
           requestSoundPermission: true,
           requestCriticalPermission: true,
         );
-        
+
         const initializationSettings = InitializationSettings(
           android: initializationSettingsAndroid,
           iOS: initializationSettingsIOS,
@@ -64,18 +66,22 @@ class NotificationService {
         // 3. Create High-Priority Channel (Android only)
         if (defaultTargetPlatform == TargetPlatform.android) {
           final androidPlugin = _localNotifications
-              .resolvePlatformSpecificPlugin<AndroidFlutterLocalNotificationsPlugin>();
-          
+              .resolvePlatformSpecificPlugin<
+                AndroidFlutterLocalNotificationsPlugin
+              >();
+
           if (androidPlugin != null) {
-            await androidPlugin.createNotificationChannel(const AndroidNotificationChannel(
-              _alarmChannelId,
-              _alarmChannelName,
-              description: 'Used for mission-critical industrial alerts',
-              importance: Importance.max,
-              playSound: true,
-              enableVibration: true,
-              showBadge: true,
-            ));
+            await androidPlugin.createNotificationChannel(
+              const AndroidNotificationChannel(
+                _alarmChannelId,
+                _alarmChannelName,
+                description: 'Used for mission-critical industrial alerts',
+                importance: Importance.max,
+                playSound: true,
+                enableVibration: true,
+                showBadge: true,
+              ),
+            );
           }
         }
       }
@@ -95,9 +101,11 @@ class NotificationService {
         _showForegroundNotification(message);
       });
 
-      // Subscribe to topics
-      await _messaging.subscribeToTopic('scada_alerts');
-      await _messaging.subscribeToTopic('critical_alerts');
+      // Subscribe to topics (Mobile only)
+      if (!kIsWeb) {
+        await _messaging.subscribeToTopic('scada_alerts');
+        await _messaging.subscribeToTopic('critical_alerts');
+      }
     }
   }
 
@@ -138,12 +146,13 @@ class NotificationService {
     bool critical = true,
     bool warning = true,
   }) async {
+    if (kIsWeb) return;
     if (critical) await _messaging.subscribeToTopic('critical_alerts');
     if (warning) await _messaging.subscribeToTopic('warning_alerts');
   }
 
   Stream<RemoteMessage> get onMessageStream => FirebaseMessaging.onMessage;
-  Stream<RemoteMessage> get onMessageOpenedAppStream => 
+  Stream<RemoteMessage> get onMessageOpenedAppStream =>
       FirebaseMessaging.onMessageOpenedApp;
 }
 

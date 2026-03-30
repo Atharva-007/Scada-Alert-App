@@ -54,10 +54,7 @@ class AlertSparkline extends StatelessWidget {
       child: Center(
         child: Text(
           'No trend data available',
-          style: TextStyle(
-            fontSize: 12,
-            color: Color(0xFF757575),
-          ),
+          style: TextStyle(fontSize: 12, color: Color(0xFF757575)),
         ),
       ),
     );
@@ -90,7 +87,8 @@ class _SparklinePainter extends CustomPainter {
     if (valueRange == 0) return;
 
     // Draw threshold line
-    final thresholdY = size.height - ((threshold - minValue) / valueRange) * size.height;
+    final thresholdY =
+        size.height - ((threshold - minValue) / valueRange) * size.height;
     if (thresholdY >= 0 && thresholdY <= size.height) {
       final thresholdPaint = Paint()
         ..color = thresholdColor.withOpacity(0.5)
@@ -128,7 +126,8 @@ class _SparklinePainter extends CustomPainter {
     final linePath = Path();
     for (int i = 0; i < values.length; i++) {
       final x = (i / (values.length - 1)) * size.width;
-      final y = size.height - ((values[i] - minValue) / valueRange) * size.height;
+      final y =
+          size.height - ((values[i] - minValue) / valueRange) * size.height;
 
       if (i == 0) {
         linePath.moveTo(x, y);
@@ -147,21 +146,21 @@ class _SparklinePainter extends CustomPainter {
     final gradient = LinearGradient(
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
-      colors: [
-        lineColor.withOpacity(0.3),
-        lineColor.withOpacity(0.0),
-      ],
+      colors: [lineColor.withOpacity(0.3), lineColor.withOpacity(0.0)],
     );
 
     final fillPaint = Paint()
-      ..shader = gradient.createShader(Rect.fromLTWH(0, 0, size.width, size.height))
+      ..shader = gradient.createShader(
+        Rect.fromLTWH(0, 0, size.width, size.height),
+      )
       ..style = PaintingStyle.fill;
 
     canvas.drawPath(fillPath, fillPaint);
 
     // Draw current value point
     final lastX = size.width;
-    final lastY = size.height - ((values.last - minValue) / valueRange) * size.height;
+    final lastY =
+        size.height - ((values.last - minValue) / valueRange) * size.height;
 
     final pointPaint = Paint()
       ..color = lineColor

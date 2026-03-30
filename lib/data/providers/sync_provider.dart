@@ -8,9 +8,9 @@ final firebaseSyncServiceProvider = Provider<FirebaseSyncService>((ref) {
     firestore: FirebaseFirestore.instance,
     messaging: FirebaseMessaging.instance,
   );
-  
+
   ref.onDispose(() => service.dispose());
-  
+
   return service;
 });
 

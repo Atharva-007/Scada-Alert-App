@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import '../../../core/theme/app_theme.dart';
-import '../../../core/widgets/shimmer_loading.dart';
 import '../../alerts/providers/alert_providers.dart';
 import '../../../data/models/alert_model.dart';
 
@@ -15,63 +14,52 @@ class AlertDetailsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final alertAsync = ref.watch(alertByIdProvider(alertId));
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return alertAsync.when(
       data: (alert) {
         if (alert == null) {
-          return Scaffold(
-            appBar: AppBar(title: const Text('Alert Details')),
-            body: const Center(child: Text('Alert not found or has been cleared.')),
-          );
+          return _buildErrorScaffold(context, 'Alert no longer active', isDark);
         }
-        return _buildDetailsScaffold(context, ref, alert);
+        return _buildDetailsScaffold(context, ref, alert, isDark);
       },
-      loading: () => Scaffold(
-        appBar: AppBar(title: const Text('Loading Details...')),
-        body: const Center(child: CircularProgressIndicator()),
-      ),
-      error: (error, stack) => Scaffold(
-        appBar: AppBar(title: const Text('Error')),
-        body: Center(child: Text('Error: $error')),
-      ),
+      loading: () => const Scaffold(body: Center(child: CircularProgressIndicator())),
+      error: (error, stack) => _buildErrorScaffold(context, 'Error: $error', isDark),
     );
   }
 
-  Widget _buildDetailsScaffold(BuildContext context, WidgetRef ref, AlertModel alert) {
+  Widget _buildDetailsScaffold(BuildContext context, WidgetRef ref, AlertModel alert, bool isDark) {
     final isCritical = alert.severity.toLowerCase() == 'critical';
     final themeColor = isCritical ? AppTheme.criticalColor : AppTheme.warningColor;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0F0F0F),
       body: CustomScrollView(
         slivers: [
-          _buildSliverAppBar(context, alert, themeColor),
+          _buildSliverAppBar(context, alert, themeColor, isDark),
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildStatusAndActions(context, ref, alert),
+                  _buildStatusChip(alert),
                   const SizedBox(height: 24),
                   
-                  // Primary Metrics Section
-                  _buildMetricsSection(alert, themeColor),
+                  _buildMetricsSection(context, alert, themeColor, isDark),
                   const SizedBox(height: 24),
 
-                  // Description / Context Section
-                  _buildDescriptionSection(alert),
+                  _buildDescriptionSection(context, alert, isDark),
                   const SizedBox(height: 32),
                   
-                  _buildSectionHeader('DIAGNOSTIC DETAILS'),
+                  _buildSectionHeader('DIAGNOSTIC DETAILS', isDark),
                   const SizedBox(height: 12),
-                  _buildDiagnosticGrid(alert),
+                  _buildDiagnosticGrid(context, alert, isDark),
                   const SizedBox(height: 32),
                   
-                  _buildSectionHeader('EVENT TIMELINE'),
+                  _buildSectionHeader('EVENT TIMELINE', isDark),
                   const SizedBox(height: 12),
-                  _buildTimeline(alert),
-                  const SizedBox(height: 100), // Bottom padding
+                  _buildTimeline(context, alert, isDark),
+                  const SizedBox(height: 100),
                 ],
               ),
             ),
@@ -93,14 +81,18 @@ class AlertDetailsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildSliverAppBar(BuildContext context, AlertModel alert, Color themeColor) {
+  Widget _buildSliverAppBar(BuildContext context, AlertModel alert, Color themeColor, bool isDark) {
     return SliverAppBar(
       expandedHeight: 180.0,
       pinned: true,
       stretch: true,
-      backgroundColor: const Color(0xFF1A1A1A),
+      backgroundColor: Theme.of(context).cardColor,
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back_ios_new, size: 20),
+        icon: Icon(
+          Icons.arrow_back_ios_new, 
+          size: 20,
+          color: isDark ? Colors.white : Colors.black87,
+        ),
         onPressed: () => Navigator.pop(context),
       ),
       flexibleSpace: FlexibleSpaceBar(
@@ -112,11 +104,10 @@ class AlertDetailsScreen extends ConsumerWidget {
           children: [
             Text(
               alert.name,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
+              style: TextStyle(
+                fontWeight: FontWeight.w900,
                 fontSize: 18,
-                color: Colors.white,
-                shadows: [Shadow(offset: Offset(0, 2), blurRadius: 4, color: Colors.black54)],
+                color: isDark ? Colors.white : Colors.black87,
               ),
             ),
             const SizedBox(height: 2),
@@ -124,8 +115,8 @@ class AlertDetailsScreen extends ConsumerWidget {
               alert.tagName,
               style: TextStyle(
                 fontSize: 10,
-                fontWeight: FontWeight.w500,
-                color: Colors.white.withOpacity(0.7),
+                fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white.withOpacity(0.6) : Colors.black45,
                 letterSpacing: 0.5,
               ),
             ),
@@ -134,38 +125,35 @@ class AlertDetailsScreen extends ConsumerWidget {
         background: Stack(
           fit: StackFit.expand,
           children: [
-            // Ambient pulse effect for critical alerts
             if (alert.severity.toLowerCase() == 'critical')
               Positioned.fill(
                 child: Opacity(
-                  opacity: 0.1,
+                  opacity: 0.05,
                   child: Lottie.network(
                     'https://assets9.lottiefiles.com/packages/lf20_pk5puaqq.json',
                     fit: BoxFit.cover,
                   ),
                 ),
               ),
-            // Gradient overlay
             Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    themeColor.withOpacity(0.4),
-                    const Color(0xFF0F0F0F),
+                    themeColor.withOpacity(isDark ? 0.3 : 0.1),
+                    Theme.of(context).scaffoldBackgroundColor,
                   ],
                 ),
               ),
             ),
-            // Decorative elements
             Positioned(
               right: -20,
               top: -20,
               child: Icon(
                 AppTheme.getSeverityIcon(alert.severity),
                 size: 150,
-                color: themeColor.withOpacity(0.05),
+                color: isDark ? Colors.white.withOpacity(0.03) : Colors.black.withOpacity(0.02),
               ),
             ),
           ],
@@ -174,27 +162,20 @@ class AlertDetailsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildStatusAndActions(BuildContext context, WidgetRef ref, AlertModel alert) {
-    return Row(
-      children: [
-        _buildStatusChip(alert),
-        const Spacer(),
-        // Actions removed per user request for a cleaner UI
-      ],
-    );
-  }
-
-  Widget _buildMetricsSection(AlertModel alert, Color themeColor) {
+  Widget _buildMetricsSection(BuildContext context, AlertModel alert, Color themeColor, bool isDark) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: const Color(0xFF1A1A1A),
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: themeColor.withOpacity(0.2), width: 1.5),
+        border: Border.all(
+          color: isDark ? themeColor.withOpacity(0.2) : const Color(0xFFE0E4E9), 
+          width: 1.5
+        ),
         boxShadow: [
           BoxShadow(
-            color: themeColor.withOpacity(0.05),
+            color: Colors.black.withOpacity(isDark ? 0.2 : 0.05),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -205,24 +186,23 @@ class AlertDetailsScreen extends ConsumerWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildValueIndicator('TRIGGER VALUE', '${alert.currentValue}', themeColor, true),
+              _buildValueIndicator('TRIGGER VALUE', '${alert.currentValue}', themeColor, true, isDark),
               Container(
                 height: 50,
                 width: 1,
-                color: Colors.white10,
+                color: isDark ? Colors.white10 : Colors.black12,
               ),
-              _buildValueIndicator('THRESHOLD', '${alert.threshold}', Colors.white38, false),
+              _buildValueIndicator('THRESHOLD', '${alert.threshold}', isDark ? Colors.white38 : Colors.black38, false, isDark),
             ],
           ),
-          const SizedBox(height: 20),
-          // Simple visual comparison bar
+          const SizedBox(height: 24),
           ClipRRect(
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: BorderRadius.circular(6),
             child: LinearProgressIndicator(
               value: alert.threshold != 0 ? (alert.currentValue / alert.threshold).clamp(0.0, 1.0) : 0,
-              backgroundColor: Colors.white10,
+              backgroundColor: isDark ? Colors.white10 : Colors.black.withOpacity(0.05),
               color: themeColor,
-              minHeight: 8,
+              minHeight: 10,
             ),
           ),
           const SizedBox(height: 12),
@@ -231,11 +211,15 @@ class AlertDetailsScreen extends ConsumerWidget {
             children: [
               Text(
                 'Deviation: ${((alert.currentValue - alert.threshold).abs()).toStringAsFixed(2)} units',
-                style: const TextStyle(fontSize: 10, color: Colors.white54),
+                style: TextStyle(
+                  fontSize: 11, 
+                  color: isDark ? Colors.white38 : Colors.black45,
+                  fontWeight: FontWeight.w600
+                ),
               ),
               Text(
                 'Condition: ${alert.condition}',
-                style: TextStyle(fontSize: 10, color: themeColor, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 11, color: themeColor, fontWeight: FontWeight.w900),
               ),
             ],
           ),
@@ -244,27 +228,27 @@ class AlertDetailsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildDescriptionSection(AlertModel alert) {
+  Widget _buildDescriptionSection(BuildContext context, AlertModel alert, bool isDark) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFF151515),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFF2D2D2D)),
+        color: isDark ? const Color(0xFF151515) : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: isDark ? const Color(0xFF2D2D2D) : const Color(0xFFE0E4E9)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          const Row(
             children: [
-              const Icon(Icons.info_outline, size: 18, color: AppTheme.infoColor),
-              const SizedBox(width: 8),
-              const Text(
+              Icon(Icons.info_outline, size: 18, color: AppTheme.infoColor),
+              SizedBox(width: 8),
+              Text(
                 'ALARM CONTEXT',
                 style: TextStyle(
-                  fontSize: 10,
-                  fontWeight: FontWeight.bold,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w900,
                   color: AppTheme.infoColor,
                   letterSpacing: 1,
                 ),
@@ -274,11 +258,11 @@ class AlertDetailsScreen extends ConsumerWidget {
           const SizedBox(height: 12),
           Text(
             alert.description,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 15,
-              color: Colors.white,
-              height: 1.5,
-              fontWeight: FontWeight.w400,
+              color: isDark ? Colors.white70 : Colors.black87,
+              height: 1.6,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ],
@@ -309,7 +293,7 @@ class AlertDetailsScreen extends ConsumerWidget {
             isAck ? 'ACKNOWLEDGED' : 'ACTIVE / UNACK',
             style: TextStyle(
               fontSize: 11,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w900,
               color: color,
               letterSpacing: 0.5,
             ),
@@ -319,22 +303,22 @@ class AlertDetailsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildSectionHeader(String title) {
+  Widget _buildSectionHeader(String title, bool isDark) {
     return Padding(
       padding: const EdgeInsets.only(left: 4),
       child: Text(
         title,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 11,
-          fontWeight: FontWeight.w800,
-          color: Colors.white38,
+          fontWeight: FontWeight.w900,
+          color: isDark ? Colors.white24 : Colors.black38,
           letterSpacing: 1.5,
         ),
       ),
     );
   }
 
-  Widget _buildDiagnosticGrid(AlertModel alert) {
+  Widget _buildDiagnosticGrid(BuildContext context, AlertModel alert, bool isDark) {
     return GridView.count(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -343,34 +327,34 @@ class AlertDetailsScreen extends ConsumerWidget {
       crossAxisSpacing: 12,
       childAspectRatio: 2.2,
       children: [
-        _buildInfoTile('EQUIPMENT', alert.equipment ?? 'N/A', Icons.precision_manufacturing_outlined),
-        _buildInfoTile('LOCATION', alert.location ?? 'N/A', Icons.location_on_outlined),
-        _buildInfoTile('SOURCE', alert.source, Icons.hub_outlined),
-        _buildInfoTile('SOURCE TAG', alert.tagName, Icons.tag_outlined),
-        _buildInfoTile('LATENCY', 'REAL-TIME', Icons.timer_outlined, color: AppTheme.infoColor),
-        _buildInfoTile('ESCALATIONS', '${alert.escalationCount}', Icons.trending_up_rounded, 
-            color: alert.escalationCount > 0 ? AppTheme.criticalColor : Colors.white54),
+        _buildInfoTile(context, 'EQUIPMENT', alert.equipment ?? 'N/A', Icons.precision_manufacturing_outlined, isDark),
+        _buildInfoTile(context, 'LOCATION', alert.location ?? 'N/A', Icons.location_on_outlined, isDark),
+        _buildInfoTile(context, 'SOURCE', alert.source, Icons.hub_outlined, isDark),
+        _buildInfoTile(context, 'SOURCE TAG', alert.tagName, Icons.tag_outlined, isDark),
+        _buildInfoTile(context, 'LATENCY', 'REAL-TIME', Icons.timer_outlined, isDark, color: AppTheme.infoColor),
+        _buildInfoTile(context, 'ESCALATIONS', '${alert.escalationCount}', Icons.trending_up_rounded, isDark,
+            color: alert.escalationCount > 0 ? AppTheme.criticalColor : null),
       ],
     );
   }
 
-  Widget _buildInfoTile(String label, String value, IconData icon, {Color? color}) {
+  Widget _buildInfoTile(BuildContext context, String label, String value, IconData icon, bool isDark, {Color? color}) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: const Color(0xFF1E1E1E),
+        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFF2D2D2D)),
+        border: Border.all(color: isDark ? const Color(0xFF2D2D2D) : const Color(0xFFE0E4E9)),
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: (color ?? Colors.white).withOpacity(0.05),
+              color: (color ?? (isDark ? Colors.white : Colors.black)).withOpacity(0.05),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(icon, size: 18, color: color ?? Colors.white38),
+            child: Icon(icon, size: 18, color: color ?? (isDark ? Colors.white38 : Colors.black38)),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -378,11 +362,11 @@ class AlertDetailsScreen extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(label, style: const TextStyle(fontSize: 8, color: Colors.white38, fontWeight: FontWeight.bold)),
+                Text(label, style: TextStyle(fontSize: 8, color: isDark ? Colors.white38 : Colors.black38, fontWeight: FontWeight.w900)),
                 const SizedBox(height: 2),
                 Text(
                   value,
-                  style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.white),
+                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: isDark ? Colors.white : Colors.black87),
                   overflow: TextOverflow.ellipsis,
                 ),
               ],
@@ -393,13 +377,18 @@ class AlertDetailsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildValueIndicator(String label, String value, Color color, bool highlight) {
+  Widget _buildValueIndicator(String label, String value, Color color, bool highlight, bool isDark) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text(
           label, 
-          style: const TextStyle(fontSize: 10, color: Colors.white38, letterSpacing: 1, fontWeight: FontWeight.bold)
+          style: TextStyle(
+            fontSize: 10, 
+            color: isDark ? Colors.white38 : Colors.black38, 
+            letterSpacing: 1, 
+            fontWeight: FontWeight.w900
+          )
         ),
         const SizedBox(height: 8),
         Text(
@@ -415,15 +404,15 @@ class AlertDetailsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildTimeline(AlertModel alert) {
+  Widget _buildTimeline(BuildContext context, AlertModel alert, bool isDark) {
     final dateFormat = DateFormat('HH:mm:ss (MMM dd)');
     
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFF151515),
+        color: isDark ? const Color(0xFF151515) : Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFF252525)),
+        border: Border.all(color: isDark ? const Color(0xFF252525) : const Color(0xFFE0E4E9)),
       ),
       child: Column(
         children: [
@@ -434,6 +423,7 @@ class AlertDetailsScreen extends ConsumerWidget {
             Icons.notification_important_outlined,
             AppTheme.criticalColor,
             alert.isAcknowledged,
+            isDark,
           ),
           if (alert.isAcknowledged && alert.acknowledgedAt != null)
             _buildTimelineItem(
@@ -443,6 +433,7 @@ class AlertDetailsScreen extends ConsumerWidget {
               Icons.verified_user_outlined,
               AppTheme.infoColor,
               alert.clearedAt != null,
+              isDark,
             ),
           if (alert.clearedAt != null)
             _buildTimelineItem(
@@ -452,13 +443,14 @@ class AlertDetailsScreen extends ConsumerWidget {
               Icons.task_alt_outlined,
               AppTheme.normalColor,
               false,
+              isDark,
             ),
         ],
       ),
     );
   }
 
-  Widget _buildTimelineItem(String title, String time, String details, IconData icon, Color color, bool hasNext) {
+  Widget _buildTimelineItem(String title, String time, String details, IconData icon, Color color, bool hasNext, bool isDark) {
     return IntrinsicHeight(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -483,7 +475,7 @@ class AlertDetailsScreen extends ConsumerWidget {
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
-                        colors: [color.withOpacity(0.5), Colors.white10],
+                        colors: [color.withOpacity(0.5), isDark ? Colors.white10 : Colors.black12],
                       ),
                     ),
                   ),
@@ -502,24 +494,46 @@ class AlertDetailsScreen extends ConsumerWidget {
                     children: [
                       Text(
                         title, 
-                        style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: color, letterSpacing: 0.5)
+                        style: TextStyle(fontSize: 13, fontWeight: FontWeight.w900, color: color, letterSpacing: 0.5)
                       ),
                       Text(
                         time, 
-                        style: const TextStyle(fontSize: 11, color: Colors.white38, fontWeight: FontWeight.w500)
+                        style: TextStyle(fontSize: 11, color: isDark ? Colors.white38 : Colors.black38, fontWeight: FontWeight.w700)
                       ),
                     ],
                   ),
                   const SizedBox(height: 6),
                   Text(
                     details, 
-                    style: const TextStyle(fontSize: 12, color: Colors.white60, height: 1.5, fontWeight: FontWeight.w400)
+                    style: TextStyle(
+                      fontSize: 12, 
+                      color: isDark ? Colors.white60 : Colors.black54, 
+                      height: 1.6, 
+                      fontWeight: FontWeight.w500
+                    )
                   ),
                 ],
               ),
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildErrorScaffold(BuildContext context, String message, bool isDark) {
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
+      body: Center(
+        child: Text(
+          message,
+          style: TextStyle(color: isDark ? Colors.white70 : Colors.black54, fontWeight: FontWeight.bold),
+        ),
       ),
     );
   }
@@ -555,7 +569,7 @@ class AlertDetailsScreen extends ConsumerWidget {
               final repository = ref.read(alertRepositoryProvider);
               await repository.acknowledgeAlert(
                 alert.id,
-                'User-App', // In production, get actual user name
+                'User-App',
                 comment: commentController.text,
               );
               if (context.mounted) Navigator.pop(context);

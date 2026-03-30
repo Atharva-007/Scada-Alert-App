@@ -7,14 +7,14 @@ import '../theme/app_theme.dart';
 /// Enhanced notification service with local notifications
 class EnhancedNotificationService {
   final FirebaseMessaging _messaging = FirebaseMessaging.instance;
-  final FlutterLocalNotificationsPlugin _localNotifications = 
+  final FlutterLocalNotificationsPlugin _localNotifications =
       FlutterLocalNotificationsPlugin();
-  
+
   bool _initialized = false;
-  
+
   Future<void> initialize() async {
     if (_initialized) return;
-    
+
     // Request permissions
     final settings = await _messaging.requestPermission(
       alert: true,
@@ -27,70 +27,76 @@ class EnhancedNotificationService {
 
     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
       debugPrint('✅ User granted notification permission');
-      
-      // Initialize local notifications
-      await _initializeLocalNotifications();
-      
+
+      // Initialize local notifications (Mobile only)
+      if (!kIsWeb) {
+        await _initializeLocalNotifications();
+      }
+
       // Get FCM token
       final token = await _messaging.getToken();
       debugPrint('📱 FCM Token: $token');
-      
-      // Subscribe to topics
-      await _messaging.subscribeToTopic('all_alerts');
-      await _messaging.subscribeToTopic('critical_alerts');
-      await _messaging.subscribeToTopic('warning_alerts');
-      
+
+      // Subscribe to topics (Mobile only)
+      if (!kIsWeb) {
+        await _messaging.subscribeToTopic('all_alerts');
+        await _messaging.subscribeToTopic('critical_alerts');
+        await _messaging.subscribeToTopic('warning_alerts');
+      }
+
       // Configure foreground notifications
       await _messaging.setForegroundNotificationPresentationOptions(
         alert: true,
         badge: true,
         sound: true,
       );
-      
+
       // Listen for foreground messages
       FirebaseMessaging.onMessage.listen(_handleForegroundMessage);
-      
+
       // Listen for background message taps
       FirebaseMessaging.onMessageOpenedApp.listen(_handleBackgroundMessageTap);
-      
+
       // Check if app was opened from terminated state
       final initialMessage = await _messaging.getInitialMessage();
       if (initialMessage != null) {
         _handleBackgroundMessageTap(initialMessage);
       }
-      
+
       // Token refresh listener
       _messaging.onTokenRefresh.listen((newToken) {
         debugPrint('🔄 FCM Token refreshed: $newToken');
         // TODO: Send to backend
       });
-      
+
       _initialized = true;
     }
   }
-  
+
   Future<void> _initializeLocalNotifications() async {
-    const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const androidSettings = AndroidInitializationSettings(
+      '@mipmap/ic_launcher',
+    );
     const iosSettings = DarwinInitializationSettings(
       requestAlertPermission: true,
       requestBadgePermission: true,
       requestSoundPermission: true,
     );
-    
+
     const settings = InitializationSettings(
       android: androidSettings,
       iOS: iosSettings,
     );
-    
+
     await _localNotifications.initialize(
       settings,
       onDidReceiveNotificationResponse: _onNotificationTap,
     );
-    
+
     // Create notification channels for Android
     await _createNotificationChannels();
   }
-  
+
   Future<void> _createNotificationChannels() async {
     // Critical alerts channel
     const criticalChannel = AndroidNotificationChannel(
@@ -103,7 +109,7 @@ class EnhancedNotificationService {
       playSound: true,
       sound: RawResourceAndroidNotificationSound('alert_critical'),
     );
-    
+
     // Warning alerts channel
     const warningChannel = AndroidNotificationChannel(
       'warning_alerts',
@@ -113,7 +119,7 @@ class EnhancedNotificationService {
       enableVibration: true,
       playSound: true,
     );
-    
+
     // Info alerts channel
     const infoChannel = AndroidNotificationChannel(
       'info_alerts',
@@ -122,26 +128,29 @@ class EnhancedNotificationService {
       importance: Importance.defaultImportance,
       playSound: true,
     );
-    
+
     await _localNotifications
         .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
+          AndroidFlutterLocalNotificationsPlugin
+        >()
         ?.createNotificationChannel(criticalChannel);
-    
+
     await _localNotifications
         .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
+          AndroidFlutterLocalNotificationsPlugin
+        >()
         ?.createNotificationChannel(warningChannel);
-    
+
     await _localNotifications
         .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
+          AndroidFlutterLocalNotificationsPlugin
+        >()
         ?.createNotificationChannel(infoChannel);
   }
-  
+
   void _handleForegroundMessage(RemoteMessage message) {
     debugPrint('📬 Foreground message: ${message.notification?.title}');
-    
+
     // Show local notification
     final severity = message.data['severity'] ?? 'info';
     _showLocalNotification(
@@ -151,17 +160,17 @@ class EnhancedNotificationService {
       severity: severity,
     );
   }
-  
+
   void _handleBackgroundMessageTap(RemoteMessage message) {
     debugPrint('👆 Notification tapped: ${message.data}');
     // TODO: Navigate to alert details
   }
-  
+
   void _onNotificationTap(NotificationResponse response) {
     debugPrint('👆 Local notification tapped: ${response.payload}');
     // TODO: Navigate to alert details
   }
-  
+
   Future<void> _showLocalNotification({
     required String title,
     required String body,
@@ -169,7 +178,7 @@ class EnhancedNotificationService {
     required String severity,
   }) async {
     final channelId = _getChannelId(severity);
-    
+
     final androidDetails = AndroidNotificationDetails(
       channelId,
       _getChannelName(severity),
@@ -182,18 +191,18 @@ class EnhancedNotificationService {
       enableVibration: true,
       playSound: true,
     );
-    
+
     const iosDetails = DarwinNotificationDetails(
       presentAlert: true,
       presentBadge: true,
       presentSound: true,
     );
-    
+
     final details = NotificationDetails(
       android: androidDetails,
       iOS: iosDetails,
     );
-    
+
     await _localNotifications.show(
       DateTime.now().millisecondsSinceEpoch % 100000,
       title,
@@ -202,7 +211,7 @@ class EnhancedNotificationService {
       payload: payload,
     );
   }
-  
+
   String _getChannelId(String severity) {
     switch (severity.toLowerCase()) {
       case 'critical':
@@ -213,7 +222,7 @@ class EnhancedNotificationService {
         return 'info_alerts';
     }
   }
-  
+
   String _getChannelName(String severity) {
     switch (severity.toLowerCase()) {
       case 'critical':
@@ -224,7 +233,7 @@ class EnhancedNotificationService {
         return 'Information Alerts';
     }
   }
-  
+
   Importance _getImportance(String severity) {
     switch (severity.toLowerCase()) {
       case 'critical':
@@ -235,7 +244,7 @@ class EnhancedNotificationService {
         return Importance.defaultImportance;
     }
   }
-  
+
   Priority _getPriority(String severity) {
     switch (severity.toLowerCase()) {
       case 'critical':
@@ -246,7 +255,7 @@ class EnhancedNotificationService {
         return Priority.defaultPriority;
     }
   }
-  
+
   Color _getNotificationColor(String severity) {
     switch (severity.toLowerCase()) {
       case 'critical':
@@ -257,7 +266,7 @@ class EnhancedNotificationService {
         return AppTheme.infoColor;
     }
   }
-  
+
   /// Show a custom local notification (for testing or manual triggers)
   Future<void> showAlertNotification({
     required String alertId,
@@ -273,18 +282,19 @@ class EnhancedNotificationService {
       severity: severity,
     );
   }
-  
+
   /// Cancel all notifications
   Future<void> cancelAllNotifications() async {
     await _localNotifications.cancelAll();
   }
-  
+
   /// Cancel specific notification
   Future<void> cancelNotification(int id) async {
     await _localNotifications.cancel(id);
   }
 }
 
-final enhancedNotificationServiceProvider = Provider<EnhancedNotificationService>((ref) {
-  return EnhancedNotificationService();
-});
+final enhancedNotificationServiceProvider =
+    Provider<EnhancedNotificationService>((ref) {
+      return EnhancedNotificationService();
+    });

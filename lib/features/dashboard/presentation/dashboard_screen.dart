@@ -9,39 +9,40 @@ class DashboardScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final criticalCount = ref.watch(activeCriticalCountProvider);
     final warningCount = ref.watch(activeWarningCountProvider);
     final acknowledgedCount = ref.watch(acknowledgedCountProvider);
     final clearedCount = ref.watch(clearedLast24hCountProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0F0F0F),
       body: RefreshIndicator(
         onRefresh: () async {
           ref.invalidate(activeCriticalCountProvider);
           ref.invalidate(activeWarningCountProvider);
           ref.invalidate(acknowledgedCountProvider);
           ref.invalidate(clearedLast24hCountProvider);
-          // Add a small delay for UX so it doesn't instantly snap back
           await Future.delayed(const Duration(milliseconds: 600));
         },
         child: CustomScrollView(
-          physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+          physics: const BouncingScrollPhysics(
+            parent: AlwaysScrollableScrollPhysics(),
+          ),
           slivers: [
             SliverAppBar(
-              expandedHeight: 120,
+              expandedHeight: 140,
               floating: true,
               pinned: true,
-              backgroundColor: const Color(0xFF0F0F0F),
               surfaceTintColor: Colors.transparent,
               flexibleSpace: FlexibleSpaceBar(
                 titlePadding: const EdgeInsets.only(left: 20, bottom: 16),
-                title: const Text(
+                title: Text(
                   'SCADA Monitor',
                   style: TextStyle(
-                    fontWeight: FontWeight.w800,
-                    fontSize: 22,
-                    letterSpacing: -0.5,
+                    fontWeight: FontWeight.w900,
+                    fontSize: 24,
+                    letterSpacing: -0.8,
+                    color: isDark ? Colors.white : Colors.black87,
                   ),
                 ),
                 background: Stack(
@@ -50,13 +51,22 @@ class DashboardScreen extends ConsumerWidget {
                     Container(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
                           colors: [
-                            AppTheme.infoColor.withOpacity(0.1),
-                            const Color(0xFF0F0F0F),
+                            AppTheme.infoColor.withOpacity(isDark ? 0.15 : 0.12),
+                            isDark ? const Color(0xFF0F0F0F) : AppTheme.backgroundLight,
                           ],
                         ),
+                      ),
+                    ),
+                    Positioned(
+                      right: -10,
+                      bottom: -10,
+                      child: Icon(
+                        Icons.dashboard_outlined,
+                        size: 140,
+                        color: isDark ? Colors.white.withOpacity(0.03) : Colors.black.withOpacity(0.04),
                       ),
                     ),
                   ],
@@ -66,8 +76,10 @@ class DashboardScreen extends ConsumerWidget {
                 Padding(
                   padding: const EdgeInsets.only(right: 8.0),
                   child: IconButton(
-                    icon: const Icon(Icons.refresh_rounded),
-                    tooltip: 'Refresh',
+                    icon: Icon(
+                      Icons.refresh_rounded, 
+                      color: isDark ? Colors.white70 : Colors.black54
+                    ),
                     onPressed: () {
                       ref.invalidate(activeCriticalCountProvider);
                       ref.invalidate(activeWarningCountProvider);
@@ -84,16 +96,19 @@ class DashboardScreen extends ConsumerWidget {
                 delegate: SliverChildListDelegate([
                   Row(
                     children: [
-                      const Icon(Icons.analytics_outlined, size: 18, color: AppTheme.infoColor),
+                      const Icon(
+                        Icons.analytics_outlined,
+                        size: 18,
+                        color: AppTheme.infoColor,
+                      ),
                       const SizedBox(width: 8),
                       Text(
                         'SYSTEM OVERVIEW',
                         style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                              color: AppTheme.infoColor,
-                              fontWeight: FontWeight.w800,
-                              letterSpacing: 1.5,
-                              fontSize: 12,
-                            ),
+                          color: AppTheme.infoColor,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 1.5,
+                        ),
                       ),
                     ],
                   ),
@@ -108,7 +123,7 @@ class DashboardScreen extends ConsumerWidget {
                     children: [
                       SummaryCard(
                         title: 'Critical Active',
-                        subtitle: 'Requires immediate action',
+                        subtitle: 'Requires action',
                         value: criticalCount.when(
                           data: (count) => count.toString(),
                           loading: () => '-',
@@ -130,7 +145,7 @@ class DashboardScreen extends ConsumerWidget {
                       ),
                       SummaryCard(
                         title: 'Acknowledged',
-                        subtitle: 'Being investigated',
+                        subtitle: 'Investigating',
                         value: acknowledgedCount.when(
                           data: (count) => count.toString(),
                           loading: () => '-',
@@ -141,7 +156,7 @@ class DashboardScreen extends ConsumerWidget {
                       ),
                       SummaryCard(
                         title: 'Resolved',
-                        subtitle: 'Past 24 hours',
+                        subtitle: 'Past 24h',
                         value: clearedCount.when(
                           data: (count) => count.toString(),
                           loading: () => '-',
@@ -152,7 +167,7 @@ class DashboardScreen extends ConsumerWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 100), // Bottom padding for floating nav bar
+                  const SizedBox(height: 100),
                 ]),
               ),
             ),
@@ -162,4 +177,3 @@ class DashboardScreen extends ConsumerWidget {
     );
   }
 }
-

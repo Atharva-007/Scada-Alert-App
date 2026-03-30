@@ -11,8 +11,10 @@ final activeAlertsProvider = StreamProvider<List<AlertModel>>((ref) {
   return repository.watchActiveAlerts();
 });
 
-final alertByIdProvider =
-    StreamProvider.family<AlertModel?, String>((ref, alertId) {
+final alertByIdProvider = StreamProvider.family<AlertModel?, String>((
+  ref,
+  alertId,
+) {
   final repository = ref.watch(alertRepositoryProvider);
   return repository.watchAlertById(alertId);
 });
