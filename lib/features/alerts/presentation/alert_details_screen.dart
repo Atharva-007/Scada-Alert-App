@@ -179,39 +179,8 @@ class AlertDetailsScreen extends ConsumerWidget {
       children: [
         _buildStatusChip(alert),
         const Spacer(),
-        _buildActionButton(Icons.history, 'Log', () {}),
-        const SizedBox(width: 8),
-        _buildActionButton(Icons.share_outlined, 'Share', () {}),
-        const SizedBox(width: 8),
-        _buildActionButton(Icons.more_vert, null, () {}),
+        // Actions removed per user request for a cleaner UI
       ],
-    );
-  }
-
-  Widget _buildActionButton(IconData icon, String? label, VoidCallback onPressed) {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFF252525),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFF333333)),
-      ),
-      child: label != null
-          ? TextButton.icon(
-              onPressed: onPressed,
-              icon: Icon(icon, size: 18, color: Colors.white70),
-              label: Text(label, style: const TextStyle(color: Colors.white70, fontSize: 12)),
-              style: TextButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                minimumSize: Size.zero,
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              ),
-            )
-          : IconButton(
-              onPressed: onPressed,
-              icon: Icon(icon, size: 18, color: Colors.white70),
-              constraints: const BoxConstraints(),
-              padding: const EdgeInsets.all(8),
-            ),
     );
   }
 

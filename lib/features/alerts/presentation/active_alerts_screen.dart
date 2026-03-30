@@ -27,233 +27,241 @@ class _ActiveAlertsScreenState extends ConsumerState<ActiveAlertsScreen>
 
   @override
   Widget build(BuildContext context) {
-    super.build(context); // Required for AutomaticKeepAliveClientMixin
+    super.build(context);
     final alertsAsync = ref.watch(activeAlertsProvider);
     final audioService = ref.read(audioServiceProvider);
     final isOffline = ref.watch(isOfflineProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          children: [
-            Text('Active Alerts'),
-            if (isOffline) ...[
-              SizedBox(width: 8),
-              Tooltip(
-                message: 'Offline - Showing cached data',
-                child: Icon(
-                  Icons.cloud_off,
-                  size: 20,
-                  color: Colors.orange,
+      backgroundColor: const Color(0xFF0F0F0F),
+      body: RefreshIndicator(
+        onRefresh: () async {
+          setState(() => _isRefreshing = true);
+          ref.invalidate(activeAlertsProvider);
+          await Future.delayed(const Duration(milliseconds: 600));
+          setState(() => _isRefreshing = false);
+        },
+        child: CustomScrollView(
+          physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+          slivers: [
+            SliverAppBar(
+              expandedHeight: 120.0,
+              floating: true,
+              pinned: true,
+              backgroundColor: const Color(0xFF0F0F0F),
+              surfaceTintColor: Colors.transparent,
+              flexibleSpace: FlexibleSpaceBar(
+                titlePadding: const EdgeInsets.only(left: 20, bottom: 16),
+                title: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                      'Active Alerts',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w800,
+                        fontSize: 22,
+                        letterSpacing: -0.5,
+                      ),
+                    ),
+                    if (isOffline) ...[
+                      const SizedBox(width: 8),
+                      const Tooltip(
+                        message: 'Offline - Showing cached data',
+                        child: Icon(
+                          Icons.cloud_off,
+                          size: 16,
+                          color: AppTheme.warningColor,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+                background: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            AppTheme.criticalColor.withOpacity(0.1),
+                            const Color(0xFF0F0F0F),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.search_rounded),
+                  tooltip: 'Search Alerts',
+                  onPressed: () => _showSearchDialog(context, alertsAsync.value ?? []),
+                ),
+                _buildFilterMenu(),
+                _buildStatusMenu(),
+                const SizedBox(width: 8),
+              ],
+            ),
+            
+            // Body Content
+            alertsAsync.when(
+              data: (alerts) => _buildAlertsSliverList(context, alerts, audioService),
+              loading: () => const SliverFillRemaining(child: Center(child: CircularProgressIndicator())),
+              error: (error, stack) => SliverFillRemaining(child: _buildErrorState(error)),
+            ),
           ],
         ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.search),
-            tooltip: 'Search Alerts',
-            onPressed: () => _showSearchDialog(context, alertsAsync.value ?? []),
-          ),
-          PopupMenuButton<String>(
-            icon: Icon(Icons.filter_list),
-            tooltip: 'Filter by Severity',
-            onSelected: (value) {
-              setState(() {
-                _selectedSeverity = value == 'all' ? null : value;
-              });
-            },
-            itemBuilder: (context) => [
-              PopupMenuItem(
-                value: 'all',
-                child: Row(
-                  children: [
-                    Icon(Icons.list_alt, size: 20),
-                    SizedBox(width: 12),
-                    Text('All Severities'),
-                  ],
-                ),
-              ),
-              PopupMenuDivider(),
-              PopupMenuItem(
-                value: 'critical',
-                child: Row(
-                  children: [
-                    Icon(Icons.error, color: AppTheme.criticalColor, size: 20),
-                    SizedBox(width: 12),
-                    Text('Critical Only'),
-                  ],
-                ),
-              ),
-              PopupMenuItem(
-                value: 'warning',
-                child: Row(
-                  children: [
-                    Icon(Icons.warning, color: AppTheme.warningColor, size: 20),
-                    SizedBox(width: 12),
-                    Text('Warning Only'),
-                  ],
-                ),
-              ),
-              PopupMenuItem(
-                value: 'info',
-                child: Row(
-                  children: [
-                    Icon(Icons.info, color: AppTheme.infoColor, size: 20),
-                    SizedBox(width: 12),
-                    Text('Info Only'),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          PopupMenuButton<bool?>(
-            icon: Icon(Icons.check_circle_outline),
-            tooltip: 'Filter by Status',
-            onSelected: (value) {
-              setState(() {
-                _filterAcknowledged = value;
-              });
-            },
-            itemBuilder: (context) => [
-              PopupMenuItem(
-                value: null,
-                child: Row(
-                  children: [
-                    Icon(Icons.all_inclusive, size: 20),
-                    SizedBox(width: 12),
-                    Text('All Alerts'),
-                  ],
-                ),
-              ),
-              PopupMenuDivider(),
-              PopupMenuItem(
-                value: false,
-                child: Row(
-                  children: [
-                    Icon(Icons.notification_important, 
-                         color: AppTheme.warningColor, size: 20),
-                    SizedBox(width: 12),
-                    Text('Unacknowledged'),
-                  ],
-                ),
-              ),
-              PopupMenuItem(
-                value: true,
-                child: Row(
-                  children: [
-                    Icon(Icons.check_circle, color: AppTheme.normalColor, size: 20),
-                    SizedBox(width: 12),
-                    Text('Acknowledged'),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-      body: alertsAsync.when(
-        data: (alerts) => _buildAlertsList(context, alerts, audioService),
-        loading: () => _buildLoadingState(),
-        error: (error, stack) => _buildErrorState(error),
       ),
     );
   }
 
-  Widget _buildAlertsList(BuildContext context, List<AlertModel> alerts, AudioService audioService) {
+  Widget _buildFilterMenu() {
+    return PopupMenuButton<String>(
+      icon: const Icon(Icons.filter_list_rounded),
+      tooltip: 'Filter by Severity',
+      onSelected: (value) {
+        setState(() {
+          _selectedSeverity = value == 'all' ? null : value;
+        });
+      },
+      itemBuilder: (context) => [
+        _buildPopupItem('all', 'All Severities', Icons.list_alt, Colors.white),
+        const PopupMenuDivider(),
+        _buildPopupItem('critical', 'Critical Only', Icons.error_outline, AppTheme.criticalColor),
+        _buildPopupItem('warning', 'Warning Only', Icons.warning_amber_rounded, AppTheme.warningColor),
+        _buildPopupItem('info', 'Info Only', Icons.info_outline, AppTheme.infoColor),
+      ],
+    );
+  }
+
+  Widget _buildStatusMenu() {
+    return PopupMenuButton<bool?>(
+      icon: const Icon(Icons.check_circle_outline),
+      tooltip: 'Filter by Status',
+      onSelected: (value) {
+        setState(() {
+          _filterAcknowledged = value;
+        });
+      },
+      itemBuilder: (context) => [
+        _buildPopupItem(null, 'All Alerts', Icons.all_inclusive, Colors.white),
+        const PopupMenuDivider(),
+        _buildPopupItem(false, 'Unacknowledged', Icons.notification_important_outlined, AppTheme.warningColor),
+        _buildPopupItem(true, 'Acknowledged', Icons.check_circle_outline, AppTheme.normalColor),
+      ],
+    );
+  }
+
+  PopupMenuItem<T> _buildPopupItem<T>(T value, String text, IconData icon, Color color) {
+    return PopupMenuItem<T>(
+      value: value,
+      child: Row(
+        children: [
+          Icon(icon, color: color, size: 20),
+          const SizedBox(width: 12),
+          Text(text, style: const TextStyle(fontWeight: FontWeight.w500)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAlertsSliverList(BuildContext context, List<AlertModel> alerts, AudioService audioService) {
     var filteredAlerts = alerts;
 
-    // Apply severity filter
     if (_selectedSeverity != null) {
       filteredAlerts = filteredAlerts
           .where((a) => a.severity.toLowerCase() == _selectedSeverity!.toLowerCase())
           .toList();
     }
 
-    // Apply acknowledgment filter
     if (_filterAcknowledged != null) {
       filteredAlerts = filteredAlerts
           .where((a) => a.isAcknowledged == _filterAcknowledged)
           .toList();
     }
 
-    // Sort by priority
     final sortedAlerts = List<AlertModel>.from(filteredAlerts)
       ..sort((a, b) => b.sortPriority.compareTo(a.sortPriority));
 
     if (sortedAlerts.isEmpty) {
-      return _buildEmptyState();
+      return SliverFillRemaining(child: _buildEmptyState());
     }
 
-    return RefreshIndicator(
-      onRefresh: () async {
-        setState(() => _isRefreshing = true);
-        ref.invalidate(activeAlertsProvider);
-        await Future.delayed(Duration(milliseconds: 500));
-        setState(() => _isRefreshing = false);
-      },
-      child: Column(
-        children: [
-          // Filter indicator
-          if (_selectedSeverity != null || _filterAcknowledged != null)
-            _buildFilterBanner(alerts.length, sortedAlerts.length),
-          
-          // Alerts list
-          Expanded(
-            child: ListView.builder(
-              physics: AlwaysScrollableScrollPhysics(),
-              padding: EdgeInsets.only(top: 8, bottom: 80),
-              itemCount: sortedAlerts.length,
-              itemBuilder: (context, index) {
-                final alert = sortedAlerts[index];
-                return AlertCard(
-                  alert: alert,
-                  onTap: () => _navigateToDetails(context, alert, audioService),
-                );
-              },
-            ),
+    return SliverList(
+      delegate: SliverChildListDelegate([
+        if (_selectedSeverity != null || _filterAcknowledged != null)
+          _buildFilterBanner(alerts.length, sortedAlerts.length),
+        
+        AnimatedSwitcher(
+          duration: const Duration(milliseconds: 300),
+          child: ListView.builder(
+            key: ValueKey(sortedAlerts.length),
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            padding: const EdgeInsets.only(top: 8, bottom: 100),
+            itemCount: sortedAlerts.length,
+            itemBuilder: (context, index) {
+              final alert = sortedAlerts[index];
+              return AlertCard(
+                alert: alert,
+                onTap: () => _navigateToDetails(context, alert, audioService),
+              );
+            },
           ),
-        ],
-      ),
+        ),
+      ]),
     );
   }
 
   Widget _buildFilterBanner(int totalCount, int filteredCount) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: AppTheme.surfaceVariantDark,
-        border: Border(
-          bottom: BorderSide(color: Color(0xFF3F3F3F), width: 1),
-        ),
+        color: const Color(0xFF1E1E1E),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFF2D2D2D)),
       ),
       child: Row(
         children: [
-          Icon(Icons.filter_alt, size: 18, color: AppTheme.infoColor),
-          SizedBox(width: 8),
+          const Icon(Icons.filter_alt_outlined, size: 18, color: AppTheme.infoColor),
+          const SizedBox(width: 8),
           Expanded(
             child: Text(
               'Filtered: $filteredCount of $totalCount alerts',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: Color(0xFFFFFFFF),
+              style: const TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
               ),
             ),
           ),
-          TextButton.icon(
-            onPressed: () {
+          InkWell(
+            onTap: () {
               setState(() {
                 _selectedSeverity = null;
                 _filterAcknowledged = null;
               });
             },
-            icon: Icon(Icons.clear, size: 16),
-            label: Text('Clear'),
-            style: TextButton.styleFrom(
-              foregroundColor: AppTheme.infoColor,
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            borderRadius: BorderRadius.circular(20),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: AppTheme.infoColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: const Text(
+                'CLEAR',
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w800,
+                  color: AppTheme.infoColor,
+                  letterSpacing: 0.5,
+                ),
+              ),
             ),
           ),
         ],
@@ -266,60 +274,37 @@ class _ActiveAlertsScreenState extends ConsumerState<ActiveAlertsScreen>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.check_circle_outline,
-            size: 80,
-            color: AppTheme.normalColor,
+          Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: AppTheme.normalColor.withOpacity(0.1),
+            ),
+            child: const Icon(
+              Icons.task_alt_rounded,
+              size: 64,
+              color: AppTheme.normalColor,
+            ),
           ),
-          SizedBox(height: 24),
-          Text(
-            'No Active Alerts',
+          const SizedBox(height: 24),
+          const Text(
+            'All Clear',
             style: TextStyle(
               fontSize: 24,
-              fontWeight: FontWeight.w600,
-              color: Color(0xFFFFFFFF),
+              fontWeight: FontWeight.w800,
+              color: Colors.white,
+              letterSpacing: -0.5,
             ),
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 8),
           Text(
             _selectedSeverity != null || _filterAcknowledged != null
-                ? 'Try adjusting your filters'
-                : 'All systems operating normally',
-            style: TextStyle(
-              fontSize: 16,
-              color: Color(0xFF9E9E9E),
-            ),
-          ),
-          if (_selectedSeverity != null || _filterAcknowledged != null) ...[
-            SizedBox(height: 24),
-            ElevatedButton.icon(
-              onPressed: () {
-                setState(() {
-                  _selectedSeverity = null;
-                  _filterAcknowledged = null;
-                });
-              },
-              icon: Icon(Icons.clear_all),
-              label: Text('Clear All Filters'),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-
-  Widget _buildLoadingState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          CircularProgressIndicator(),
-          SizedBox(height: 24),
-          Text(
-            'Loading alerts...',
-            style: TextStyle(
-              fontSize: 16,
-              color: Color(0xFF9E9E9E),
+                ? 'No alerts match your current filters.'
+                : 'System operating within normal parameters.',
+            style: const TextStyle(
+              fontSize: 14,
+              color: Colors.white54,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ],
@@ -330,50 +315,40 @@ class _ActiveAlertsScreenState extends ConsumerState<ActiveAlertsScreen>
   Widget _buildErrorState(Object error) {
     return Center(
       child: Padding(
-        padding: EdgeInsets.all(32),
+        padding: const EdgeInsets.all(32),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.cloud_off,
-              size: 80,
+            const Icon(
+              Icons.cloud_off_rounded,
+              size: 64,
               color: AppTheme.criticalColor,
             ),
-            SizedBox(height: 24),
-            Text(
+            const SizedBox(height: 24),
+            const Text(
               'Connection Error',
               style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.w600,
-                color: Color(0xFFFFFFFF),
+                fontSize: 20,
+                fontWeight: FontWeight.w800,
+                color: Colors.white,
               ),
             ),
-            SizedBox(height: 12),
-            Text(
+            const SizedBox(height: 12),
+            const Text(
               'Unable to load alerts. Running in offline mode.',
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 16,
-                color: Color(0xFF9E9E9E),
+                fontSize: 14,
+                color: Colors.white54,
               ),
             ),
-            SizedBox(height: 8),
-            Text(
-              error.toString(),
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 12,
-                color: Color(0xFF757575),
-                fontFamily: 'monospace',
-              ),
-            ),
-            SizedBox(height: 24),
-            ElevatedButton.icon(
+            const SizedBox(height: 24),
+            OutlinedButton.icon(
               onPressed: () {
                 ref.invalidate(activeAlertsProvider);
               },
-              icon: Icon(Icons.refresh),
-              label: Text('Retry Connection'),
+              icon: const Icon(Icons.refresh_rounded),
+              label: const Text('RETRY'),
             ),
           ],
         ),
@@ -382,17 +357,21 @@ class _ActiveAlertsScreenState extends ConsumerState<ActiveAlertsScreen>
   }
 
   void _navigateToDetails(BuildContext context, AlertModel alert, AudioService audioService) {
-    // Play haptic feedback
     audioService.playAlertSound(alert.severity);
     
-    // Navigate to details
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => AlertDetailsScreen(alertId: alert.id),
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => AlertDetailsScreen(alertId: alert.id),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          const begin = Offset(1.0, 0.0);
+          const end = Offset.zero;
+          const curve = Curves.easeOutCubic;
+          var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+          return SlideTransition(position: animation.drive(tween), child: child);
+        },
       ),
     ).then((_) {
-      // Refresh list when coming back
       if (mounted) {
         ref.invalidate(activeAlertsProvider);
       }
@@ -414,3 +393,4 @@ class _ActiveAlertsScreenState extends ConsumerState<ActiveAlertsScreen>
     }
   }
 }
+

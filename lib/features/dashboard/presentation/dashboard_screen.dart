@@ -15,94 +15,148 @@ class DashboardScreen extends ConsumerWidget {
     final clearedCount = ref.watch(clearedLast24hCountProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('SCADA Alarm Monitor'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.refresh),
-            tooltip: 'Refresh',
-            onPressed: () {
-              ref.invalidate(activeCriticalCountProvider);
-              ref.invalidate(activeWarningCountProvider);
-              ref.invalidate(acknowledgedCountProvider);
-              ref.invalidate(clearedLast24hCountProvider);
-            },
-          ),
-        ],
-      ),
+      backgroundColor: const Color(0xFF0F0F0F),
       body: RefreshIndicator(
         onRefresh: () async {
           ref.invalidate(activeCriticalCountProvider);
           ref.invalidate(activeWarningCountProvider);
           ref.invalidate(acknowledgedCountProvider);
           ref.invalidate(clearedLast24hCountProvider);
+          // Add a small delay for UX so it doesn't instantly snap back
+          await Future.delayed(const Duration(milliseconds: 600));
         },
-        child: SingleChildScrollView(
-          physics: AlwaysScrollableScrollPhysics(),
-          padding: EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'ALERT SUMMARY',
-                style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                      color: Color(0xFF9E9E9E),
-                      letterSpacing: 1.2,
+        child: CustomScrollView(
+          physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+          slivers: [
+            SliverAppBar(
+              expandedHeight: 120,
+              floating: true,
+              pinned: true,
+              backgroundColor: const Color(0xFF0F0F0F),
+              surfaceTintColor: Colors.transparent,
+              flexibleSpace: FlexibleSpaceBar(
+                titlePadding: const EdgeInsets.only(left: 20, bottom: 16),
+                title: const Text(
+                  'SCADA Monitor',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w800,
+                    fontSize: 22,
+                    letterSpacing: -0.5,
+                  ),
+                ),
+                background: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            AppTheme.infoColor.withOpacity(0.1),
+                            const Color(0xFF0F0F0F),
+                          ],
+                        ),
+                      ),
                     ),
+                  ],
+                ),
               ),
-              SizedBox(height: 12),
-              GridView.count(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                crossAxisCount: 2,
-                mainAxisSpacing: 12,
-                crossAxisSpacing: 12,
-                childAspectRatio: 1.3,
-                children: [
-                  SummaryCard(
-                    title: 'Critical Alerts',
-                    value: criticalCount.when(
-                      data: (count) => count.toString(),
-                      loading: () => '-',
-                      error: (_, __) => '!',
-                    ),
-                    icon: Icons.error,
-                    color: AppTheme.criticalColor,
+              actions: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: IconButton(
+                    icon: const Icon(Icons.refresh_rounded),
+                    tooltip: 'Refresh',
+                    onPressed: () {
+                      ref.invalidate(activeCriticalCountProvider);
+                      ref.invalidate(activeWarningCountProvider);
+                      ref.invalidate(acknowledgedCountProvider);
+                      ref.invalidate(clearedLast24hCountProvider);
+                    },
                   ),
-                  SummaryCard(
-                    title: 'Warning Alerts',
-                    value: warningCount.when(
-                      data: (count) => count.toString(),
-                      loading: () => '-',
-                      error: (_, __) => '!',
-                    ),
-                    icon: Icons.warning,
-                    color: AppTheme.warningColor,
+                ),
+              ],
+            ),
+            SliverPadding(
+              padding: const EdgeInsets.all(20),
+              sliver: SliverList(
+                delegate: SliverChildListDelegate([
+                  Row(
+                    children: [
+                      const Icon(Icons.analytics_outlined, size: 18, color: AppTheme.infoColor),
+                      const SizedBox(width: 8),
+                      Text(
+                        'SYSTEM OVERVIEW',
+                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                              color: AppTheme.infoColor,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 1.5,
+                              fontSize: 12,
+                            ),
+                      ),
+                    ],
                   ),
-                  SummaryCard(
-                    title: 'Acknowledged',
-                    value: acknowledgedCount.when(
-                      data: (count) => count.toString(),
-                      loading: () => '-',
-                      error: (_, __) => '!',
-                    ),
-                    icon: Icons.check_circle,
-                    color: AppTheme.infoColor,
+                  const SizedBox(height: 16),
+                  GridView.count(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 16,
+                    crossAxisSpacing: 16,
+                    childAspectRatio: 1.1,
+                    children: [
+                      SummaryCard(
+                        title: 'Critical Active',
+                        subtitle: 'Requires immediate action',
+                        value: criticalCount.when(
+                          data: (count) => count.toString(),
+                          loading: () => '-',
+                          error: (_, __) => '!',
+                        ),
+                        icon: Icons.error_outline,
+                        color: AppTheme.criticalColor,
+                      ),
+                      SummaryCard(
+                        title: 'Warnings',
+                        subtitle: 'Needs attention',
+                        value: warningCount.when(
+                          data: (count) => count.toString(),
+                          loading: () => '-',
+                          error: (_, __) => '!',
+                        ),
+                        icon: Icons.warning_amber_rounded,
+                        color: AppTheme.warningColor,
+                      ),
+                      SummaryCard(
+                        title: 'Acknowledged',
+                        subtitle: 'Being investigated',
+                        value: acknowledgedCount.when(
+                          data: (count) => count.toString(),
+                          loading: () => '-',
+                          error: (_, __) => '!',
+                        ),
+                        icon: Icons.check_circle_outline,
+                        color: AppTheme.infoColor,
+                      ),
+                      SummaryCard(
+                        title: 'Resolved',
+                        subtitle: 'Past 24 hours',
+                        value: clearedCount.when(
+                          data: (count) => count.toString(),
+                          loading: () => '-',
+                          error: (_, __) => '!',
+                        ),
+                        icon: Icons.task_alt,
+                        color: AppTheme.normalColor,
+                      ),
+                    ],
                   ),
-                  SummaryCard(
-                    title: 'Cleared (24h)',
-                    value: clearedCount.when(
-                      data: (count) => count.toString(),
-                      loading: () => '-',
-                      error: (_, __) => '!',
-                    ),
-                    icon: Icons.done_all,
-                    color: AppTheme.normalColor,
-                  ),
-                ],
+                  const SizedBox(height: 100), // Bottom padding for floating nav bar
+                ]),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

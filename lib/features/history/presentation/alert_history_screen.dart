@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/alert_card.dart';
 import '../../../data/models/alert_model.dart';
 import '../../../data/repositories/alert_repository.dart';
@@ -79,7 +80,10 @@ class _AlertHistoryScreenState extends ConsumerState<AlertHistoryScreen> {
       });
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error loading history: $e')),
+          SnackBar(
+            content: Text('Error loading history: $e'),
+            backgroundColor: AppTheme.criticalColor,
+          ),
         );
       }
     }
@@ -88,9 +92,15 @@ class _AlertHistoryScreenState extends ConsumerState<AlertHistoryScreen> {
   Future<void> _selectDateRange() async {
     final picked = await showDateRangePicker(
       context: context,
-      firstDate: DateTime.now().subtract(Duration(days: 365)),
+      firstDate: DateTime.now().subtract(const Duration(days: 365)),
       lastDate: DateTime.now(),
       initialDateRange: _dateRange,
+      builder: (context, child) {
+        return Theme(
+          data: AppTheme.darkTheme,
+          child: child!,
+        );
+      },
     );
 
     if (picked != null) {
@@ -104,126 +114,209 @@ class _AlertHistoryScreenState extends ConsumerState<AlertHistoryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Alert History'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.date_range),
-            tooltip: 'Date Range',
-            onPressed: _selectDateRange,
-          ),
-          PopupMenuButton<String>(
-            icon: Icon(Icons.filter_list),
-            tooltip: 'Filter Severity',
-            onSelected: (value) {
-              setState(() {
-                _selectedSeverity = value == 'all' ? null : value;
-              });
-              _loadAlerts(refresh: true);
-            },
-            itemBuilder: (context) => [
-              PopupMenuItem(value: 'all', child: Text('All Severities')),
-              PopupMenuItem(value: 'critical', child: Text('Critical')),
-              PopupMenuItem(value: 'warning', child: Text('Warning')),
-              PopupMenuItem(value: 'info', child: Text('Info')),
-            ],
-          ),
-        ],
-      ),
+      backgroundColor: const Color(0xFF0F0F0F),
       body: RefreshIndicator(
         onRefresh: () => _loadAlerts(refresh: true),
-        child: _alerts.isEmpty && !_isLoading
-            ? Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+        child: CustomScrollView(
+          controller: _scrollController,
+          physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+          slivers: [
+            SliverAppBar(
+              expandedHeight: 120.0,
+              floating: true,
+              pinned: true,
+              backgroundColor: const Color(0xFF0F0F0F),
+              surfaceTintColor: Colors.transparent,
+              flexibleSpace: FlexibleSpaceBar(
+                titlePadding: const EdgeInsets.only(left: 20, bottom: 16),
+                title: const Text(
+                  'Alert History',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w800,
+                    fontSize: 22,
+                    letterSpacing: -0.5,
+                  ),
+                ),
+                background: Stack(
+                  fit: StackFit.expand,
                   children: [
-                    Icon(
-                      Icons.history,
-                      size: 64,
-                      color: Color(0xFF757575),
-                    ),
-                    SizedBox(height: 16),
-                    Text(
-                      'No History Available',
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    SizedBox(height: 8),
-                    Text(
-                      'Try adjusting filters',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Color(0xFF9E9E9E),
-                          ),
+                    Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            AppTheme.normalColor.withOpacity(0.1),
+                            const Color(0xFF0F0F0F),
+                          ],
+                        ),
+                      ),
                     ),
                   ],
                 ),
-              )
-            : Column(
-                children: [
-                  if (_selectedSeverity != null || _dateRange != null)
-                    Container(
-                      padding: EdgeInsets.all(12),
-                      color: Color(0xFF2D2D2D),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.filter_alt,
-                            size: 16,
-                            color: Color(0xFFBDBDBD),
+              ),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.date_range_rounded),
+                  tooltip: 'Date Range',
+                  onPressed: _selectDateRange,
+                ),
+                PopupMenuButton<String>(
+                  icon: const Icon(Icons.filter_list_rounded),
+                  tooltip: 'Filter Severity',
+                  onSelected: (value) {
+                    setState(() {
+                      _selectedSeverity = value == 'all' ? null : value;
+                    });
+                    _loadAlerts(refresh: true);
+                  },
+                  itemBuilder: (context) => [
+                    const PopupMenuItem(value: 'all', child: Text('All Severities')),
+                    const PopupMenuItem(value: 'critical', child: Text('Critical')),
+                    const PopupMenuItem(value: 'warning', child: Text('Warning')),
+                    const PopupMenuItem(value: 'info', child: Text('Info')),
+                  ],
+                ),
+                const SizedBox(width: 8),
+              ],
+            ),
+            
+            if (_selectedSeverity != null || _dateRange != null)
+              SliverToBoxAdapter(
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF1E1E1E),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: const Color(0xFF2D2D2D)),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.filter_alt_outlined, size: 18, color: AppTheme.infoColor),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'Filters: ${_selectedSeverity?.toUpperCase() ?? "ALL"}'
+                          '${_dateRange != null ? " • Date Range Active" : ""}',
+                          style: const TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
                           ),
-                          SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              'Filters: ${_selectedSeverity ?? "All"}'
-                              '${_dateRange != null ? " | Date Range" : ""}',
-                              style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          setState(() {
+                            _selectedSeverity = null;
+                            _dateRange = null;
+                          });
+                          _loadAlerts(refresh: true);
+                        },
+                        borderRadius: BorderRadius.circular(20),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: AppTheme.infoColor.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: const Text(
+                            'CLEAR',
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w800,
+                              color: AppTheme.infoColor,
+                              letterSpacing: 0.5,
                             ),
                           ),
-                          TextButton(
-                            onPressed: () {
-                              setState(() {
-                                _selectedSeverity = null;
-                                _dateRange = null;
-                              });
-                              _loadAlerts(refresh: true);
-                            },
-                            child: Text('Clear'),
-                          ),
-                        ],
+                        ),
                       ),
-                    ),
-                  Expanded(
-                    child: ListView.builder(
-                      controller: _scrollController,
-                      padding: EdgeInsets.symmetric(vertical: 8),
-                      itemCount: _alerts.length + (_hasMore ? 1 : 0),
-                      itemBuilder: (context, index) {
-                        if (index == _alerts.length) {
-                          return Center(
-                            child: Padding(
-                              padding: EdgeInsets.all(16),
-                              child: CircularProgressIndicator(),
+                    ],
+                  ),
+                ),
+              ),
+
+            if (_alerts.isEmpty && !_isLoading)
+              SliverFillRemaining(
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(24),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: const Color(0xFF2D2D2D).withOpacity(0.5),
+                        ),
+                        child: const Icon(
+                          Icons.history_rounded,
+                          size: 64,
+                          color: Color(0xFF757575),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      const Text(
+                        'No History Available',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.white,
+                          letterSpacing: -0.5,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        'Try adjusting your filters or date range.',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.white54,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            else
+              SliverPadding(
+                padding: const EdgeInsets.only(bottom: 100),
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      if (index == _alerts.length) {
+                        return const Padding(
+                          padding: EdgeInsets.all(32),
+                          child: Center(child: CircularProgressIndicator()),
+                        );
+                      }
+
+                      final alert = _alerts[index];
+                      return AlertCard(
+                        alert: alert,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            PageRouteBuilder(
+                              pageBuilder: (context, animation, secondaryAnimation) => AlertDetailsScreen(alertId: alert.id),
+                              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                const begin = Offset(1.0, 0.0);
+                                const end = Offset.zero;
+                                const curve = Curves.easeOutCubic;
+                                var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                                return SlideTransition(position: animation.drive(tween), child: child);
+                              },
                             ),
                           );
-                        }
-
-                        final alert = _alerts[index];
-                        return AlertCard(
-                          alert: alert,
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    AlertDetailsScreen(alertId: alert.id),
-                              ),
-                            );
-                          },
-                        );
-                      },
-                    ),
+                        },
+                      );
+                    },
+                    childCount: _alerts.length + (_hasMore ? 1 : 0),
                   ),
-                ],
+                ),
               ),
+          ],
+        ),
       ),
     );
   }
