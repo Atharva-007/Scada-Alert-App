@@ -17,13 +17,18 @@ class CriticalAlertsScreen extends ConsumerWidget {
 
     return Scaffold(
       body: CustomScrollView(
-        physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+        physics: const BouncingScrollPhysics(
+          parent: AlwaysScrollableScrollPhysics(),
+        ),
         slivers: [
           SliverAppBar(
             expandedHeight: 140.0,
             pinned: true,
             leading: IconButton(
-              icon: Icon(Icons.arrow_back_ios_new, color: isDark ? Colors.white : Colors.black87),
+              icon: Icon(
+                Icons.arrow_back_ios_new,
+                color: isDark ? Colors.white : Colors.black87,
+              ),
               onPressed: () => Navigator.pop(context),
             ),
             flexibleSpace: FlexibleSpaceBar(
@@ -46,7 +51,9 @@ class CriticalAlertsScreen extends ConsumerWidget {
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                         colors: [
-                          AppTheme.criticalColor.withOpacity(isDark ? 0.2 : 0.15),
+                          AppTheme.criticalColor.withValues(
+                            alpha: isDark ? 0.2 : 0.15,
+                          ),
                           Theme.of(context).scaffoldBackgroundColor,
                         ],
                       ),
@@ -58,14 +65,16 @@ class CriticalAlertsScreen extends ConsumerWidget {
                     child: Icon(
                       Icons.error_outline_rounded,
                       size: 140,
-                      color: isDark ? Colors.white.withOpacity(0.03) : Colors.black.withOpacity(0.04),
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.03)
+                          : Colors.black.withValues(alpha: 0.04),
                     ),
                   ),
                 ],
               ),
             ),
           ),
-          
+
           alertsAsync.when(
             data: (alerts) {
               if (alerts.isEmpty) {
@@ -74,14 +83,18 @@ class CriticalAlertsScreen extends ConsumerWidget {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.check_circle_outline, size: 64, color: AppTheme.normalColor.withOpacity(0.5)),
+                        Icon(
+                          Icons.check_circle_outline,
+                          size: 64,
+                          color: AppTheme.normalColor.withValues(alpha: 0.5),
+                        ),
                         const SizedBox(height: 16),
                         Text(
                           'No Critical Alarms',
                           style: TextStyle(
-                            fontSize: 18, 
+                            fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: isDark ? Colors.white54 : Colors.black45
+                            color: isDark ? Colors.white54 : Colors.black45,
                           ),
                         ),
                       ],
@@ -89,39 +102,47 @@ class CriticalAlertsScreen extends ConsumerWidget {
                   ),
                 );
               }
-              
+
               return SliverPadding(
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 sliver: SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      final alert = alerts[index];
-                      return AlertCard(
-                        alert: alert,
-                        onTap: () {
-                          audioService.playAlertSound(alert.severity);
-                          Navigator.push(
-                            context,
-                            PageRouteBuilder(
-                              pageBuilder: (context, anim, sec) => AlertDetailsScreen(alertId: alert.id),
-                              transitionsBuilder: (context, anim, sec, child) {
-                                return SlideTransition(
-                                  position: anim.drive(Tween(begin: const Offset(1, 0), end: Offset.zero).chain(CurveTween(curve: Curves.easeOutCubic))),
-                                  child: child,
-                                );
-                              },
-                            ),
-                          );
-                        },
-                      );
-                    },
-                    childCount: alerts.length,
-                  ),
+                  delegate: SliverChildBuilderDelegate((context, index) {
+                    final alert = alerts[index];
+                    return AlertCard(
+                      alert: alert,
+                      onTap: () {
+                        audioService.playAlertSound(alert.severity);
+                        Navigator.push(
+                          context,
+                          PageRouteBuilder(
+                            pageBuilder: (context, anim, sec) =>
+                                AlertDetailsScreen(alertId: alert.id),
+                            transitionsBuilder: (context, anim, sec, child) {
+                              return SlideTransition(
+                                position: anim.drive(
+                                  Tween(
+                                    begin: const Offset(1, 0),
+                                    end: Offset.zero,
+                                  ).chain(
+                                    CurveTween(curve: Curves.easeOutCubic),
+                                  ),
+                                ),
+                                child: child,
+                              );
+                            },
+                          ),
+                        );
+                      },
+                    );
+                  }, childCount: alerts.length),
                 ),
               );
             },
-            loading: () => const SliverFillRemaining(child: Center(child: CircularProgressIndicator())),
-            error: (err, _) => SliverFillRemaining(child: Center(child: Text('Error: $err'))),
+            loading: () => const SliverFillRemaining(
+              child: Center(child: CircularProgressIndicator()),
+            ),
+            error: (err, _) =>
+                SliverFillRemaining(child: Center(child: Text('Error: $err'))),
           ),
         ],
       ),

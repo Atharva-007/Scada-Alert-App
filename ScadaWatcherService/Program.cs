@@ -10,20 +10,24 @@ using Serilog.Events;
 
 try
 {
+    var serviceBasePath = AppContext.BaseDirectory;
+    var environmentName = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") ?? "Production";
+
     // Load configuration to determine log path before initializing logger
     var tempConfig = new ConfigurationBuilder()
-        .SetBasePath(Directory.GetCurrentDirectory())
+        .SetBasePath(serviceBasePath)
         .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-        .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") ?? "Production"}.json", optional: true)
+        .AddJsonFile($"appsettings.{environmentName}.json", optional: true)
         .Build();
 
     var loggingConfig = tempConfig.GetSection("Logging").Get<LoggingConfiguration>() 
         ?? new LoggingConfiguration();
+    var logDirectory = loggingConfig.ResolveLogDirectory();
 
     // Ensure log directory exists
-    if (!Directory.Exists(loggingConfig.LogDirectory))
+    if (!Directory.Exists(logDirectory))
     {
-        Directory.CreateDirectory(loggingConfig.LogDirectory);
+        Directory.CreateDirectory(logDirectory);
     }
 
     // Configure Serilog for production-grade logging with rotation
@@ -38,7 +42,7 @@ try
         .WriteTo.Console(
             outputTemplate: "[{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz}] [{Level:u3}] {Message:lj}{NewLine}{Exception}")
         .WriteTo.File(
-            path: Path.Combine(loggingConfig.LogDirectory, "ScadaWatcher-.log"),
+            path: Path.Combine(logDirectory, "ScadaWatcher-.log"),
             rollingInterval: RollingInterval.Day,
             fileSizeLimitBytes: loggingConfig.FileSizeLimitMB * 1024 * 1024,
             retainedFileCountLimit: loggingConfig.RetainedFileCount,
@@ -48,9 +52,10 @@ try
 
     Log.Information("==========================================================");
     Log.Information("SCADA Watcher Service Initializing");
-    Log.Information("Environment: {Environment}", Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") ?? "Production");
+    Log.Information("Environment: {Environment}", environmentName);
+    Log.Information("Service Base Directory: {Directory}", serviceBasePath);
     Log.Information("Working Directory: {Directory}", Directory.GetCurrentDirectory());
-    Log.Information("Log Directory: {LogDirectory}", loggingConfig.LogDirectory);
+    Log.Information("Log Directory: {LogDirectory}", logDirectory);
     Log.Information("==========================================================");
 
     // Build and configure the Windows Service host
@@ -58,6 +63,7 @@ try
 
     // Add configuration sources
     builder.Configuration
+        .SetBasePath(serviceBasePath)
         .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
         .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
         .AddEnvironmentVariables();

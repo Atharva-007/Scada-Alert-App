@@ -32,17 +32,8 @@ public class AlertEngineService : IDisposable
     // Active alerts indexed by RuleId
     private readonly ConcurrentDictionary<string, ActiveAlert> _activeAlerts;
 
-    // Alert rules indexed by NodeId for fast lookup
-    private readonly ConcurrentDictionary<string, List<AlertRule>> _rulesByNode;
-
     // Cooldown tracking: RuleId -> LastAlertTime
     private readonly ConcurrentDictionary<string, DateTime> _cooldownTracker;
-
-    // Stale data tracking: NodeId -> LastDataTime
-    private readonly ConcurrentDictionary<string, DateTime> _lastDataTime;
-
-    // Rate-of-change tracking: RuleId -> Queue of (timestamp, value)
-    private readonly ConcurrentDictionary<string, Queue<(DateTime, double)>> _rateOfChangeHistory;
 
     // Background evaluation task
     private Task? _evaluationTask;
@@ -80,10 +71,7 @@ public class AlertEngineService : IDisposable
         _config = config?.Value ?? throw new ArgumentNullException(nameof(config));
 
         _activeAlerts = new ConcurrentDictionary<string, ActiveAlert>();
-        _rulesByNode = new ConcurrentDictionary<string, List<AlertRule>>();
         _cooldownTracker = new ConcurrentDictionary<string, DateTime>();
-        _lastDataTime = new ConcurrentDictionary<string, DateTime>();
-        _rateOfChangeHistory = new ConcurrentDictionary<string, Queue<(DateTime, double)>>();
     }
 
     /// <summary>
@@ -120,22 +108,8 @@ public class AlertEngineService : IDisposable
                 throw new InvalidOperationException("Invalid alert configuration. See logs for details.");
             }
 
-            // Build rule lookup index
-            BuildRuleIndex();
-
             _logger.LogInformation("Loaded {Count} alert rules", _config.Rules.Count);
             
-            // Log enabled rules summary
-            var enabledByType = _config.Rules
-                .Where(r => r.Enabled)
-                .GroupBy(r => r.AlertType)
-                .ToDictionary(g => g.Key, g => g.Count());
-
-            foreach (var kvp in enabledByType)
-            {
-                _logger.LogInformation("  {Type}: {Count} rules", kvp.Key, kvp.Value);
-            }
-
             // Start background evaluation task
             _evaluationCts = new CancellationTokenSource();
             _evaluationTask = Task.Run(() => EvaluationLoopAsync(_evaluationCts.Token), _evaluationCts.Token);
@@ -184,69 +158,19 @@ public class AlertEngineService : IDisposable
     }
 
     /// <summary>
-    /// Process incoming OPC UA data point for alert evaluation.
-    /// NON-BLOCKING - returns immediately after queuing evaluation.
-    /// Called from OPC UA callback thread - MUST be fast.
-    /// </summary>
-    public void EvaluateDataPoint(OpcUaDataValue dataPoint)
-    {
-        if (!_isRunning || dataPoint == null)
-        {
-            return;
-        }
-
-        try
-        {
-            // Update last data time for stale data detection
-            _lastDataTime.AddOrUpdate(dataPoint.NodeId, DateTime.UtcNow, (_, __) => DateTime.UtcNow);
-
-            // Fast lookup: do we have any rules for this node?
-            if (!_rulesByNode.TryGetValue(dataPoint.NodeId, out var rules))
-            {
-                return; // No rules for this node
-            }
-
-            // Evaluate each rule for this node
-            foreach (var rule in rules)
-            {
-                if (!rule.Enabled)
-                {
-                    continue;
-                }
-
-                try
-                {
-                    EvaluateRule(rule, dataPoint);
-                }
-                catch (Exception ex)
-                {
-                    // CRITICAL: Never allow a single rule evaluation to crash the engine
-                    _logger.LogError(ex, "Error evaluating rule {RuleId} for node {NodeId}", 
-                        rule.RuleId, dataPoint.NodeId);
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            // CRITICAL: Never throw from public API
-            _logger.LogError(ex, "Error in alert evaluation for {NodeId}", dataPoint.NodeId);
-        }
-    }
-
-    /// <summary>
     /// Acknowledge an active alert.
     /// Returns true if alert was found and acknowledged.
     /// </summary>
-    public bool AcknowledgeAlert(string ruleId)
+    public bool AcknowledgeAlert(string ruleId, string? acknowledgedBy = null, string? detail = null)
     {
         if (_activeAlerts.TryGetValue(ruleId, out var alert))
         {
             if (alert.State == AlertState.Active)
             {
-                alert.Acknowledge();
+                alert.Acknowledge(acknowledgedBy, detail);
                 _logger.LogInformation(
-                    "Alert acknowledged: {RuleId} - {Description}",
-                    alert.Rule.RuleId, alert.Rule.Description);
+                    "Alert acknowledged: {RuleId} - {Description} by {By}",
+                    alert.Rule.RuleId, alert.Rule.Description, acknowledgedBy ?? "System");
                 return true;
             }
         }
@@ -277,176 +201,6 @@ public class AlertEngineService : IDisposable
     }
 
     /// <summary>
-    /// Build index of rules by NodeId for fast lookup.
-    /// </summary>
-    private void BuildRuleIndex()
-    {
-        _rulesByNode.Clear();
-
-        foreach (var rule in _config.Rules.Where(r => r.Enabled))
-        {
-            _rulesByNode.AddOrUpdate(
-                rule.NodeId,
-                _ => new List<AlertRule> { rule },
-                (_, list) =>
-                {
-                    list.Add(rule);
-                    return list;
-                });
-        }
-    }
-
-    /// <summary>
-    /// Evaluate a single alert rule against data point.
-    /// Implements ISA-18.2 state-based alerting with deadband and cooldown.
-    /// </summary>
-    private void EvaluateRule(AlertRule rule, OpcUaDataValue dataPoint)
-    {
-        // Check if alert already exists
-        var existingAlert = _activeAlerts.GetValueOrDefault(rule.RuleId);
-
-        // Determine if condition is currently true
-        bool conditionActive = false;
-        double currentValue = 0;
-
-        switch (rule.AlertType)
-        {
-            case AlertType.HighThreshold:
-            case AlertType.HighHighThreshold:
-                if (dataPoint.TryGetDouble(out currentValue) && rule.Threshold.HasValue)
-                {
-                    conditionActive = currentValue > rule.Threshold.Value;
-                }
-                break;
-
-            case AlertType.LowThreshold:
-            case AlertType.LowLowThreshold:
-                if (dataPoint.TryGetDouble(out currentValue) && rule.Threshold.HasValue)
-                {
-                    conditionActive = currentValue < rule.Threshold.Value;
-                }
-                break;
-
-            case AlertType.RateOfChange:
-                conditionActive = EvaluateRateOfChange(rule, dataPoint, out currentValue);
-                break;
-
-            case AlertType.BadQuality:
-                conditionActive = !dataPoint.IsGoodQuality;
-                currentValue = dataPoint.TryGetDouble(out var val) ? val : 0;
-                break;
-
-            // StaleData is evaluated in background loop
-            case AlertType.StaleData:
-                return;
-        }
-
-        // Handle existing alert
-        if (existingAlert != null)
-        {
-            existingAlert.UpdateValue(currentValue);
-
-            // Check if condition has cleared (with deadband/hysteresis)
-            bool conditionCleared = !conditionActive;
-
-            // Apply deadband for threshold alerts
-            if ((rule.AlertType == AlertType.HighThreshold || rule.AlertType == AlertType.HighHighThreshold) &&
-                rule.Threshold.HasValue && rule.Deadband > 0)
-            {
-                // For high alerts, must drop below threshold - deadband to clear
-                conditionCleared = currentValue < (rule.Threshold.Value - rule.Deadband);
-            }
-            else if ((rule.AlertType == AlertType.LowThreshold || rule.AlertType == AlertType.LowLowThreshold) &&
-                rule.Threshold.HasValue && rule.Deadband > 0)
-            {
-                // For low alerts, must rise above threshold + deadband to clear
-                conditionCleared = currentValue > (rule.Threshold.Value + rule.Deadband);
-            }
-
-            if (conditionCleared && existingAlert.State != AlertState.Cleared)
-            {
-                // Condition has returned to normal - clear the alert
-                ClearAlert(existingAlert);
-            }
-        }
-        else
-        {
-            // No existing alert - check if condition is active
-            if (conditionActive)
-            {
-                // Check cooldown to prevent flooding
-                if (IsInCooldown(rule))
-                {
-                    _totalAlertsSuppressed++;
-                    
-                    if (_config.VerboseLogging)
-                    {
-                        _logger.LogDebug(
-                            "Alert suppressed (cooldown): {RuleId} - {Description}",
-                            rule.RuleId, rule.Description);
-                    }
-                    return;
-                }
-
-                // Raise new alert
-                RaiseAlert(rule, currentValue, dataPoint);
-            }
-        }
-    }
-
-    /// <summary>
-    /// Evaluate rate of change alert.
-    /// Calculates rate over configured time window.
-    /// </summary>
-    private bool EvaluateRateOfChange(AlertRule rule, OpcUaDataValue dataPoint, out double currentValue)
-    {
-        currentValue = 0;
-
-        if (!dataPoint.TryGetDouble(out currentValue) || !rule.RateOfChangeThreshold.HasValue)
-        {
-            return false;
-        }
-
-        // Get or create history queue for this rule
-        var history = _rateOfChangeHistory.GetOrAdd(rule.RuleId, _ => new Queue<(DateTime, double)>());
-
-        var now = DateTime.UtcNow;
-        
-        // Add current value
-        history.Enqueue((now, currentValue));
-
-        // Remove values outside the time window
-        var cutoffTime = now.AddSeconds(-rule.RateOfChangeWindowSeconds);
-        while (history.Count > 0 && history.Peek().Item1 < cutoffTime)
-        {
-            history.Dequeue();
-        }
-
-        // Need at least 2 points to calculate rate
-        if (history.Count < 2)
-        {
-            return false;
-        }
-
-        // Calculate rate of change
-        var oldest = history.First();
-        var newest = (now, currentValue);
-        var timeDelta = (newest.Item1 - oldest.Item1).TotalSeconds;
-
-        if (timeDelta <= 0)
-        {
-            return false;
-        }
-
-        var valueDelta = newest.Item2 - oldest.Item2;
-        var rate = valueDelta / timeDelta;
-
-        // Check against threshold
-        var threshold = Math.Abs(rule.RateOfChangeThreshold.Value);
-        return Math.Abs(rate) > threshold;
-    }
-
-    /// <summary>
     /// Check if rule is in cooldown period.
     /// </summary>
     private bool IsInCooldown(AlertRule rule)
@@ -466,138 +220,8 @@ public class AlertEngineService : IDisposable
     }
 
     /// <summary>
-    /// Raise a new alert.
-    /// </summary>
-    private void RaiseAlert(AlertRule rule, double triggerValue, OpcUaDataValue dataPoint)
-    {
-        try
-        {
-            // Format message
-            var message = FormatAlertMessage(rule, triggerValue, dataPoint);
-
-            // Create active alert
-            var alert = new ActiveAlert(rule, triggerValue, message);
-
-            // Add to active alerts
-            if (_activeAlerts.TryAdd(rule.RuleId, alert))
-            {
-                _totalAlertsRaised++;
-                _cooldownTracker[rule.RuleId] = DateTime.UtcNow;
-
-                // Log alert raised
-                _logger.LogWarning(
-                    "ALERT RAISED [{Severity}]: {RuleId} - {Message} (Value: {Value})",
-                    alert.Rule.Severity,
-                    alert.Rule.RuleId,
-                    alert.Message,
-                    triggerValue);
-
-                // Raise event
-                try
-                {
-                    AlertRaised?.Invoke(this, alert);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Error in AlertRaised event handler for rule {RuleId}", rule.RuleId);
-                }
-
-                // Check if we need to purge old alerts
-                if (_activeAlerts.Count > _config.MaxActiveAlerts)
-                {
-                    PurgeOldAlerts();
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error raising alert for rule {RuleId}", rule.RuleId);
-        }
-    }
-
-    /// <summary>
-    /// Clear an active alert (condition returned to normal).
-    /// </summary>
-    private void ClearAlert(ActiveAlert alert)
-    {
-        try
-        {
-            alert.Clear();
-            _totalAlertsCleared++;
-
-            _logger.LogInformation(
-                "ALERT CLEARED: {RuleId} - {Description} (Active for {Duration})",
-                alert.Rule.RuleId,
-                alert.Rule.Description,
-                alert.ActiveDuration);
-
-            // Raise event
-            try
-            {
-                AlertCleared?.Invoke(this, alert);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error in AlertCleared event handler for rule {RuleId}", 
-                    alert.Rule.RuleId);
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error clearing alert for rule {RuleId}", alert.Rule.RuleId);
-        }
-    }
-
-    /// <summary>
-    /// Escalate an unacknowledged alert.
-    /// </summary>
-    private void EscalateAlert(ActiveAlert alert)
-    {
-        try
-        {
-            alert.Escalate();
-            _totalAlertsEscalated++;
-
-            _logger.LogError(
-                "ALERT ESCALATED [{Severity}]: {RuleId} - {Description} (Unacknowledged for {Minutes} minutes)",
-                alert.Rule.Severity,
-                alert.Rule.RuleId,
-                alert.Rule.Description,
-                alert.Rule.EscalationMinutes);
-
-            // Raise event
-            try
-            {
-                AlertEscalated?.Invoke(this, alert);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error in AlertEscalated event handler for rule {RuleId}", 
-                    alert.Rule.RuleId);
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error escalating alert for rule {RuleId}", alert.Rule.RuleId);
-        }
-    }
-
-    /// <summary>
-    /// Format alert message with value substitution.
-    /// </summary>
-    private string FormatAlertMessage(AlertRule rule, double value, OpcUaDataValue dataPoint)
-    {
-        return rule.MessageTemplate
-            .Replace("{NodeId}", rule.NodeId)
-            .Replace("{DisplayName}", dataPoint.DisplayName)
-            .Replace("{Value}", value.ToString("F2"))
-            .Replace("{Threshold}", rule.Threshold?.ToString("F2") ?? "N/A")
-            .Replace("{Description}", rule.Description);
-    }
-
-    /// <summary>
     /// Background evaluation loop.
-    /// Handles escalation checks, stale data detection, and cleanup.
+    /// Handles escalation checks and cleanup.
     /// </summary>
     private async Task EvaluationLoopAsync(CancellationToken cancellationToken)
     {
@@ -611,9 +235,6 @@ public class AlertEngineService : IDisposable
 
                 // Check escalations
                 CheckEscalations();
-
-                // Check stale data
-                CheckStaleData();
 
                 // Auto-acknowledge info alerts if configured
                 if (_config.AutoAcknowledgeInfoAlertsMinutes > 0)
@@ -652,58 +273,36 @@ public class AlertEngineService : IDisposable
     }
 
     /// <summary>
-    /// Check for stale data conditions.
+    /// Escalate an unacknowledged alert.
     /// </summary>
-    private void CheckStaleData()
+    private void EscalateAlert(ActiveAlert alert)
     {
-        var staleRules = _config.Rules
-            .Where(r => r.Enabled && r.AlertType == AlertType.StaleData)
-            .ToList();
-
-        foreach (var rule in staleRules)
+        try
         {
+            alert.Escalate();
+            _totalAlertsEscalated++;
+
+            _logger.LogError(
+                "ALERT ESCALATED [{Severity}]: {RuleId} - {Description} (Unacknowledged for {Minutes} minutes)",
+                alert.Rule.Severity,
+                alert.Rule.RuleId,
+                alert.Rule.Description,
+                alert.Rule.EscalationMinutes);
+
+            // Raise event
             try
             {
-                var existingAlert = _activeAlerts.GetValueOrDefault(rule.RuleId);
-                
-                if (_lastDataTime.TryGetValue(rule.NodeId, out var lastTime))
-                {
-                    var elapsed = (DateTime.UtcNow - lastTime).TotalSeconds;
-                    bool isStale = elapsed > rule.StaleDataTimeoutSeconds;
-
-                    if (isStale && existingAlert == null)
-                    {
-                        // Data is stale and no alert exists - check cooldown
-                        if (!IsInCooldown(rule))
-                        {
-                            // Create dummy data point for stale alert
-                            var message = $"{rule.Description}: No data for {elapsed:F0} seconds";
-                            var alert = new ActiveAlert(rule, elapsed, message);
-                            
-                            if (_activeAlerts.TryAdd(rule.RuleId, alert))
-                            {
-                                _totalAlertsRaised++;
-                                _cooldownTracker[rule.RuleId] = DateTime.UtcNow;
-
-                                _logger.LogWarning(
-                                    "ALERT RAISED [StaleData]: {RuleId} - {Message}",
-                                    rule.RuleId, message);
-
-                                AlertRaised?.Invoke(this, alert);
-                            }
-                        }
-                    }
-                    else if (!isStale && existingAlert != null && existingAlert.State != AlertState.Cleared)
-                    {
-                        // Data is no longer stale - clear alert
-                        ClearAlert(existingAlert);
-                    }
-                }
+                AlertEscalated?.Invoke(this, alert);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error checking stale data for rule {RuleId}", rule.RuleId);
+                _logger.LogError(ex, "Error in AlertEscalated event handler for rule {RuleId}", 
+                    alert.Rule.RuleId);
             }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error escalating alert for rule {RuleId}", alert.Rule.RuleId);
         }
     }
 

@@ -1,0 +1,735 @@
+{
+  "generatedAt": "2026-04-24T00:08:27.049Z",
+  "projectId": "scadadataserver",
+  "requestedSourceProjectId": "scadadaralert",
+  "baselineMonthDay": "01-26",
+  "baselineTimezone": "UTC",
+  "firestoreSummary": {
+    "totalDocuments": 22,
+    "totalCollections": 7,
+    "topLevelCollections": [
+      "alerts_active",
+      "alerts_history",
+      "client_heartbeats",
+      "config",
+      "device_tokens",
+      "statistics",
+      "system_status"
+    ]
+  },
+  "realtimeSummary": {
+    "topLevelCollections": [
+      "alerts_active",
+      "alerts_history",
+      "client_heartbeats",
+      "config",
+      "device_tokens",
+      "statistics",
+      "system_status"
+    ]
+  },
+  "globalPreparedVsLive": {
+    "totalDiffs": 57,
+    "nullOnlyDiffs": 56,
+    "otherDiffs": 1,
+    "sampleDiffs": [
+      {
+        "path": "alerts_active.ALT004.acknowledgedAt",
+        "expected": null
+      },
+      {
+        "path": "alerts_active.ALT004.acknowledgedBy",
+        "expected": null
+      },
+      {
+        "path": "alerts_active.ALT004.threshold",
+        "expected": null
+      },
+      {
+        "path": "alerts_active.ALT004.unit",
+        "expected": null
+      },
+      {
+        "path": "alerts_active.ALT004.value",
+        "expected": null
+      },
+      {
+        "path": "alerts_active.ALT005.acknowledgedAt",
+        "expected": null
+      },
+      {
+        "path": "alerts_active.ALT005.acknowledgedBy",
+        "expected": null
+      },
+      {
+        "path": "alerts_active.ALT005.threshold",
+        "expected": null
+      },
+      {
+        "path": "client_heartbeats.windows_client.timestamp",
+        "expected": "2026-04-24T00:05:14.875Z",
+        "actual": "2026-04-24T00:02:14.879Z"
+      },
+      {
+        "path": "system_status.Alert Engine.metadata.activeConnections",
+        "expected": null
+      },
+      {
+        "path": "system_status.Alert Engine.metadata.alertsProcessed",
+        "expected": null
+      },
+      {
+        "path": "system_status.Alert Engine.metadata.deliveryRate",
+        "expected": null
+      },
+      {
+        "path": "system_status.Alert Engine.metadata.fcmTokens",
+        "expected": null
+      },
+      {
+        "path": "system_status.Alert Engine.metadata.lastBackup",
+        "expected": null
+      },
+      {
+        "path": "system_status.Alert Engine.metadata.notificationsSent",
+        "expected": null
+      },
+      {
+        "path": "system_status.Alert Engine.metadata.size",
+        "expected": null
+      },
+      {
+        "path": "system_status.Alert Engine.metadata.syncedToCloud",
+        "expected": null
+      },
+      {
+        "path": "system_status.Alert Engine.metadata.uptime",
+        "expected": null
+      },
+      {
+        "path": "system_status.Database Server.metadata.alertsGenerated",
+        "expected": null
+      },
+      {
+        "path": "system_status.Database Server.metadata.alertsProcessed",
+        "expected": null
+      }
+    ],
+    "equalIgnoringNulls": false
+  },
+  "collectionReports": [
+    {
+      "collectionName": "alerts_active",
+      "firestoreRawTopLevelDocumentCount": 5,
+      "firestoreRawRecursiveDocumentCount": 5,
+      "normalizedTopLevelDocumentCount": 5,
+      "realtimeTopLevelDocumentCount": 5,
+      "firestoreDocumentIds": [
+        "ALT001",
+        "ALT002",
+        "ALT003",
+        "ALT004",
+        "ALT005"
+      ],
+      "realtimeDocumentIds": [
+        "ALT001",
+        "ALT002",
+        "ALT003",
+        "ALT004",
+        "ALT005"
+      ],
+      "missingInRealtime": [],
+      "extraInRealtime": [],
+      "baselineAvailable": true,
+      "baselineDocumentCount": 5,
+      "baselineTimestampFieldsObserved": {
+        "raisedAt": 5
+      },
+      "baselineRequiredFields": [
+        "category",
+        "equipment",
+        "id",
+        "isAcknowledged",
+        "isActive",
+        "location",
+        "message",
+        "priority",
+        "raisedAt",
+        "severity",
+        "status",
+        "title"
+      ],
+      "fullTopLevelFields": [
+        "acknowledgedAt",
+        "acknowledgedBy",
+        "category",
+        "equipment",
+        "id",
+        "isAcknowledged",
+        "isActive",
+        "location",
+        "message",
+        "priority",
+        "raisedAt",
+        "severity",
+        "status",
+        "threshold",
+        "title",
+        "unit",
+        "value"
+      ],
+      "preparedVsLive": {
+        "totalDiffs": 8,
+        "nullOnlyDiffs": 8,
+        "otherDiffs": 0,
+        "sampleDiffs": [
+          {
+            "path": "alerts_active.ALT004.acknowledgedAt",
+            "expected": null
+          },
+          {
+            "path": "alerts_active.ALT004.acknowledgedBy",
+            "expected": null
+          },
+          {
+            "path": "alerts_active.ALT004.threshold",
+            "expected": null
+          },
+          {
+            "path": "alerts_active.ALT004.unit",
+            "expected": null
+          },
+          {
+            "path": "alerts_active.ALT004.value",
+            "expected": null
+          },
+          {
+            "path": "alerts_active.ALT005.acknowledgedAt",
+            "expected": null
+          },
+          {
+            "path": "alerts_active.ALT005.acknowledgedBy",
+            "expected": null
+          },
+          {
+            "path": "alerts_active.ALT005.threshold",
+            "expected": null
+          }
+        ],
+        "equalIgnoringNulls": true
+      },
+      "sampleDocuments": [
+        {
+          "docId": "ALT001",
+          "expectedFieldCount": 17,
+          "liveFieldCount": 17,
+          "missingFieldsInLive": [],
+          "extraFieldsInLive": []
+        },
+        {
+          "docId": "ALT002",
+          "expectedFieldCount": 17,
+          "liveFieldCount": 17,
+          "missingFieldsInLive": [],
+          "extraFieldsInLive": []
+        },
+        {
+          "docId": "ALT003",
+          "expectedFieldCount": 17,
+          "liveFieldCount": 17,
+          "missingFieldsInLive": [],
+          "extraFieldsInLive": []
+        },
+        {
+          "docId": "ALT004",
+          "expectedFieldCount": 17,
+          "liveFieldCount": 12,
+          "missingFieldsInLive": [
+            "acknowledgedAt",
+            "acknowledgedBy",
+            "threshold",
+            "unit",
+            "value"
+          ],
+          "extraFieldsInLive": []
+        },
+        {
+          "docId": "ALT005",
+          "expectedFieldCount": 17,
+          "liveFieldCount": 14,
+          "missingFieldsInLive": [
+            "acknowledgedAt",
+            "acknowledgedBy",
+            "threshold"
+          ],
+          "extraFieldsInLive": []
+        }
+      ]
+    },
+    {
+      "collectionName": "alerts_history",
+      "firestoreRawTopLevelDocumentCount": 2,
+      "firestoreRawRecursiveDocumentCount": 2,
+      "normalizedTopLevelDocumentCount": 2,
+      "realtimeTopLevelDocumentCount": 2,
+      "firestoreDocumentIds": [
+        "ALT_H001",
+        "ALT_H002"
+      ],
+      "realtimeDocumentIds": [
+        "ALT_H001",
+        "ALT_H002"
+      ],
+      "missingInRealtime": [],
+      "extraInRealtime": [],
+      "baselineAvailable": false,
+      "baselineDocumentCount": 0,
+      "baselineTimestampFieldsObserved": {},
+      "baselineRequiredFields": [],
+      "fullTopLevelFields": [
+        "acknowledgedBy",
+        "category",
+        "clearedAt",
+        "duration",
+        "equipment",
+        "id",
+        "isActive",
+        "location",
+        "message",
+        "raisedAt",
+        "severity",
+        "status",
+        "title"
+      ],
+      "preparedVsLive": {
+        "totalDiffs": 0,
+        "nullOnlyDiffs": 0,
+        "otherDiffs": 0,
+        "sampleDiffs": [],
+        "equalIgnoringNulls": true
+      },
+      "sampleDocuments": [
+        {
+          "docId": "ALT_H001",
+          "expectedFieldCount": 13,
+          "liveFieldCount": 13,
+          "missingFieldsInLive": [],
+          "extraFieldsInLive": []
+        },
+        {
+          "docId": "ALT_H002",
+          "expectedFieldCount": 13,
+          "liveFieldCount": 13,
+          "missingFieldsInLive": [],
+          "extraFieldsInLive": []
+        }
+      ]
+    },
+    {
+      "collectionName": "client_heartbeats",
+      "firestoreRawTopLevelDocumentCount": 1,
+      "firestoreRawRecursiveDocumentCount": 1,
+      "normalizedTopLevelDocumentCount": 1,
+      "realtimeTopLevelDocumentCount": 1,
+      "firestoreDocumentIds": [
+        "windows_client"
+      ],
+      "realtimeDocumentIds": [
+        "windows_client"
+      ],
+      "missingInRealtime": [],
+      "extraInRealtime": [],
+      "baselineAvailable": false,
+      "baselineDocumentCount": 0,
+      "baselineTimestampFieldsObserved": {},
+      "baselineRequiredFields": [],
+      "fullTopLevelFields": [
+        "platform",
+        "status",
+        "timestamp",
+        "version"
+      ],
+      "preparedVsLive": {
+        "totalDiffs": 1,
+        "nullOnlyDiffs": 0,
+        "otherDiffs": 1,
+        "sampleDiffs": [
+          {
+            "path": "client_heartbeats.windows_client.timestamp",
+            "expected": "2026-04-24T00:05:14.875Z",
+            "actual": "2026-04-24T00:02:14.879Z"
+          }
+        ],
+        "equalIgnoringNulls": false
+      },
+      "sampleDocuments": [
+        {
+          "docId": "windows_client",
+          "expectedFieldCount": 4,
+          "liveFieldCount": 4,
+          "missingFieldsInLive": [],
+          "extraFieldsInLive": []
+        }
+      ]
+    },
+    {
+      "collectionName": "config",
+      "firestoreRawTopLevelDocumentCount": 1,
+      "firestoreRawRecursiveDocumentCount": 1,
+      "normalizedTopLevelDocumentCount": 1,
+      "realtimeTopLevelDocumentCount": 1,
+      "firestoreDocumentIds": [
+        "sync_settings"
+      ],
+      "realtimeDocumentIds": [
+        "sync_settings"
+      ],
+      "missingInRealtime": [],
+      "extraInRealtime": [],
+      "baselineAvailable": true,
+      "baselineDocumentCount": 1,
+      "baselineTimestampFieldsObserved": {
+        "lastUpdated": 1
+      },
+      "baselineRequiredFields": [
+        "enableNotifications",
+        "heartbeatInterval",
+        "lastUpdated",
+        "maxOfflineQueueSize",
+        "notificationSound",
+        "offlineQueueEnabled",
+        "syncInterval"
+      ],
+      "fullTopLevelFields": [
+        "enableNotifications",
+        "heartbeatInterval",
+        "lastUpdated",
+        "maxOfflineQueueSize",
+        "notificationSound",
+        "offlineQueueEnabled",
+        "syncInterval"
+      ],
+      "preparedVsLive": {
+        "totalDiffs": 0,
+        "nullOnlyDiffs": 0,
+        "otherDiffs": 0,
+        "sampleDiffs": [],
+        "equalIgnoringNulls": true
+      },
+      "sampleDocuments": [
+        {
+          "docId": "sync_settings",
+          "expectedFieldCount": 7,
+          "liveFieldCount": 7,
+          "missingFieldsInLive": [],
+          "extraFieldsInLive": []
+        }
+      ]
+    },
+    {
+      "collectionName": "device_tokens",
+      "firestoreRawTopLevelDocumentCount": 7,
+      "firestoreRawRecursiveDocumentCount": 7,
+      "normalizedTopLevelDocumentCount": 7,
+      "realtimeTopLevelDocumentCount": 7,
+      "firestoreDocumentIds": [
+        "cUcJO0FTX1xp6i7b3wVMDE:APA91bEfclizJRmVAP-6fAYr7HMT1S9qEFlZuJ2oNRLiAdzQmzm2FbOJxze4kWRE9KXApJiCQ5U6pCeVSFRkb531sYconFAABMp9iNP9FstD7lPyVgovgw8",
+        "c_5fLdUbYCfQCXqpx7kudX:APA91bFF96MFEjmyv8RH1gPVFnxzpNIW8KEiQ7TwEXfXZwaucMpxovjLuwYB1baeQ7guhixNvCOjTS9YyRoBV2ukEZxNHHh0IvV4Nw66GynxOqctCi3sdqU",
+        "dJzN0STTRVubjUiJY312TZ:APA91bEcZamBFj9mGAimV8Hrig3nhNYAPBaPWJGL75HGl2MERJWIS9YVH2Sdh1FWr1TWP7ctWRDDbGL07mVtJpXJ1qWlubvSmAk8oXVZekD8suyu11wOFX0",
+        "dWuk3iKKfH_RQ8JzSzjDRj:APA91bHO9Bd5M3FSmT71Pv5nFVg-SN0zxrshrNEiBfK04uFyQ23x4m2MVgx480oVQ0yB7wvG88UTxQBCbQl-gLnuayfGXsOg4ASy0qAkE9H0ru1d3yuww4c",
+        "d_vHyuiuSDmK1yGTKW-_4a:APA91bHeIbZu2DATnoOvogNP9W2nim8Ie7XrbM_A73NX5m68OLnCeDZj0ME-54ThVi3nLvmctIDpQWc4fucnImiTQYUMSYPQVhidRZ8mCA4qxW2UyDL1P8g",
+        "dxkS7DOInZzRKpM24ZODEh:APA91bHnDCc3OA4u7FVR4ihI0_vnigbnVehPF17-rRCJlq3w_-MWLJSRrNpuogmI-t7fIWZd8xqMWlkCjyGjsdq0X2aJ5fprlVsSIGuO6nRayxCK2rTd8GQ",
+        "fnPDplJUdwW3P0ZwPO4f7H:APA91bEZTgY6Qnlv9bQA5tgYRl5bJVPJUdVcBcufez-U3DXWqSyFvo92zGS1upBn7yZGkvvxysXjpkc1jmLjKI5W8b9uNzhF8LKjNuVTKgr0jYvUpZRhq2Q"
+      ],
+      "realtimeDocumentIds": [
+        "cUcJO0FTX1xp6i7b3wVMDE:APA91bEfclizJRmVAP-6fAYr7HMT1S9qEFlZuJ2oNRLiAdzQmzm2FbOJxze4kWRE9KXApJiCQ5U6pCeVSFRkb531sYconFAABMp9iNP9FstD7lPyVgovgw8",
+        "c_5fLdUbYCfQCXqpx7kudX:APA91bFF96MFEjmyv8RH1gPVFnxzpNIW8KEiQ7TwEXfXZwaucMpxovjLuwYB1baeQ7guhixNvCOjTS9YyRoBV2ukEZxNHHh0IvV4Nw66GynxOqctCi3sdqU",
+        "dJzN0STTRVubjUiJY312TZ:APA91bEcZamBFj9mGAimV8Hrig3nhNYAPBaPWJGL75HGl2MERJWIS9YVH2Sdh1FWr1TWP7ctWRDDbGL07mVtJpXJ1qWlubvSmAk8oXVZekD8suyu11wOFX0",
+        "dWuk3iKKfH_RQ8JzSzjDRj:APA91bHO9Bd5M3FSmT71Pv5nFVg-SN0zxrshrNEiBfK04uFyQ23x4m2MVgx480oVQ0yB7wvG88UTxQBCbQl-gLnuayfGXsOg4ASy0qAkE9H0ru1d3yuww4c",
+        "d_vHyuiuSDmK1yGTKW-_4a:APA91bHeIbZu2DATnoOvogNP9W2nim8Ie7XrbM_A73NX5m68OLnCeDZj0ME-54ThVi3nLvmctIDpQWc4fucnImiTQYUMSYPQVhidRZ8mCA4qxW2UyDL1P8g",
+        "dxkS7DOInZzRKpM24ZODEh:APA91bHnDCc3OA4u7FVR4ihI0_vnigbnVehPF17-rRCJlq3w_-MWLJSRrNpuogmI-t7fIWZd8xqMWlkCjyGjsdq0X2aJ5fprlVsSIGuO6nRayxCK2rTd8GQ",
+        "fnPDplJUdwW3P0ZwPO4f7H:APA91bEZTgY6Qnlv9bQA5tgYRl5bJVPJUdVcBcufez-U3DXWqSyFvo92zGS1upBn7yZGkvvxysXjpkc1jmLjKI5W8b9uNzhF8LKjNuVTKgr0jYvUpZRhq2Q"
+      ],
+      "missingInRealtime": [],
+      "extraInRealtime": [],
+      "baselineAvailable": true,
+      "baselineDocumentCount": 1,
+      "baselineTimestampFieldsObserved": {
+        "lastUpdated": 1
+      },
+      "baselineRequiredFields": [
+        "active",
+        "lastUpdated",
+        "platform",
+        "token"
+      ],
+      "fullTopLevelFields": [
+        "active",
+        "lastUpdated",
+        "platform",
+        "token"
+      ],
+      "preparedVsLive": {
+        "totalDiffs": 0,
+        "nullOnlyDiffs": 0,
+        "otherDiffs": 0,
+        "sampleDiffs": [],
+        "equalIgnoringNulls": true
+      },
+      "sampleDocuments": [
+        {
+          "docId": "cUcJO0FTX1xp6i7b3wVMDE:APA91bEfclizJRmVAP-6fAYr7HMT1S9qEFlZuJ2oNRLiAdzQmzm2FbOJxze4kWRE9KXApJiCQ5U6pCeVSFRkb531sYconFAABMp9iNP9FstD7lPyVgovgw8",
+          "expectedFieldCount": 4,
+          "liveFieldCount": 4,
+          "missingFieldsInLive": [],
+          "extraFieldsInLive": []
+        },
+        {
+          "docId": "c_5fLdUbYCfQCXqpx7kudX:APA91bFF96MFEjmyv8RH1gPVFnxzpNIW8KEiQ7TwEXfXZwaucMpxovjLuwYB1baeQ7guhixNvCOjTS9YyRoBV2ukEZxNHHh0IvV4Nw66GynxOqctCi3sdqU",
+          "expectedFieldCount": 4,
+          "liveFieldCount": 4,
+          "missingFieldsInLive": [],
+          "extraFieldsInLive": []
+        },
+        {
+          "docId": "dJzN0STTRVubjUiJY312TZ:APA91bEcZamBFj9mGAimV8Hrig3nhNYAPBaPWJGL75HGl2MERJWIS9YVH2Sdh1FWr1TWP7ctWRDDbGL07mVtJpXJ1qWlubvSmAk8oXVZekD8suyu11wOFX0",
+          "expectedFieldCount": 4,
+          "liveFieldCount": 4,
+          "missingFieldsInLive": [],
+          "extraFieldsInLive": []
+        },
+        {
+          "docId": "dWuk3iKKfH_RQ8JzSzjDRj:APA91bHO9Bd5M3FSmT71Pv5nFVg-SN0zxrshrNEiBfK04uFyQ23x4m2MVgx480oVQ0yB7wvG88UTxQBCbQl-gLnuayfGXsOg4ASy0qAkE9H0ru1d3yuww4c",
+          "expectedFieldCount": 4,
+          "liveFieldCount": 4,
+          "missingFieldsInLive": [],
+          "extraFieldsInLive": []
+        },
+        {
+          "docId": "d_vHyuiuSDmK1yGTKW-_4a:APA91bHeIbZu2DATnoOvogNP9W2nim8Ie7XrbM_A73NX5m68OLnCeDZj0ME-54ThVi3nLvmctIDpQWc4fucnImiTQYUMSYPQVhidRZ8mCA4qxW2UyDL1P8g",
+          "expectedFieldCount": 4,
+          "liveFieldCount": 4,
+          "missingFieldsInLive": [],
+          "extraFieldsInLive": []
+        }
+      ]
+    },
+    {
+      "collectionName": "statistics",
+      "firestoreRawTopLevelDocumentCount": 1,
+      "firestoreRawRecursiveDocumentCount": 1,
+      "normalizedTopLevelDocumentCount": 1,
+      "realtimeTopLevelDocumentCount": 1,
+      "firestoreDocumentIds": [
+        "overview"
+      ],
+      "realtimeDocumentIds": [
+        "overview"
+      ],
+      "missingInRealtime": [],
+      "extraInRealtime": [],
+      "baselineAvailable": true,
+      "baselineDocumentCount": 1,
+      "baselineTimestampFieldsObserved": {
+        "lastUpdated": 1
+      },
+      "baselineRequiredFields": [
+        "acknowledgedAlerts",
+        "criticalAlerts",
+        "lastUpdated",
+        "totalAlerts",
+        "totalCleared24h"
+      ],
+      "fullTopLevelFields": [
+        "acknowledgedAlerts",
+        "criticalAlerts",
+        "lastUpdated",
+        "totalAlerts",
+        "totalCleared24h"
+      ],
+      "preparedVsLive": {
+        "totalDiffs": 0,
+        "nullOnlyDiffs": 0,
+        "otherDiffs": 0,
+        "sampleDiffs": [],
+        "equalIgnoringNulls": true
+      },
+      "sampleDocuments": [
+        {
+          "docId": "overview",
+          "expectedFieldCount": 5,
+          "liveFieldCount": 5,
+          "missingFieldsInLive": [],
+          "extraFieldsInLive": []
+        }
+      ]
+    },
+    {
+      "collectionName": "system_status",
+      "firestoreRawTopLevelDocumentCount": 5,
+      "firestoreRawRecursiveDocumentCount": 5,
+      "normalizedTopLevelDocumentCount": 5,
+      "realtimeTopLevelDocumentCount": 5,
+      "firestoreDocumentIds": [
+        "Alert Engine",
+        "Database Server",
+        "Notification Service",
+        "OPC UA Server",
+        "Windows Sync Service"
+      ],
+      "realtimeDocumentIds": [
+        "Alert Engine",
+        "Database Server",
+        "Notification Service",
+        "OPC UA Server",
+        "Windows Sync Service"
+      ],
+      "missingInRealtime": [],
+      "extraInRealtime": [],
+      "baselineAvailable": true,
+      "baselineDocumentCount": 4,
+      "baselineTimestampFieldsObserved": {
+        "lastHeartbeat": 4
+      },
+      "baselineRequiredFields": [
+        "componentName",
+        "lastHeartbeat",
+        "metadata",
+        "status",
+        "version"
+      ],
+      "fullTopLevelFields": [
+        "componentName",
+        "lastHeartbeat",
+        "metadata",
+        "status",
+        "version"
+      ],
+      "preparedVsLive": {
+        "totalDiffs": 48,
+        "nullOnlyDiffs": 48,
+        "otherDiffs": 0,
+        "sampleDiffs": [
+          {
+            "path": "system_status.Alert Engine.metadata.activeConnections",
+            "expected": null
+          },
+          {
+            "path": "system_status.Alert Engine.metadata.alertsProcessed",
+            "expected": null
+          },
+          {
+            "path": "system_status.Alert Engine.metadata.deliveryRate",
+            "expected": null
+          },
+          {
+            "path": "system_status.Alert Engine.metadata.fcmTokens",
+            "expected": null
+          },
+          {
+            "path": "system_status.Alert Engine.metadata.lastBackup",
+            "expected": null
+          },
+          {
+            "path": "system_status.Alert Engine.metadata.notificationsSent",
+            "expected": null
+          },
+          {
+            "path": "system_status.Alert Engine.metadata.size",
+            "expected": null
+          },
+          {
+            "path": "system_status.Alert Engine.metadata.syncedToCloud",
+            "expected": null
+          },
+          {
+            "path": "system_status.Alert Engine.metadata.uptime",
+            "expected": null
+          },
+          {
+            "path": "system_status.Database Server.metadata.alertsGenerated",
+            "expected": null
+          },
+          {
+            "path": "system_status.Database Server.metadata.alertsProcessed",
+            "expected": null
+          },
+          {
+            "path": "system_status.Database Server.metadata.deliveryRate",
+            "expected": null
+          },
+          {
+            "path": "system_status.Database Server.metadata.fcmTokens",
+            "expected": null
+          },
+          {
+            "path": "system_status.Database Server.metadata.notificationsSent",
+            "expected": null
+          },
+          {
+            "path": "system_status.Database Server.metadata.processingTime",
+            "expected": null
+          },
+          {
+            "path": "system_status.Database Server.metadata.rulesLoaded",
+            "expected": null
+          },
+          {
+            "path": "system_status.Database Server.metadata.syncedToCloud",
+            "expected": null
+          },
+          {
+            "path": "system_status.Database Server.metadata.uptime",
+            "expected": null
+          },
+          {
+            "path": "system_status.Notification Service.metadata.activeConnections",
+            "expected": null
+          },
+          {
+            "path": "system_status.Notification Service.metadata.alertsGenerated",
+            "expected": null
+          }
+        ],
+        "equalIgnoringNulls": true
+      },
+      "sampleDocuments": [
+        {
+          "docId": "Alert Engine",
+          "expectedFieldCount": 5,
+          "liveFieldCount": 5,
+          "missingFieldsInLive": [],
+          "extraFieldsInLive": []
+        },
+        {
+          "docId": "Database Server",
+          "expectedFieldCount": 5,
+          "liveFieldCount": 5,
+          "missingFieldsInLive": [],
+          "extraFieldsInLive": []
+        },
+        {
+          "docId": "Notification Service",
+          "expectedFieldCount": 5,
+          "liveFieldCount": 5,
+          "missingFieldsInLive": [],
+          "extraFieldsInLive": []
+        },
+        {
+          "docId": "OPC UA Server",
+          "expectedFieldCount": 5,
+          "liveFieldCount": 5,
+          "missingFieldsInLive": [],
+          "extraFieldsInLive": []
+        },
+        {
+          "docId": "Windows Sync Service",
+          "expectedFieldCount": 5,
+          "liveFieldCount": 5,
+          "missingFieldsInLive": [],
+          "extraFieldsInLive": []
+        }
+      ]
+    }
+  ]
+}

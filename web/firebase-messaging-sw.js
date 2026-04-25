@@ -2,12 +2,13 @@ importScripts("https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"
 importScripts("https://www.gstatic.com/firebasejs/10.7.0/firebase-messaging-compat.js");
 
 firebase.initializeApp({
-  apiKey: "AIzaSyBvGqq5JDjVb-b2sdP1kqCgX2d858X4E2k",
-  appId: "1:932777127221:web:94b95413180801325b707c",
-  messagingSenderId: "932777127221",
-  projectId: "scadadataserver",
-  authDomain: "scadadataserver.firebaseapp.com",
-  storageBucket: "scadadataserver.firebasestorage.app",
+  apiKey: "AIzaSyDZP1p0cAWrxb4qRF_uQugqkPIm2KrKCG4",
+  authDomain: "alert-systems-db.firebaseapp.com",
+  projectId: "alert-systems-db",
+  storageBucket: "alert-systems-db.firebasestorage.app",
+  messagingSenderId: "567541837784",
+  appId: "1:567541837784:web:51dc9e4f0f40871ff94cad",
+  measurementId: "G-Q3CVP4ESH8"
 });
 
 const messaging = firebase.messaging();

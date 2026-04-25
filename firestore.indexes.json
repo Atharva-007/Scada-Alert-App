@@ -4,49 +4,33 @@
       "collectionGroup": "alerts_active",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "isActive", "order": "ASCENDING" },
-        { "fieldPath": "raisedAt", "order": "DESCENDING" }
+        { "fieldPath": "status", "order": "ASCENDING" },
+        { "fieldPath": "timestamp", "order": "DESCENDING" }
       ]
     },
     {
       "collectionGroup": "alerts_active",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "severity", "order": "ASCENDING" },
-        { "fieldPath": "raisedAt", "order": "DESCENDING" }
-      ]
-    },
-    {
-      "collectionGroup": "alerts_active",
-      "queryScope": "COLLECTION",
-      "fields": [
-        { "fieldPath": "isActive", "order": "ASCENDING" },
-        { "fieldPath": "severity", "order": "ASCENDING" },
-        { "fieldPath": "raisedAt", "order": "DESCENDING" }
-      ]
-    },
-    {
-      "collectionGroup": "alerts_active",
-      "queryScope": "COLLECTION",
-      "fields": [
-        { "fieldPath": "isAcknowledged", "order": "ASCENDING" },
-        { "fieldPath": "raisedAt", "order": "DESCENDING" }
+        { "fieldPath": "status", "order": "ASCENDING" },
+        { "fieldPath": "acknowledged", "order": "ASCENDING" },
+        { "fieldPath": "timestamp", "order": "DESCENDING" }
       ]
     },
     {
       "collectionGroup": "alerts_history",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "clearedAt", "order": "DESCENDING" },
-        { "fieldPath": "severity", "order": "ASCENDING" }
+        { "fieldPath": "severity", "order": "ASCENDING" },
+        { "fieldPath": "timestamp", "order": "DESCENDING" }
       ]
     },
     {
-      "collectionGroup": "system_status",
+      "collectionGroup": "alerts_history",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "status", "order": "ASCENDING" },
-        { "fieldPath": "lastHeartbeat", "order": "DESCENDING" }
+        { "fieldPath": "clearedTime", "order": "ASCENDING" },
+        { "fieldPath": "timestamp", "order": "DESCENDING" }
       ]
     }
   ],

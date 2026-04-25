@@ -8,7 +8,7 @@ public class ProcessConfiguration
 {
     /// <summary>
     /// Full path to the Flutter executable to be managed.
-    /// Example: "C:\\SCADA\\FlutterApp\\app.exe"
+    /// Example: "C:\\SCADA\\scada_alarm_client\\scada_alarm_client.exe"
     /// </summary>
     public string ExecutablePath { get; set; } = string.Empty;
 
@@ -77,9 +77,9 @@ public class LoggingConfiguration
 {
     /// <summary>
     /// Directory where log files will be stored.
-    /// Example: "C:\\Logs\\ScadaWatcher"
+    /// Relative paths are resolved from the deployed service folder.
     /// </summary>
-    public string LogDirectory { get; set; } = "C:\\Logs\\ScadaWatcher";
+    public string LogDirectory { get; set; } = "runtime\\logs";
 
     /// <summary>
     /// Maximum size of a single log file in MB before rotation.
@@ -90,4 +90,6 @@ public class LoggingConfiguration
     /// Number of log files to retain before deleting oldest.
     /// </summary>
     public int RetainedFileCount { get; set; } = 30;
+
+    public string ResolveLogDirectory() => ServicePathResolver.ResolvePath(LogDirectory);
 }

@@ -136,7 +136,8 @@ public class NotificationAdapterService
         try
         {
             // Load service account credentials
-            var credential = GoogleCredential.FromFile(_config.ServiceAccountJsonPath);
+            var serviceAccountPath = _config.ResolveServiceAccountJsonPath();
+            var credential = GoogleCredential.FromFile(serviceAccountPath);
 
             // Initialize Firebase App (if not already initialized)
             if (FirebaseApp.DefaultInstance == null)
@@ -154,8 +155,13 @@ public class NotificationAdapterService
                 _logger.LogInformation("Using existing Firebase App instance");
             }
 
-            // Initialize Firestore client
-            _firestoreDb = await FirestoreDb.CreateAsync(_config.ProjectId);
+            // Initialize Firestore client with explicit credentials instead of
+            // depending on ambient application-default credentials.
+            _firestoreDb = new FirestoreDbBuilder
+            {
+                ProjectId = _config.ProjectId,
+                JsonCredentials = await File.ReadAllTextAsync(serviceAccountPath)
+            }.Build();
             _logger.LogInformation("Firestore client initialized");
 
             _isInitialized = true;
@@ -496,7 +502,7 @@ public class NotificationAdapterService
             _logger.LogInformation("Starting real-time Firestore acknowledgement listener...");
 
             Query query = _firestoreDb.Collection(_config.ActiveAlertsCollection)
-                .WhereNotEqualTo("acknowledgedTime", null);
+                .WhereNotEqualTo("acknowledgedAt", null);
 
             _acknowledgementListener = query.Listen(snapshot =>
             {
@@ -511,10 +517,10 @@ public class NotificationAdapterService
                             
                             if (alert.AcknowledgedTime.HasValue)
                             {
-                                var acknowledged = _alertEngine.AcknowledgeAlert(alert.AlertId);
+                                var acknowledged = _alertEngine.AcknowledgeAlert(alert.AlertId, alert.AcknowledgedBy, alert.AcknowledgementDetail);
                                 if (acknowledged)
                                 {
-                                    _logger.LogInformation($"Real-time sync: Alert {alert.AlertId} acknowledged by {alert.AcknowledgedBy ?? "unknown"}");
+                                    _logger.LogInformation($"Real-time sync: Alert {alert.AlertId} acknowledged by {alert.AcknowledgedBy ?? "unknown"} with note: {alert.AcknowledgementDetail ?? "none"}");
                                 }
                             }
                         }

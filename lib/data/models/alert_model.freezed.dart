@@ -49,7 +49,16 @@ mixin _$AlertModel {
   int get escalationCount => throw _privateConstructorUsedError;
   DateTime? get lastUpdatedTime => throw _privateConstructorUsedError;
   String? get equipment => throw _privateConstructorUsedError;
-  String? get location => throw _privateConstructorUsedError;
+  String? get location =>
+      throw _privateConstructorUsedError; // Approval/Rejection Workflow
+  String get status => throw _privateConstructorUsedError;
+  String get approvalStatus =>
+      throw _privateConstructorUsedError; // 'pending', 'approved', 'rejected'
+  String? get approvedBy => throw _privateConstructorUsedError;
+  DateTime? get approvedAt => throw _privateConstructorUsedError;
+  String? get rejectedBy => throw _privateConstructorUsedError;
+  DateTime? get rejectedAt => throw _privateConstructorUsedError;
+  String? get rejectionReason => throw _privateConstructorUsedError;
 
   /// Serializes this AlertModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -97,6 +106,13 @@ abstract class $AlertModelCopyWith<$Res> {
     DateTime? lastUpdatedTime,
     String? equipment,
     String? location,
+    String status,
+    String approvalStatus,
+    String? approvedBy,
+    DateTime? approvedAt,
+    String? rejectedBy,
+    DateTime? rejectedAt,
+    String? rejectionReason,
   });
 }
 
@@ -143,6 +159,13 @@ class _$AlertModelCopyWithImpl<$Res, $Val extends AlertModel>
     Object? lastUpdatedTime = freezed,
     Object? equipment = freezed,
     Object? location = freezed,
+    Object? status = null,
+    Object? approvalStatus = null,
+    Object? approvedBy = freezed,
+    Object? approvedAt = freezed,
+    Object? rejectedBy = freezed,
+    Object? rejectedAt = freezed,
+    Object? rejectionReason = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -258,6 +281,34 @@ class _$AlertModelCopyWithImpl<$Res, $Val extends AlertModel>
                 ? _value.location
                 : location // ignore: cast_nullable_to_non_nullable
                       as String?,
+            status: null == status
+                ? _value.status
+                : status // ignore: cast_nullable_to_non_nullable
+                      as String,
+            approvalStatus: null == approvalStatus
+                ? _value.approvalStatus
+                : approvalStatus // ignore: cast_nullable_to_non_nullable
+                      as String,
+            approvedBy: freezed == approvedBy
+                ? _value.approvedBy
+                : approvedBy // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            approvedAt: freezed == approvedAt
+                ? _value.approvedAt
+                : approvedAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            rejectedBy: freezed == rejectedBy
+                ? _value.rejectedBy
+                : rejectedBy // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            rejectedAt: freezed == rejectedAt
+                ? _value.rejectedAt
+                : rejectedAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            rejectionReason: freezed == rejectionReason
+                ? _value.rejectionReason
+                : rejectionReason // ignore: cast_nullable_to_non_nullable
+                      as String?,
           )
           as $Val,
     );
@@ -302,6 +353,13 @@ abstract class _$$AlertModelImplCopyWith<$Res>
     DateTime? lastUpdatedTime,
     String? equipment,
     String? location,
+    String status,
+    String approvalStatus,
+    String? approvedBy,
+    DateTime? approvedAt,
+    String? rejectedBy,
+    DateTime? rejectedAt,
+    String? rejectionReason,
   });
 }
 
@@ -347,6 +405,13 @@ class __$$AlertModelImplCopyWithImpl<$Res>
     Object? lastUpdatedTime = freezed,
     Object? equipment = freezed,
     Object? location = freezed,
+    Object? status = null,
+    Object? approvalStatus = null,
+    Object? approvedBy = freezed,
+    Object? approvedAt = freezed,
+    Object? rejectedBy = freezed,
+    Object? rejectedAt = freezed,
+    Object? rejectionReason = freezed,
   }) {
     return _then(
       _$AlertModelImpl(
@@ -462,6 +527,34 @@ class __$$AlertModelImplCopyWithImpl<$Res>
             ? _value.location
             : location // ignore: cast_nullable_to_non_nullable
                   as String?,
+        status: null == status
+            ? _value.status
+            : status // ignore: cast_nullable_to_non_nullable
+                  as String,
+        approvalStatus: null == approvalStatus
+            ? _value.approvalStatus
+            : approvalStatus // ignore: cast_nullable_to_non_nullable
+                  as String,
+        approvedBy: freezed == approvedBy
+            ? _value.approvedBy
+            : approvedBy // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        approvedAt: freezed == approvedAt
+            ? _value.approvedAt
+            : approvedAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        rejectedBy: freezed == rejectedBy
+            ? _value.rejectedBy
+            : rejectedBy // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        rejectedAt: freezed == rejectedAt
+            ? _value.rejectedAt
+            : rejectedAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        rejectionReason: freezed == rejectionReason
+            ? _value.rejectionReason
+            : rejectionReason // ignore: cast_nullable_to_non_nullable
+                  as String?,
       ),
     );
   }
@@ -499,6 +592,13 @@ class _$AlertModelImpl extends _AlertModel {
     this.lastUpdatedTime,
     this.equipment,
     this.location,
+    this.status = 'active',
+    this.approvalStatus = 'pending',
+    this.approvedBy,
+    this.approvedAt,
+    this.rejectedBy,
+    this.rejectedAt,
+    this.rejectionReason,
   }) : _relatedAlertIds = relatedAlertIds,
        _trendData = trendData,
        super._();
@@ -580,10 +680,28 @@ class _$AlertModelImpl extends _AlertModel {
   final String? equipment;
   @override
   final String? location;
+  // Approval/Rejection Workflow
+  @override
+  @JsonKey()
+  final String status;
+  @override
+  @JsonKey()
+  final String approvalStatus;
+  // 'pending', 'approved', 'rejected'
+  @override
+  final String? approvedBy;
+  @override
+  final DateTime? approvedAt;
+  @override
+  final String? rejectedBy;
+  @override
+  final DateTime? rejectedAt;
+  @override
+  final String? rejectionReason;
 
   @override
   String toString() {
-    return 'AlertModel(id: $id, name: $name, description: $description, severity: $severity, source: $source, tagName: $tagName, currentValue: $currentValue, threshold: $threshold, condition: $condition, raisedAt: $raisedAt, acknowledgedAt: $acknowledgedAt, acknowledgedBy: $acknowledgedBy, acknowledgedComment: $acknowledgedComment, clearedAt: $clearedAt, escalatedAt: $escalatedAt, isActive: $isActive, isAcknowledged: $isAcknowledged, isSuppressed: $isSuppressed, notes: $notes, escalationLevel: $escalationLevel, suppressionCount: $suppressionCount, relatedAlertIds: $relatedAlertIds, trendData: $trendData, alertType: $alertType, escalationCount: $escalationCount, lastUpdatedTime: $lastUpdatedTime, equipment: $equipment, location: $location)';
+    return 'AlertModel(id: $id, name: $name, description: $description, severity: $severity, source: $source, tagName: $tagName, currentValue: $currentValue, threshold: $threshold, condition: $condition, raisedAt: $raisedAt, acknowledgedAt: $acknowledgedAt, acknowledgedBy: $acknowledgedBy, acknowledgedComment: $acknowledgedComment, clearedAt: $clearedAt, escalatedAt: $escalatedAt, isActive: $isActive, isAcknowledged: $isAcknowledged, isSuppressed: $isSuppressed, notes: $notes, escalationLevel: $escalationLevel, suppressionCount: $suppressionCount, relatedAlertIds: $relatedAlertIds, trendData: $trendData, alertType: $alertType, escalationCount: $escalationCount, lastUpdatedTime: $lastUpdatedTime, equipment: $equipment, location: $location, status: $status, approvalStatus: $approvalStatus, approvedBy: $approvedBy, approvedAt: $approvedAt, rejectedBy: $rejectedBy, rejectedAt: $rejectedAt, rejectionReason: $rejectionReason)';
   }
 
   @override
@@ -645,7 +763,20 @@ class _$AlertModelImpl extends _AlertModel {
             (identical(other.equipment, equipment) ||
                 other.equipment == equipment) &&
             (identical(other.location, location) ||
-                other.location == location));
+                other.location == location) &&
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.approvalStatus, approvalStatus) ||
+                other.approvalStatus == approvalStatus) &&
+            (identical(other.approvedBy, approvedBy) ||
+                other.approvedBy == approvedBy) &&
+            (identical(other.approvedAt, approvedAt) ||
+                other.approvedAt == approvedAt) &&
+            (identical(other.rejectedBy, rejectedBy) ||
+                other.rejectedBy == rejectedBy) &&
+            (identical(other.rejectedAt, rejectedAt) ||
+                other.rejectedAt == rejectedAt) &&
+            (identical(other.rejectionReason, rejectionReason) ||
+                other.rejectionReason == rejectionReason));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -680,6 +811,13 @@ class _$AlertModelImpl extends _AlertModel {
     lastUpdatedTime,
     equipment,
     location,
+    status,
+    approvalStatus,
+    approvedBy,
+    approvedAt,
+    rejectedBy,
+    rejectedAt,
+    rejectionReason,
   ]);
 
   /// Create a copy of AlertModel
@@ -726,6 +864,13 @@ abstract class _AlertModel extends AlertModel {
     final DateTime? lastUpdatedTime,
     final String? equipment,
     final String? location,
+    final String status,
+    final String approvalStatus,
+    final String? approvedBy,
+    final DateTime? approvedAt,
+    final String? rejectedBy,
+    final DateTime? rejectedAt,
+    final String? rejectionReason,
   }) = _$AlertModelImpl;
   const _AlertModel._() : super._();
 
@@ -787,7 +932,21 @@ abstract class _AlertModel extends AlertModel {
   @override
   String? get equipment;
   @override
-  String? get location;
+  String? get location; // Approval/Rejection Workflow
+  @override
+  String get status;
+  @override
+  String get approvalStatus; // 'pending', 'approved', 'rejected'
+  @override
+  String? get approvedBy;
+  @override
+  DateTime? get approvedAt;
+  @override
+  String? get rejectedBy;
+  @override
+  DateTime? get rejectedAt;
+  @override
+  String? get rejectionReason;
 
   /// Create a copy of AlertModel
   /// with the given fields replaced by the non-null parameter values.

@@ -9,6 +9,9 @@ namespace ScadaWatcherService;
 [FirestoreData]
 public class FirestoreAlertDocument
 {
+    [FirestoreProperty("id")]
+    public string Id { get; set; } = string.Empty;
+
     /// <summary>
     /// Unique alert identifier (RuleId).
     /// Serves as the Firestore document ID.
@@ -25,8 +28,11 @@ public class FirestoreAlertDocument
     /// <summary>
     /// Alert rule description.
     /// </summary>
-    [FirestoreProperty("description")]
+    [FirestoreProperty("detail")]
     public string Description { get; set; } = string.Empty;
+
+    [FirestoreProperty("description")]
+    public string DescriptionText { get; set; } = string.Empty;
 
     /// <summary>
     /// Alert severity: "Info", "Warning", "Critical"
@@ -43,14 +49,29 @@ public class FirestoreAlertDocument
     /// <summary>
     /// Current alert state: "Inactive", "Active", "Acknowledged", "Cleared"
     /// </summary>
-    [FirestoreProperty("currentState")]
+    [FirestoreProperty("status")]
     public string CurrentState { get; set; } = string.Empty;
 
     /// <summary>
     /// Formatted alert message.
     /// </summary>
-    [FirestoreProperty("message")]
+    [FirestoreProperty("alert")]
     public string Message { get; set; } = string.Empty;
+
+    [FirestoreProperty("name")]
+    public string Name { get; set; } = string.Empty;
+
+    [FirestoreProperty("source")]
+    public string Source { get; set; } = string.Empty;
+
+    [FirestoreProperty("tagName")]
+    public string TagName { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Whether the alert has been acknowledged.
+    /// </summary>
+    [FirestoreProperty("acknowledged")]
+    public bool Acknowledged { get; set; } = false;
 
     /// <summary>
     /// Value that triggered the alert (numeric, boolean, or string).
@@ -58,6 +79,9 @@ public class FirestoreAlertDocument
     /// </summary>
     [FirestoreProperty("triggerValue")]
     public object? TriggerValue { get; set; }
+
+    [FirestoreProperty("currentValue")]
+    public double? CurrentValue { get; set; }
 
     /// <summary>
     /// Threshold value (for threshold-based alerts).
@@ -68,13 +92,16 @@ public class FirestoreAlertDocument
     /// <summary>
     /// Timestamp when alert was first raised (UTC).
     /// </summary>
-    [FirestoreProperty("raisedTime")]
+    [FirestoreProperty("timestamp")]
     public Timestamp RaisedTime { get; set; }
+
+    [FirestoreProperty("raisedAt")]
+    public Timestamp RaisedAt { get; set; }
 
     /// <summary>
     /// Timestamp when alert was acknowledged (UTC, nullable).
     /// </summary>
-    [FirestoreProperty("acknowledgedTime")]
+    [FirestoreProperty("acknowledgedAt")]
     public Timestamp? AcknowledgedTime { get; set; }
 
     /// <summary>
@@ -88,6 +115,12 @@ public class FirestoreAlertDocument
     /// </summary>
     [FirestoreProperty("lastUpdatedTime")]
     public Timestamp LastUpdatedTime { get; set; }
+
+    [FirestoreProperty("created_at")]
+    public Timestamp CreatedAt { get; set; }
+
+    [FirestoreProperty("updated_at")]
+    public Timestamp UpdatedAt { get; set; }
 
     /// <summary>
     /// Number of times this alert has escalated.
@@ -108,10 +141,28 @@ public class FirestoreAlertDocument
     public string? AcknowledgedBy { get; set; }
 
     /// <summary>
+    /// Detailed message provided during acknowledgement.
+    /// </summary>
+    [FirestoreProperty("acknowledgement_detail")]
+    public string? AcknowledgementDetail { get; set; }
+
+    [FirestoreProperty("acknowledgedComment")]
+    public string? AcknowledgedComment { get; set; }
+
+    /// <summary>
     /// Active duration in seconds (for cleared alerts).
     /// </summary>
     [FirestoreProperty("activeDurationSeconds")]
     public long? ActiveDurationSeconds { get; set; }
+
+    [FirestoreProperty("isActive")]
+    public bool IsActive { get; set; } = true;
+
+    [FirestoreProperty("isAcknowledged")]
+    public bool IsAcknowledged { get; set; } = false;
+
+    [FirestoreProperty("condition")]
+    public string Condition { get; set; } = string.Empty;
 
     /// <summary>
     /// Timestamp when last notification was sent (for throttling).
@@ -126,34 +177,125 @@ public class FirestoreAlertDocument
     public int NotificationCount { get; set; } = 0;
 
     /// <summary>
+    /// Approval status: "pending", "approved", "rejected"
+    /// </summary>
+    [FirestoreProperty("approvalStatus")]
+    public string ApprovalStatus { get; set; } = "pending";
+
+    /// <summary>
+    /// User who approved the alert.
+    /// </summary>
+    [FirestoreProperty("approvedBy")]
+    public string? ApprovedBy { get; set; }
+
+    /// <summary>
+    /// Timestamp when the alert was approved.
+    /// </summary>
+    [FirestoreProperty("approvedAt")]
+    public Timestamp? ApprovedAt { get; set; }
+
+    /// <summary>
+    /// User who rejected the alert.
+    /// </summary>
+    [FirestoreProperty("rejectedBy")]
+    public string? RejectedBy { get; set; }
+
+    /// <summary>
+    /// Timestamp when the alert was rejected.
+    /// </summary>
+    [FirestoreProperty("rejectedAt")]
+    public Timestamp? RejectedAt { get; set; }
+
+    /// <summary>
+    /// Reason for rejection.
+    /// </summary>
+    [FirestoreProperty("rejectionReason")]
+    public string? RejectionReason { get; set; }
+
+    [FirestoreProperty("clearedAt")]
+    public Timestamp? ClearedAt { get; set; }
+
+    /// <summary>
     /// Creates a Firestore document from an ActiveAlert.
     /// </summary>
     public static FirestoreAlertDocument FromActiveAlert(ActiveAlert alert)
     {
+        var raisedTimestamp = Timestamp.FromDateTime(alert.FirstRaisedTime.ToUniversalTime());
+        var lastUpdatedTimestamp = Timestamp.FromDateTime(DateTime.UtcNow);
+        var currentValue = TryConvertToDouble(alert.TriggerValue);
+
         return new FirestoreAlertDocument
         {
+            Id = alert.Rule.RuleId,
             AlertId = alert.Rule.RuleId,
             NodeId = alert.Rule.NodeId,
             Description = alert.Rule.Description,
-            Severity = alert.Rule.Severity.ToString(),
+            DescriptionText = alert.Rule.Description,
+            Severity = alert.Rule.Severity.ToString().ToLower(),
             AlertType = alert.Rule.AlertType.ToString(),
-            CurrentState = alert.State.ToString(),
+            CurrentState = alert.State.ToString().ToLower(),
             Message = alert.Message,
+            Name = alert.Message,
+            Source = alert.Rule.NodeId,
+            TagName = alert.Rule.NodeId,
             TriggerValue = alert.TriggerValue,
+            CurrentValue = currentValue,
             Threshold = alert.Rule.Threshold,
-            RaisedTime = Timestamp.FromDateTime(alert.FirstRaisedTime.ToUniversalTime()),
+            RaisedTime = raisedTimestamp,
+            RaisedAt = raisedTimestamp,
             AcknowledgedTime = alert.AcknowledgedTime.HasValue 
                 ? Timestamp.FromDateTime(alert.AcknowledgedTime.Value.ToUniversalTime()) 
                 : null,
+            AcknowledgedBy = alert.AcknowledgedBy,
+            AcknowledgementDetail = alert.AcknowledgementDetail,
+            AcknowledgedComment = alert.AcknowledgementDetail,
+            Acknowledged = alert.AcknowledgedTime.HasValue,
             ClearedTime = alert.ClearedTime.HasValue 
                 ? Timestamp.FromDateTime(alert.ClearedTime.Value.ToUniversalTime()) 
                 : null,
-            LastUpdatedTime = Timestamp.FromDateTime(DateTime.UtcNow),
+            ClearedAt = alert.ClearedTime.HasValue
+                ? Timestamp.FromDateTime(alert.ClearedTime.Value.ToUniversalTime())
+                : null,
+            LastUpdatedTime = lastUpdatedTimestamp,
+            CreatedAt = raisedTimestamp,
+            UpdatedAt = lastUpdatedTimestamp,
             EscalationCount = alert.IsEscalated ? 1 : 0,
             IsEscalated = alert.IsEscalated,
             ActiveDurationSeconds = alert.ClearedTime.HasValue 
                 ? (long)alert.ActiveDuration.TotalSeconds 
-                : null
+                : null,
+            IsActive = alert.State != AlertState.Cleared &&
+                alert.ApprovalStatus != "approved" &&
+                alert.ApprovalStatus != "rejected",
+            IsAcknowledged = alert.AcknowledgedTime.HasValue,
+            Condition = alert.Rule.AlertType.ToString().ToLowerInvariant(),
+            ApprovalStatus = alert.ApprovalStatus,
+            ApprovedBy = alert.ApprovedBy,
+            ApprovedAt = alert.ApprovedAt.HasValue ? Timestamp.FromDateTime(alert.ApprovedAt.Value.ToUniversalTime()) : null,
+            RejectedBy = alert.RejectedBy,
+            RejectedAt = alert.RejectedAt.HasValue ? Timestamp.FromDateTime(alert.RejectedAt.Value.ToUniversalTime()) : null,
+            RejectionReason = alert.RejectionReason
+        };
+    }
+
+    private static double? TryConvertToDouble(object? value)
+    {
+        if (value == null)
+        {
+            return null;
+        }
+
+        return value switch
+        {
+            double d => d,
+            float f => f,
+            decimal m => (double)m,
+            int i => i,
+            long l => l,
+            short s => s,
+            byte b => b,
+            _ when double.TryParse(value.ToString(), out var parsed) => parsed,
+            _ => null
         };
     }
 }

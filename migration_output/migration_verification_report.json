@@ -1,0 +1,123 @@
+{
+  "generatedAt": "2026-04-24T00:03:10.096Z",
+  "strictEqual": false,
+  "nullElidedEqual": true,
+  "expectedCounts": {
+    "objects": 35,
+    "arrays": 0,
+    "scalars": 226
+  },
+  "actualCounts": {
+    "objects": 35,
+    "arrays": 0,
+    "scalars": 182
+  },
+  "diffSummary": {
+    "total": 44,
+    "nullOnly": 44,
+    "other": 0,
+    "samples": [
+      {
+        "path": "alerts_active.ALT004.acknowledgedBy",
+        "expected": null
+      },
+      {
+        "path": "alerts_active.ALT004.threshold",
+        "expected": null
+      },
+      {
+        "path": "alerts_active.ALT004.unit",
+        "expected": null
+      },
+      {
+        "path": "alerts_active.ALT004.value",
+        "expected": null
+      },
+      {
+        "path": "alerts_active.ALT004.acknowledgedAt",
+        "expected": null
+      },
+      {
+        "path": "alerts_active.ALT005.acknowledgedBy",
+        "expected": null
+      },
+      {
+        "path": "alerts_active.ALT005.threshold",
+        "expected": null
+      },
+      {
+        "path": "alerts_active.ALT005.acknowledgedAt",
+        "expected": null
+      },
+      {
+        "path": "system_status.Alert Engine.metadata.size",
+        "expected": null
+      },
+      {
+        "path": "system_status.Alert Engine.metadata.activeConnections",
+        "expected": null
+      },
+      {
+        "path": "system_status.Alert Engine.metadata.lastBackup",
+        "expected": null
+      },
+      {
+        "path": "system_status.Alert Engine.metadata.notificationsSent",
+        "expected": null
+      },
+      {
+        "path": "system_status.Alert Engine.metadata.deliveryRate",
+        "expected": null
+      },
+      {
+        "path": "system_status.Alert Engine.metadata.fcmTokens",
+        "expected": null
+      },
+      {
+        "path": "system_status.Database Server.metadata.alertsGenerated",
+        "expected": null
+      },
+      {
+        "path": "system_status.Database Server.metadata.processingTime",
+        "expected": null
+      },
+      {
+        "path": "system_status.Database Server.metadata.rulesLoaded",
+        "expected": null
+      },
+      {
+        "path": "system_status.Database Server.metadata.notificationsSent",
+        "expected": null
+      },
+      {
+        "path": "system_status.Database Server.metadata.deliveryRate",
+        "expected": null
+      },
+      {
+        "path": "system_status.Database Server.metadata.fcmTokens",
+        "expected": null
+      },
+      {
+        "path": "system_status.Notification Service.metadata.alertsGenerated",
+        "expected": null
+      },
+      {
+        "path": "system_status.Notification Service.metadata.processingTime",
+        "expected": null
+      },
+      {
+        "path": "system_status.Notification Service.metadata.rulesLoaded",
+        "expected": null
+      },
+      {
+        "path": "system_status.Notification Service.metadata.size",
+        "expected": null
+      },
+      {
+        "path": "system_status.Notification Service.metadata.activeConnections",
+        "expected": null
+      }
+    ]
+  },
+  "conclusion": "Live Realtime Database matches the prepared payload after accounting for RTDB null-field elision."
+}

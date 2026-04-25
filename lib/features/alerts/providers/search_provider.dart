@@ -101,14 +101,22 @@ class AlertSearchDelegate extends SearchDelegate<AlertModel?> {
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.white.withOpacity(0.03),
+                  color: Colors.white.withValues(alpha: 0.03),
                 ),
-                child: const Icon(Icons.search_rounded, size: 64, color: Colors.white24),
+                child: const Icon(
+                  Icons.search_rounded,
+                  size: 64,
+                  color: Colors.white24,
+                ),
               ),
               const SizedBox(height: 24),
               const Text(
                 'Search Alerts',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white70),
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white70,
+                ),
               ),
               const SizedBox(height: 8),
               const Text(
@@ -141,14 +149,22 @@ class AlertSearchDelegate extends SearchDelegate<AlertModel?> {
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: AppTheme.criticalColor.withOpacity(0.05),
+                  color: AppTheme.criticalColor.withValues(alpha: 0.05),
                 ),
-                child: const Icon(Icons.search_off_rounded, size: 64, color: AppTheme.criticalColor),
+                child: const Icon(
+                  Icons.search_off_rounded,
+                  size: 64,
+                  color: AppTheme.criticalColor,
+                ),
               ),
               const SizedBox(height: 24),
               const Text(
                 'No Results Found',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white70),
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white70,
+                ),
               ),
               const SizedBox(height: 8),
               Text(
@@ -179,4 +195,3 @@ class AlertSearchDelegate extends SearchDelegate<AlertModel?> {
     );
   }
 }
-

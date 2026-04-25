@@ -1,5 +1,5 @@
 // Firebase configuration for scadadataserver project
-// Generated automatically - DO NOT edit manually
+// Updated manually to match the provided Firebase project settings.
 
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
@@ -39,17 +39,16 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions web = FirebaseOptions(
     apiKey: 'AIzaSyBvGqq5JDjVb-b2sdP1kqCgX2d858X4E2k',
-    appId: '1:932777127221:web:94b95413180801325b707c', // Standardized with android suffix for consistency
+    appId: '1:932777127221:web:faea4508f1c8015a5b707c',
     messagingSenderId: '932777127221',
     projectId: 'scadadataserver',
     authDomain: 'scadadataserver.firebaseapp.com',
     storageBucket: 'scadadataserver.firebasestorage.app',
-    measurementId: 'G-932777127221',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyBvGqq5JDjVb-b2sdP1kqCgX2d858X4E2k',
-    appId: '1:932777127221:android:94b95413180801325b707c',
+    appId: '1:932777127221:android:35b7aa954d6b1ebd5b707c',
     messagingSenderId: '932777127221',
     projectId: 'scadadataserver',
     storageBucket: 'scadadataserver.firebasestorage.app',
@@ -57,7 +56,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions windows = FirebaseOptions(
     apiKey: 'AIzaSyBvGqq5JDjVb-b2sdP1kqCgX2d858X4E2k',
-    appId: '1:932777127221:android:94b95413180801325b707c',
+    appId: '1:932777127221:web:faea4508f1c8015a5b707c',
     messagingSenderId: '932777127221',
     projectId: 'scadadataserver',
     storageBucket: 'scadadataserver.firebasestorage.app',

@@ -32,6 +32,8 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
+/ScadaWatcherService/publish/
+/ScadaWatcherService/runtime/
 
 # Symbolication related
 app.*.symbols
@@ -50,6 +52,8 @@ app.*.map.json
 **/*-firebase-adminsdk-*.json
 **/firebase-adminsdk-*.json
 scadadataserver-firebase-adminsdk-*.json
+firebase-service-account.json
+config/firebase-service-account.json
 
 # Firebase config files (keep firebase_options.dart but protect service accounts)
 google-services.json

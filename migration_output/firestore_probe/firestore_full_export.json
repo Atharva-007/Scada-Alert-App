@@ -1,0 +1,958 @@
+{
+  "metadata": {
+    "generatedAt": "2026-04-25T10:27:55.901Z",
+    "sourceProjectId": "scadadataserver",
+    "requestedSourceProjectId": "scadadataserver",
+    "databaseId": "(default)",
+    "targetProjectId": "scadadataserver",
+    "targetDatabaseUrl": "https://scadadataserver-default-rtdb.firebaseio.com",
+    "authType": "firebase_cli",
+    "sourceProjectCandidates": [
+      "scadadataserver",
+      "alert-systems-db"
+    ],
+    "accessibleProjectsViaCli": [],
+    "baselineMonthDay": "01-26",
+    "baselineTimezone": "UTC",
+    "warnings": [],
+    "projectResolutionErrors": [],
+    "totalDocuments": 26,
+    "totalCollections": 7,
+    "baselineDocuments": 11,
+    "collectionsWithBaseline": 6
+  },
+  "collections": {
+    "alerts_active": {
+      "ALT004": {
+        "__path": "alerts_active/ALT004",
+        "fields": {
+          "severity": {
+            "stringValue": "High"
+          },
+          "approvalStatus": {
+            "stringValue": "approved"
+          },
+          "location": {
+            "stringValue": "Control Room"
+          },
+          "isActive": {
+            "booleanValue": true
+          },
+          "status": {
+            "stringValue": "Approved"
+          },
+          "acknowledgedAt": {
+            "timestampValue": "2026-04-24T07:43:53.019Z"
+          },
+          "category": {
+            "stringValue": "Communication"
+          },
+          "equipment": {
+            "stringValue": "PLC-5"
+          },
+          "title": {
+            "stringValue": "Communication Error - PLC 5"
+          },
+          "acknowledgedBy": {
+            "stringValue": "Supervisor-App"
+          },
+          "priority": {
+            "integerValue": "1"
+          },
+          "approvedBy": {
+            "stringValue": "Supervisor-App"
+          },
+          "approvedAt": {
+            "timestampValue": "2026-04-24T07:43:59.774Z"
+          },
+          "acknowledgedComment": {
+            "stringValue": ""
+          },
+          "id": {
+            "stringValue": "ALT004"
+          },
+          "message": {
+            "stringValue": "Lost communication with remote PLC"
+          },
+          "raisedAt": {
+            "timestampValue": "2026-01-26T10:25:00Z"
+          },
+          "isAcknowledged": {
+            "booleanValue": true
+          }
+        }
+      },
+      "ALT005": {
+        "__path": "alerts_active/ALT005",
+        "fields": {
+          "raisedAt": {
+            "timestampValue": "2026-01-26T10:30:00Z"
+          },
+          "value": {
+            "integerValue": "-999"
+          },
+          "acknowledgement_detail": {
+            "stringValue": ""
+          },
+          "isAcknowledged": {
+            "booleanValue": true
+          },
+          "id": {
+            "stringValue": "ALT005"
+          },
+          "message": {
+            "stringValue": "Level sensor reporting invalid values"
+          },
+          "acknowledged": {
+            "booleanValue": true
+          },
+          "acknowledgedBy": {
+            "stringValue": "Supervisor-App"
+          },
+          "priority": {
+            "integerValue": "1"
+          },
+          "approvedBy": {
+            "stringValue": "Supervisor-App"
+          },
+          "approvedAt": {
+            "timestampValue": "2026-04-24T07:36:29.007Z"
+          },
+          "severity": {
+            "stringValue": "High"
+          },
+          "approvalStatus": {
+            "stringValue": "approved"
+          },
+          "location": {
+            "stringValue": "Storage Area D3"
+          },
+          "acknowledgedAt": {
+            "timestampValue": "2026-04-24T07:36:24.094Z"
+          },
+          "category": {
+            "stringValue": "Sensor"
+          },
+          "isActive": {
+            "booleanValue": true
+          },
+          "status": {
+            "stringValue": "Active"
+          },
+          "equipment": {
+            "stringValue": "Tank-7"
+          },
+          "unit": {
+            "stringValue": "%"
+          },
+          "title": {
+            "stringValue": "Level Sensor Failure - Tank 7"
+          }
+        }
+      }
+    },
+    "alerts_history": {
+      "ALT001": {
+        "__path": "alerts_history/ALT001",
+        "fields": {
+          "threshold": {
+            "doubleValue": 150
+          },
+          "tagName": {
+            "stringValue": "Reactor-1"
+          },
+          "rejectedAt": {
+            "nullValue": null
+          },
+          "lastUpdatedTime": {
+            "nullValue": null
+          },
+          "currentValue": {
+            "doubleValue": 185.5
+          },
+          "suppressionCount": {
+            "integerValue": "0"
+          },
+          "notes": {
+            "nullValue": null
+          },
+          "isAcknowledged": {
+            "booleanValue": true
+          },
+          "approvedBy": {
+            "stringValue": "Supervisor-App"
+          },
+          "acknowledgedBy": {
+            "stringValue": "operator_user"
+          },
+          "equipment": {
+            "stringValue": "Reactor-1"
+          },
+          "rejectionReason": {
+            "nullValue": null
+          },
+          "approvalStatus": {
+            "stringValue": "approved"
+          },
+          "condition": {
+            "stringValue": "Temperature"
+          },
+          "source": {
+            "stringValue": "Reactor-1"
+          },
+          "alertType": {
+            "stringValue": "Temperature"
+          },
+          "acknowledgedComment": {
+            "nullValue": null
+          },
+          "rejectedBy": {
+            "nullValue": null
+          },
+          "raisedAt": {
+            "timestampValue": "2026-01-26T10:00:00Z"
+          },
+          "severity": {
+            "stringValue": "Critical"
+          },
+          "escalationLevel": {
+            "integerValue": "1"
+          },
+          "clearedAt": {
+            "timestampValue": "2026-04-24T09:34:41.879230Z"
+          },
+          "name": {
+            "stringValue": "High Temperature Alert - Reactor 1"
+          },
+          "location": {
+            "stringValue": "Reactor Area A1"
+          },
+          "escalationCount": {
+            "integerValue": "0"
+          },
+          "isActive": {
+            "booleanValue": false
+          },
+          "trendData": {
+            "arrayValue": {}
+          },
+          "description": {
+            "stringValue": "Temperature exceeds normal operating range"
+          },
+          "escalatedAt": {
+            "nullValue": null
+          },
+          "status": {
+            "stringValue": "approved"
+          },
+          "isSuppressed": {
+            "booleanValue": false
+          },
+          "acknowledgedAt": {
+            "timestampValue": "2026-01-26T12:20:12.377Z"
+          },
+          "approvedAt": {
+            "timestampValue": "2026-04-24T09:34:41.879230Z"
+          },
+          "relatedAlertIds": {
+            "arrayValue": {}
+          }
+        }
+      },
+      "ALT002": {
+        "__path": "alerts_history/ALT002",
+        "fields": {
+          "approvalStatus": {
+            "stringValue": "approved"
+          },
+          "alertType": {
+            "stringValue": "Pressure"
+          },
+          "source": {
+            "stringValue": "Tank-3"
+          },
+          "condition": {
+            "stringValue": "Pressure"
+          },
+          "raisedAt": {
+            "timestampValue": "2026-01-26T10:15:00Z"
+          },
+          "rejectedBy": {
+            "nullValue": null
+          },
+          "acknowledgedComment": {
+            "nullValue": null
+          },
+          "acknowledgedBy": {
+            "stringValue": "User-App"
+          },
+          "equipment": {
+            "stringValue": "Tank-3"
+          },
+          "rejectionReason": {
+            "nullValue": null
+          },
+          "suppressionCount": {
+            "integerValue": "0"
+          },
+          "notes": {
+            "nullValue": null
+          },
+          "approvedBy": {
+            "stringValue": "Supervisor-App"
+          },
+          "isAcknowledged": {
+            "booleanValue": true
+          },
+          "threshold": {
+            "doubleValue": 100
+          },
+          "lastUpdatedTime": {
+            "nullValue": null
+          },
+          "tagName": {
+            "stringValue": "Tank-3"
+          },
+          "rejectedAt": {
+            "nullValue": null
+          },
+          "currentValue": {
+            "doubleValue": 95.2
+          },
+          "acknowledgedAt": {
+            "timestampValue": "2026-03-29T19:50:02.684Z"
+          },
+          "approvedAt": {
+            "timestampValue": "2026-04-24T09:34:19.313369Z"
+          },
+          "relatedAlertIds": {
+            "arrayValue": {}
+          },
+          "status": {
+            "stringValue": "approved"
+          },
+          "escalatedAt": {
+            "nullValue": null
+          },
+          "isSuppressed": {
+            "booleanValue": false
+          },
+          "escalationCount": {
+            "integerValue": "0"
+          },
+          "isActive": {
+            "booleanValue": false
+          },
+          "description": {
+            "stringValue": "Pressure reading outside acceptable limits"
+          },
+          "trendData": {
+            "arrayValue": {}
+          },
+          "severity": {
+            "stringValue": "Warning"
+          },
+          "escalationLevel": {
+            "integerValue": "2"
+          },
+          "name": {
+            "stringValue": "Pressure Anomaly - Tank 3"
+          },
+          "clearedAt": {
+            "timestampValue": "2026-04-24T09:34:19.313369Z"
+          },
+          "location": {
+            "stringValue": "Storage Area B2"
+          }
+        }
+      },
+      "ALT003": {
+        "__path": "alerts_history/ALT003",
+        "fields": {
+          "location": {
+            "stringValue": "Pump Station C1"
+          },
+          "name": {
+            "stringValue": "Flow Rate Low - Pump 2"
+          },
+          "clearedAt": {
+            "timestampValue": "2026-04-24T08:16:01.703526Z"
+          },
+          "escalationLevel": {
+            "integerValue": "2"
+          },
+          "severity": {
+            "stringValue": "Warning"
+          },
+          "trendData": {
+            "arrayValue": {}
+          },
+          "description": {
+            "stringValue": "Flow rate below minimum required"
+          },
+          "isActive": {
+            "booleanValue": false
+          },
+          "escalationCount": {
+            "integerValue": "0"
+          },
+          "isSuppressed": {
+            "booleanValue": false
+          },
+          "escalatedAt": {
+            "nullValue": null
+          },
+          "status": {
+            "stringValue": "Approved"
+          },
+          "relatedAlertIds": {
+            "arrayValue": {}
+          },
+          "approvedAt": {
+            "timestampValue": "2026-04-24T08:16:01.703526Z"
+          },
+          "acknowledgedAt": {
+            "timestampValue": "2026-01-26T10:20:00Z"
+          },
+          "currentValue": {
+            "doubleValue": 45
+          },
+          "rejectedAt": {
+            "nullValue": null
+          },
+          "tagName": {
+            "stringValue": "Pump-2"
+          },
+          "lastUpdatedTime": {
+            "nullValue": null
+          },
+          "threshold": {
+            "doubleValue": 50
+          },
+          "isAcknowledged": {
+            "booleanValue": true
+          },
+          "approvedBy": {
+            "stringValue": "Supervisor-App"
+          },
+          "notes": {
+            "nullValue": null
+          },
+          "suppressionCount": {
+            "integerValue": "0"
+          },
+          "rejectionReason": {
+            "nullValue": null
+          },
+          "equipment": {
+            "stringValue": "Pump-2"
+          },
+          "acknowledgedBy": {
+            "stringValue": "operator_john"
+          },
+          "acknowledgedComment": {
+            "nullValue": null
+          },
+          "raisedAt": {
+            "timestampValue": "2026-01-26T10:10:00Z"
+          },
+          "rejectedBy": {
+            "nullValue": null
+          },
+          "condition": {
+            "stringValue": "Flow"
+          },
+          "alertType": {
+            "stringValue": "Flow"
+          },
+          "source": {
+            "stringValue": "Pump-2"
+          },
+          "approvalStatus": {
+            "stringValue": "approved"
+          }
+        }
+      },
+      "ALT_H001": {
+        "__path": "alerts_history/ALT_H001",
+        "fields": {
+          "location": {
+            "stringValue": "Production Line 1"
+          },
+          "clearedAt": {
+            "timestampValue": "2026-01-25T14:30:00Z"
+          },
+          "severity": {
+            "stringValue": "Critical"
+          },
+          "title": {
+            "stringValue": "Motor Overload - Conveyor 1"
+          },
+          "id": {
+            "stringValue": "ALT_H001"
+          },
+          "isActive": {
+            "booleanValue": false
+          },
+          "category": {
+            "stringValue": "Electrical"
+          },
+          "equipment": {
+            "stringValue": "Conveyor-1"
+          },
+          "acknowledgedBy": {
+            "stringValue": "operator_sarah"
+          },
+          "status": {
+            "stringValue": "Cleared"
+          },
+          "message": {
+            "stringValue": "Motor current exceeded rated capacity"
+          },
+          "duration": {
+            "integerValue": "1800"
+          },
+          "raisedAt": {
+            "timestampValue": "2026-01-25T14:00:00Z"
+          }
+        }
+      },
+      "ALT_H002": {
+        "__path": "alerts_history/ALT_H002",
+        "fields": {
+          "duration": {
+            "integerValue": "900"
+          },
+          "raisedAt": {
+            "timestampValue": "2026-01-25T16:00:00Z"
+          },
+          "message": {
+            "stringValue": "Valve failed to reach commanded position"
+          },
+          "equipment": {
+            "stringValue": "Valve-103"
+          },
+          "status": {
+            "stringValue": "Cleared"
+          },
+          "acknowledgedBy": {
+            "stringValue": "operator_mike"
+          },
+          "title": {
+            "stringValue": "Valve Position Error - V-103"
+          },
+          "isActive": {
+            "booleanValue": false
+          },
+          "id": {
+            "stringValue": "ALT_H002"
+          },
+          "category": {
+            "stringValue": "Mechanical"
+          },
+          "clearedAt": {
+            "timestampValue": "2026-01-25T16:15:00Z"
+          },
+          "location": {
+            "stringValue": "Process Area 2"
+          },
+          "severity": {
+            "stringValue": "Warning"
+          }
+        }
+      }
+    },
+    "client_heartbeats": {
+      "windows_client": {
+        "__path": "client_heartbeats/windows_client",
+        "fields": {
+          "timestamp": {
+            "timestampValue": "2026-04-25T10:27:19.901Z"
+          },
+          "platform": {
+            "stringValue": "windows"
+          },
+          "status": {
+            "stringValue": "online"
+          },
+          "version": {
+            "stringValue": "1.2.0"
+          }
+        }
+      }
+    },
+    "config": {
+      "sync_settings": {
+        "__path": "config/sync_settings",
+        "fields": {
+          "offlineQueueEnabled": {
+            "booleanValue": true
+          },
+          "notificationSound": {
+            "booleanValue": true
+          },
+          "lastUpdated": {
+            "timestampValue": "2026-01-26T11:15:04.587Z"
+          },
+          "maxOfflineQueueSize": {
+            "integerValue": "1000"
+          },
+          "heartbeatInterval": {
+            "integerValue": "30000"
+          },
+          "syncInterval": {
+            "integerValue": "5000"
+          },
+          "enableNotifications": {
+            "booleanValue": true
+          }
+        }
+      }
+    },
+    "device_tokens": {
+      "c6afYTIjV1a1_VjifVLADl:APA91bEKZT-EiAQ1lPZqNyoshIGfnnSPfX6vZwfXHq--LdiwHT8zKB8kFi7G7mMK8lzawMawHmp61CGwxo8s5o_Pk869CmiWZgSKYn4GNFAOGldut9LMUzM": {
+        "__path": "device_tokens/c6afYTIjV1a1_VjifVLADl:APA91bEKZT-EiAQ1lPZqNyoshIGfnnSPfX6vZwfXHq--LdiwHT8zKB8kFi7G7mMK8lzawMawHmp61CGwxo8s5o_Pk869CmiWZgSKYn4GNFAOGldut9LMUzM",
+        "fields": {
+          "active": {
+            "booleanValue": true
+          },
+          "lastUpdated": {
+            "timestampValue": "2026-04-24T13:59:25.457Z"
+          },
+          "platform": {
+            "stringValue": "windows"
+          },
+          "token": {
+            "stringValue": "c6afYTIjV1a1_VjifVLADl:APA91bEKZT-EiAQ1lPZqNyoshIGfnnSPfX6vZwfXHq--LdiwHT8zKB8kFi7G7mMK8lzawMawHmp61CGwxo8s5o_Pk869CmiWZgSKYn4GNFAOGldut9LMUzM"
+          }
+        }
+      },
+      "cUcJO0FTX1xp6i7b3wVMDE:APA91bEfclizJRmVAP-6fAYr7HMT1S9qEFlZuJ2oNRLiAdzQmzm2FbOJxze4kWRE9KXApJiCQ5U6pCeVSFRkb531sYconFAABMp9iNP9FstD7lPyVgovgw8": {
+        "__path": "device_tokens/cUcJO0FTX1xp6i7b3wVMDE:APA91bEfclizJRmVAP-6fAYr7HMT1S9qEFlZuJ2oNRLiAdzQmzm2FbOJxze4kWRE9KXApJiCQ5U6pCeVSFRkb531sYconFAABMp9iNP9FstD7lPyVgovgw8",
+        "fields": {
+          "active": {
+            "booleanValue": true
+          },
+          "platform": {
+            "stringValue": "windows"
+          },
+          "lastUpdated": {
+            "timestampValue": "2026-03-30T19:07:25.651Z"
+          },
+          "token": {
+            "stringValue": "cUcJO0FTX1xp6i7b3wVMDE:APA91bEfclizJRmVAP-6fAYr7HMT1S9qEFlZuJ2oNRLiAdzQmzm2FbOJxze4kWRE9KXApJiCQ5U6pCeVSFRkb531sYconFAABMp9iNP9FstD7lPyVgovgw8"
+          }
+        }
+      },
+      "c_5fLdUbYCfQCXqpx7kudX:APA91bFF96MFEjmyv8RH1gPVFnxzpNIW8KEiQ7TwEXfXZwaucMpxovjLuwYB1baeQ7guhixNvCOjTS9YyRoBV2ukEZxNHHh0IvV4Nw66GynxOqctCi3sdqU": {
+        "__path": "device_tokens/c_5fLdUbYCfQCXqpx7kudX:APA91bFF96MFEjmyv8RH1gPVFnxzpNIW8KEiQ7TwEXfXZwaucMpxovjLuwYB1baeQ7guhixNvCOjTS9YyRoBV2ukEZxNHHh0IvV4Nw66GynxOqctCi3sdqU",
+        "fields": {
+          "active": {
+            "booleanValue": true
+          },
+          "token": {
+            "stringValue": "c_5fLdUbYCfQCXqpx7kudX:APA91bFF96MFEjmyv8RH1gPVFnxzpNIW8KEiQ7TwEXfXZwaucMpxovjLuwYB1baeQ7guhixNvCOjTS9YyRoBV2ukEZxNHHh0IvV4Nw66GynxOqctCi3sdqU"
+          },
+          "lastUpdated": {
+            "timestampValue": "2026-04-01T20:00:36.413Z"
+          },
+          "platform": {
+            "stringValue": "windows"
+          }
+        }
+      },
+      "dJzN0STTRVubjUiJY312TZ:APA91bEcZamBFj9mGAimV8Hrig3nhNYAPBaPWJGL75HGl2MERJWIS9YVH2Sdh1FWr1TWP7ctWRDDbGL07mVtJpXJ1qWlubvSmAk8oXVZekD8suyu11wOFX0": {
+        "__path": "device_tokens/dJzN0STTRVubjUiJY312TZ:APA91bEcZamBFj9mGAimV8Hrig3nhNYAPBaPWJGL75HGl2MERJWIS9YVH2Sdh1FWr1TWP7ctWRDDbGL07mVtJpXJ1qWlubvSmAk8oXVZekD8suyu11wOFX0",
+        "fields": {
+          "token": {
+            "stringValue": "dJzN0STTRVubjUiJY312TZ:APA91bEcZamBFj9mGAimV8Hrig3nhNYAPBaPWJGL75HGl2MERJWIS9YVH2Sdh1FWr1TWP7ctWRDDbGL07mVtJpXJ1qWlubvSmAk8oXVZekD8suyu11wOFX0"
+          },
+          "platform": {
+            "stringValue": "windows"
+          },
+          "lastUpdated": {
+            "timestampValue": "2026-04-24T14:01:51.497Z"
+          },
+          "active": {
+            "booleanValue": true
+          }
+        }
+      },
+      "dWuk3iKKfH_RQ8JzSzjDRj:APA91bHO9Bd5M3FSmT71Pv5nFVg-SN0zxrshrNEiBfK04uFyQ23x4m2MVgx480oVQ0yB7wvG88UTxQBCbQl-gLnuayfGXsOg4ASy0qAkE9H0ru1d3yuww4c": {
+        "__path": "device_tokens/dWuk3iKKfH_RQ8JzSzjDRj:APA91bHO9Bd5M3FSmT71Pv5nFVg-SN0zxrshrNEiBfK04uFyQ23x4m2MVgx480oVQ0yB7wvG88UTxQBCbQl-gLnuayfGXsOg4ASy0qAkE9H0ru1d3yuww4c",
+        "fields": {
+          "active": {
+            "booleanValue": true
+          },
+          "token": {
+            "stringValue": "dWuk3iKKfH_RQ8JzSzjDRj:APA91bHO9Bd5M3FSmT71Pv5nFVg-SN0zxrshrNEiBfK04uFyQ23x4m2MVgx480oVQ0yB7wvG88UTxQBCbQl-gLnuayfGXsOg4ASy0qAkE9H0ru1d3yuww4c"
+          },
+          "platform": {
+            "stringValue": "windows"
+          },
+          "lastUpdated": {
+            "timestampValue": "2026-04-01T19:56:08.893Z"
+          }
+        }
+      },
+      "d_vHyuiuSDmK1yGTKW-_4a:APA91bHeIbZu2DATnoOvogNP9W2nim8Ie7XrbM_A73NX5m68OLnCeDZj0ME-54ThVi3nLvmctIDpQWc4fucnImiTQYUMSYPQVhidRZ8mCA4qxW2UyDL1P8g": {
+        "__path": "device_tokens/d_vHyuiuSDmK1yGTKW-_4a:APA91bHeIbZu2DATnoOvogNP9W2nim8Ie7XrbM_A73NX5m68OLnCeDZj0ME-54ThVi3nLvmctIDpQWc4fucnImiTQYUMSYPQVhidRZ8mCA4qxW2UyDL1P8g",
+        "fields": {
+          "active": {
+            "booleanValue": true
+          },
+          "platform": {
+            "stringValue": "windows"
+          },
+          "lastUpdated": {
+            "timestampValue": "2026-01-26T12:24:04.983Z"
+          },
+          "token": {
+            "stringValue": "d_vHyuiuSDmK1yGTKW-_4a:APA91bHeIbZu2DATnoOvogNP9W2nim8Ie7XrbM_A73NX5m68OLnCeDZj0ME-54ThVi3nLvmctIDpQWc4fucnImiTQYUMSYPQVhidRZ8mCA4qxW2UyDL1P8g"
+          }
+        }
+      },
+      "dxkS7DOInZzRKpM24ZODEh:APA91bHnDCc3OA4u7FVR4ihI0_vnigbnVehPF17-rRCJlq3w_-MWLJSRrNpuogmI-t7fIWZd8xqMWlkCjyGjsdq0X2aJ5fprlVsSIGuO6nRayxCK2rTd8GQ": {
+        "__path": "device_tokens/dxkS7DOInZzRKpM24ZODEh:APA91bHnDCc3OA4u7FVR4ihI0_vnigbnVehPF17-rRCJlq3w_-MWLJSRrNpuogmI-t7fIWZd8xqMWlkCjyGjsdq0X2aJ5fprlVsSIGuO6nRayxCK2rTd8GQ",
+        "fields": {
+          "token": {
+            "stringValue": "dxkS7DOInZzRKpM24ZODEh:APA91bHnDCc3OA4u7FVR4ihI0_vnigbnVehPF17-rRCJlq3w_-MWLJSRrNpuogmI-t7fIWZd8xqMWlkCjyGjsdq0X2aJ5fprlVsSIGuO6nRayxCK2rTd8GQ"
+          },
+          "lastUpdated": {
+            "timestampValue": "2026-04-05T06:52:31.138Z"
+          },
+          "platform": {
+            "stringValue": "windows"
+          },
+          "active": {
+            "booleanValue": true
+          }
+        }
+      },
+      "eoM1eb1Cngd9ojcbOSZKJH:APA91bElUyqRmdDmR9KQZlcPVKpE1DaRK5iqaEBDjOmi8QMiv6tjFUo0BinzrvW5MEYIdRkj4E4Y7k4vrKnX6npKs5JRhcJD7epzqUqb5WYK_Oz8He7lLTU": {
+        "__path": "device_tokens/eoM1eb1Cngd9ojcbOSZKJH:APA91bElUyqRmdDmR9KQZlcPVKpE1DaRK5iqaEBDjOmi8QMiv6tjFUo0BinzrvW5MEYIdRkj4E4Y7k4vrKnX6npKs5JRhcJD7epzqUqb5WYK_Oz8He7lLTU",
+        "fields": {
+          "active": {
+            "booleanValue": true
+          },
+          "lastUpdated": {
+            "timestampValue": "2026-04-25T10:12:19.435Z"
+          },
+          "platform": {
+            "stringValue": "windows"
+          },
+          "token": {
+            "stringValue": "eoM1eb1Cngd9ojcbOSZKJH:APA91bElUyqRmdDmR9KQZlcPVKpE1DaRK5iqaEBDjOmi8QMiv6tjFUo0BinzrvW5MEYIdRkj4E4Y7k4vrKnX6npKs5JRhcJD7epzqUqb5WYK_Oz8He7lLTU"
+          }
+        }
+      },
+      "f94G7Bzcx9QZxyhS1hH9cw:APA91bF577D2tMKUQEN5ZpI3JOARSUG-pZ0jpMyySBvtYrdTH1DfvAma_J-WyDeg_3DFmznMTB-uT9dpeB13nMZSwspCbca8J3-_jlDULeTCjG7eCSp6rwk": {
+        "__path": "device_tokens/f94G7Bzcx9QZxyhS1hH9cw:APA91bF577D2tMKUQEN5ZpI3JOARSUG-pZ0jpMyySBvtYrdTH1DfvAma_J-WyDeg_3DFmznMTB-uT9dpeB13nMZSwspCbca8J3-_jlDULeTCjG7eCSp6rwk",
+        "fields": {
+          "lastUpdated": {
+            "timestampValue": "2026-04-24T21:21:57.652Z"
+          },
+          "platform": {
+            "stringValue": "windows"
+          },
+          "token": {
+            "stringValue": "f94G7Bzcx9QZxyhS1hH9cw:APA91bF577D2tMKUQEN5ZpI3JOARSUG-pZ0jpMyySBvtYrdTH1DfvAma_J-WyDeg_3DFmznMTB-uT9dpeB13nMZSwspCbca8J3-_jlDULeTCjG7eCSp6rwk"
+          },
+          "active": {
+            "booleanValue": true
+          }
+        }
+      },
+      "fIqw1UTm88vzWsPSOJMU7c:APA91bFY-31pQaeEW2VeVrFZWT2uyx92MLBSzoLCirmuZT7f0rTWh_68ALIf8WlRtvqfwwNivVp_ntgXEeM1iQadBh8_EVRzZ1zK3fX4YcPAxBgtf_6LHuY": {
+        "__path": "device_tokens/fIqw1UTm88vzWsPSOJMU7c:APA91bFY-31pQaeEW2VeVrFZWT2uyx92MLBSzoLCirmuZT7f0rTWh_68ALIf8WlRtvqfwwNivVp_ntgXEeM1iQadBh8_EVRzZ1zK3fX4YcPAxBgtf_6LHuY",
+        "fields": {
+          "platform": {
+            "stringValue": "windows"
+          },
+          "lastUpdated": {
+            "timestampValue": "2026-04-24T12:24:20.331Z"
+          },
+          "token": {
+            "stringValue": "fIqw1UTm88vzWsPSOJMU7c:APA91bFY-31pQaeEW2VeVrFZWT2uyx92MLBSzoLCirmuZT7f0rTWh_68ALIf8WlRtvqfwwNivVp_ntgXEeM1iQadBh8_EVRzZ1zK3fX4YcPAxBgtf_6LHuY"
+          },
+          "active": {
+            "booleanValue": true
+          }
+        }
+      },
+      "fnPDplJUdwW3P0ZwPO4f7H:APA91bEZTgY6Qnlv9bQA5tgYRl5bJVPJUdVcBcufez-U3DXWqSyFvo92zGS1upBn7yZGkvvxysXjpkc1jmLjKI5W8b9uNzhF8LKjNuVTKgr0jYvUpZRhq2Q": {
+        "__path": "device_tokens/fnPDplJUdwW3P0ZwPO4f7H:APA91bEZTgY6Qnlv9bQA5tgYRl5bJVPJUdVcBcufez-U3DXWqSyFvo92zGS1upBn7yZGkvvxysXjpkc1jmLjKI5W8b9uNzhF8LKjNuVTKgr0jYvUpZRhq2Q",
+        "fields": {
+          "token": {
+            "stringValue": "fnPDplJUdwW3P0ZwPO4f7H:APA91bEZTgY6Qnlv9bQA5tgYRl5bJVPJUdVcBcufez-U3DXWqSyFvo92zGS1upBn7yZGkvvxysXjpkc1jmLjKI5W8b9uNzhF8LKjNuVTKgr0jYvUpZRhq2Q"
+          },
+          "lastUpdated": {
+            "timestampValue": "2026-03-30T18:02:44.754Z"
+          },
+          "platform": {
+            "stringValue": "windows"
+          },
+          "active": {
+            "booleanValue": true
+          }
+        }
+      }
+    },
+    "statistics": {
+      "overview": {
+        "__path": "statistics/overview",
+        "fields": {
+          "acknowledgedAlerts": {
+            "integerValue": "1"
+          },
+          "criticalAlerts": {
+            "integerValue": "1"
+          },
+          "totalCleared24h": {
+            "integerValue": "2"
+          },
+          "lastUpdated": {
+            "timestampValue": "2026-01-26T11:15:03.473Z"
+          },
+          "totalAlerts": {
+            "integerValue": "5"
+          }
+        }
+      }
+    },
+    "system_status": {
+      "Alert Engine": {
+        "__path": "system_status/Alert Engine",
+        "fields": {
+          "status": {
+            "stringValue": "Online"
+          },
+          "metadata": {
+            "mapValue": {
+              "fields": {
+                "processingTime": {
+                  "stringValue": "15ms"
+                },
+                "rulesLoaded": {
+                  "integerValue": "48"
+                },
+                "alertsGenerated": {
+                  "integerValue": "127"
+                }
+              }
+            }
+          },
+          "lastHeartbeat": {
+            "timestampValue": "2026-01-26T11:15:01.705Z"
+          },
+          "version": {
+            "stringValue": "1.0.3"
+          },
+          "componentName": {
+            "stringValue": "Alert Engine"
+          }
+        }
+      },
+      "Database Server": {
+        "__path": "system_status/Database Server",
+        "fields": {
+          "componentName": {
+            "stringValue": "Database Server"
+          },
+          "version": {
+            "stringValue": "SQLite 3.41.0"
+          },
+          "lastHeartbeat": {
+            "timestampValue": "2026-01-26T11:15:01.705Z"
+          },
+          "status": {
+            "stringValue": "Online"
+          },
+          "metadata": {
+            "mapValue": {
+              "fields": {
+                "size": {
+                  "stringValue": "45.2 MB"
+                },
+                "lastBackup": {
+                  "timestampValue": "2026-01-26T02:00:00Z"
+                },
+                "activeConnections": {
+                  "integerValue": "2"
+                }
+              }
+            }
+          }
+        }
+      },
+      "Notification Service": {
+        "__path": "system_status/Notification Service",
+        "fields": {
+          "lastHeartbeat": {
+            "timestampValue": "2026-01-26T11:15:01.705Z"
+          },
+          "metadata": {
+            "mapValue": {
+              "fields": {
+                "notificationsSent": {
+                  "integerValue": "89"
+                },
+                "fcmTokens": {
+                  "integerValue": "5"
+                },
+                "deliveryRate": {
+                  "stringValue": "98.9%"
+                }
+              }
+            }
+          },
+          "status": {
+            "stringValue": "Online"
+          },
+          "componentName": {
+            "stringValue": "Notification Service"
+          },
+          "version": {
+            "stringValue": "1.1.2"
+          }
+        }
+      },
+      "OPC UA Server": {
+        "__path": "system_status/OPC UA Server",
+        "fields": {}
+      },
+      "Windows Sync Service": {
+        "__path": "system_status/Windows Sync Service",
+        "fields": {
+          "componentName": {
+            "stringValue": "Windows Sync Service"
+          },
+          "version": {
+            "stringValue": "1.2.0"
+          },
+          "lastHeartbeat": {
+            "timestampValue": "2026-01-26T11:15:01.704Z"
+          },
+          "status": {
+            "stringValue": "Online"
+          },
+          "metadata": {
+            "mapValue": {
+              "fields": {
+                "uptime": {
+                  "stringValue": "24:15:30"
+                },
+                "alertsProcessed": {
+                  "integerValue": "1247"
+                },
+                "syncedToCloud": {
+                  "integerValue": "1247"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

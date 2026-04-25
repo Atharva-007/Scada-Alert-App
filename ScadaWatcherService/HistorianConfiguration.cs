@@ -14,12 +14,11 @@ public class HistorianConfiguration
     public bool Enabled { get; set; } = true;
 
     /// <summary>
-    /// Full path to the SQLite database file.
+    /// Path to the SQLite database file.
+    /// Relative paths are resolved from the deployed service folder.
     /// Directory will be created automatically if it does not exist.
-    /// Example: "C:\\SCADA\\Data\\historian.db"
-    /// Recommended: Use dedicated data partition with sufficient space.
     /// </summary>
-    public string DatabasePath { get; set; } = "C:\\SCADA\\Data\\historian.db";
+    public string DatabasePath { get; set; } = "runtime\\historian\\historian.db";
 
     /// <summary>
     /// Number of data points to batch before writing to database.
@@ -108,4 +107,6 @@ public class HistorianConfiguration
     /// Disable in production if log volume is too high.
     /// </summary>
     public bool VerboseLogging { get; set; } = false;
+
+    public string ResolveDatabasePath() => ServicePathResolver.ResolvePath(DatabasePath);
 }

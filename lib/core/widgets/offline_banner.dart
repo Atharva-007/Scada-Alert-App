@@ -9,20 +9,20 @@ class OfflineBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (isOnline) return SizedBox.shrink();
+    if (isOnline) return const SizedBox.shrink();
 
     return Material(
       color: Colors.transparent,
       child: Container(
         width: double.infinity,
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
           color: AppTheme.warningColor,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.2),
+              color: Colors.black.withValues(alpha: 0.2),
               blurRadius: 8,
-              offset: Offset(0, 2),
+              offset: const Offset(0, 2),
             ),
           ],
         ),
@@ -30,14 +30,14 @@ class OfflineBanner extends StatelessWidget {
           bottom: false,
           child: Row(
             children: [
-              Icon(Icons.cloud_off, color: Colors.white, size: 20),
-              SizedBox(width: 12),
+              const Icon(Icons.cloud_off, color: Colors.white, size: 20),
+              const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
+                    const Text(
                       'Offline Mode',
                       style: TextStyle(
                         fontSize: 14,
@@ -45,29 +45,32 @@ class OfflineBanner extends StatelessWidget {
                         color: Colors.white,
                       ),
                     ),
-                    SizedBox(height: 2),
+                    const SizedBox(height: 2),
                     Text(
                       'Showing cached data. Acknowledgements disabled.',
                       style: TextStyle(
                         fontSize: 11,
-                        color: Colors.white.withOpacity(0.9),
+                        color: Colors.white.withValues(alpha: 0.9),
                       ),
                     ),
                   ],
                 ),
               ),
               if (onRetry != null) ...[
-                SizedBox(width: 12),
+                const SizedBox(width: 12),
                 TextButton(
                   onPressed: onRetry,
                   style: TextButton.styleFrom(
                     foregroundColor: Colors.white,
-                    backgroundColor: Colors.white.withOpacity(0.2),
-                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    minimumSize: Size(0, 0),
+                    backgroundColor: Colors.white.withValues(alpha: 0.2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    minimumSize: const Size(0, 0),
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   ),
-                  child: Text(
+                  child: const Text(
                     'Retry',
                     style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                   ),

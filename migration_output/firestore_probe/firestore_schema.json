@@ -1,0 +1,4574 @@
+{
+  "metadata": {
+    "generatedAt": "2026-04-25T10:27:55.901Z",
+    "sourceProjectId": "scadadataserver",
+    "requestedSourceProjectId": "scadadataserver",
+    "databaseId": "(default)",
+    "targetProjectId": "scadadataserver",
+    "targetDatabaseUrl": "https://scadadataserver-default-rtdb.firebaseio.com",
+    "authType": "firebase_cli",
+    "sourceProjectCandidates": [
+      "scadadataserver",
+      "alert-systems-db"
+    ],
+    "accessibleProjectsViaCli": [],
+    "baselineMonthDay": "01-26",
+    "baselineTimezone": "UTC",
+    "warnings": [],
+    "projectResolutionErrors": [],
+    "totalDocuments": 26,
+    "totalCollections": 7,
+    "baselineDocuments": 11,
+    "collectionsWithBaseline": 6
+  },
+  "collections": {
+    "alerts_active": {
+      "collectionId": "alerts_active",
+      "pathPattern": "alerts_active",
+      "documentCount": 2,
+      "baselineDocumentCount": 2,
+      "baselineMonthDay": "01-26",
+      "baselineTimezone": "UTC",
+      "baselineAvailable": true,
+      "sampleDocumentIds": [
+        "ALT004",
+        "ALT005"
+      ],
+      "sampleDocumentPaths": [
+        "alerts_active/ALT004",
+        "alerts_active/ALT005"
+      ],
+      "subcollectionPatterns": [],
+      "repeatedStructures": [
+        {
+          "occurrences": 1,
+          "signature": "acknowledgedAt:timestamp,acknowledgedBy:string,acknowledgedComment:string,approvalStatus:string,approvedAt:timestamp,approvedBy:string,category:string,equipment:string,id:string,isAcknowledged:boolean,isActive:boolean,location:string,message:string,priority:integer,raisedAt:timestamp,severity:string,status:string,title:string"
+        },
+        {
+          "occurrences": 1,
+          "signature": "acknowledged:boolean,acknowledgedAt:timestamp,acknowledgedBy:string,acknowledgement_detail:string,approvalStatus:string,approvedAt:timestamp,approvedBy:string,category:string,equipment:string,id:string,isAcknowledged:boolean,isActive:boolean,location:string,message:string,priority:integer,raisedAt:timestamp,severity:string,status:string,title:string,unit:string,value:integer"
+        }
+      ],
+      "timestampFieldsObserved": {
+        "raisedAt": 2
+      },
+      "baselineTimestampFieldsObserved": {
+        "raisedAt": 2
+      },
+      "fields": {
+        "full": {
+          "acknowledged": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.5,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "boolean": 1
+            },
+            "constraints": {},
+            "sampleValues": [
+              true
+            ]
+          },
+          "acknowledgedAt": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 2,
+            "nullCount": 0,
+            "kinds": {
+              "timestamp": 2
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 24,
+                "max": 24
+              }
+            },
+            "sampleValues": [
+              "2026-04-24T07:43:53.019Z",
+              "2026-04-24T07:36:24.094Z"
+            ]
+          },
+          "acknowledgedBy": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 2,
+            "nullCount": 0,
+            "kinds": {
+              "string": 2
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 14,
+                "max": 14
+              }
+            },
+            "sampleValues": [
+              "Supervisor-App"
+            ]
+          },
+          "acknowledgedComment": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.5,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "string": 1
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 0,
+                "max": 0
+              }
+            },
+            "sampleValues": [
+              ""
+            ]
+          },
+          "acknowledgement_detail": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.5,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "string": 1
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 0,
+                "max": 0
+              }
+            },
+            "sampleValues": [
+              ""
+            ]
+          },
+          "approvalStatus": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 2,
+            "nullCount": 0,
+            "kinds": {
+              "string": 2
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 8,
+                "max": 8
+              }
+            },
+            "sampleValues": [
+              "approved"
+            ]
+          },
+          "approvedAt": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 2,
+            "nullCount": 0,
+            "kinds": {
+              "timestamp": 2
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 24,
+                "max": 24
+              }
+            },
+            "sampleValues": [
+              "2026-04-24T07:43:59.774Z",
+              "2026-04-24T07:36:29.007Z"
+            ]
+          },
+          "approvedBy": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 2,
+            "nullCount": 0,
+            "kinds": {
+              "string": 2
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 14,
+                "max": 14
+              }
+            },
+            "sampleValues": [
+              "Supervisor-App"
+            ]
+          },
+          "category": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 2,
+            "nullCount": 0,
+            "kinds": {
+              "string": 2
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 6,
+                "max": 13
+              }
+            },
+            "sampleValues": [
+              "Communication",
+              "Sensor"
+            ]
+          },
+          "equipment": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 2,
+            "nullCount": 0,
+            "kinds": {
+              "string": 2
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 5,
+                "max": 6
+              }
+            },
+            "sampleValues": [
+              "PLC-5",
+              "Tank-7"
+            ]
+          },
+          "id": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 2,
+            "nullCount": 0,
+            "kinds": {
+              "string": 2
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 6,
+                "max": 6
+              }
+            },
+            "sampleValues": [
+              "ALT004",
+              "ALT005"
+            ]
+          },
+          "isAcknowledged": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 2,
+            "nullCount": 0,
+            "kinds": {
+              "boolean": 2
+            },
+            "constraints": {},
+            "sampleValues": [
+              true
+            ]
+          },
+          "isActive": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 2,
+            "nullCount": 0,
+            "kinds": {
+              "boolean": 2
+            },
+            "constraints": {},
+            "sampleValues": [
+              true
+            ]
+          },
+          "location": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 2,
+            "nullCount": 0,
+            "kinds": {
+              "string": 2
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 12,
+                "max": 15
+              }
+            },
+            "sampleValues": [
+              "Control Room",
+              "Storage Area D3"
+            ]
+          },
+          "message": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 2,
+            "nullCount": 0,
+            "kinds": {
+              "string": 2
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 34,
+                "max": 37
+              }
+            },
+            "sampleValues": [
+              "Lost communication with remote PLC",
+              "Level sensor reporting invalid values"
+            ]
+          },
+          "priority": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 2,
+            "nullCount": 0,
+            "kinds": {
+              "integer": 2
+            },
+            "constraints": {
+              "numericRange": {
+                "min": 1,
+                "max": 1
+              }
+            },
+            "sampleValues": [
+              "1"
+            ]
+          },
+          "raisedAt": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 2,
+            "nullCount": 0,
+            "kinds": {
+              "timestamp": 2
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 20,
+                "max": 20
+              }
+            },
+            "sampleValues": [
+              "2026-01-26T10:25:00Z",
+              "2026-01-26T10:30:00Z"
+            ]
+          },
+          "severity": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 2,
+            "nullCount": 0,
+            "kinds": {
+              "string": 2
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 4,
+                "max": 4
+              }
+            },
+            "sampleValues": [
+              "High"
+            ]
+          },
+          "status": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 2,
+            "nullCount": 0,
+            "kinds": {
+              "string": 2
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 6,
+                "max": 8
+              }
+            },
+            "sampleValues": [
+              "Approved",
+              "Active"
+            ]
+          },
+          "title": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 2,
+            "nullCount": 0,
+            "kinds": {
+              "string": 2
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 27,
+                "max": 29
+              }
+            },
+            "sampleValues": [
+              "Communication Error - PLC 5",
+              "Level Sensor Failure - Tank 7"
+            ]
+          },
+          "unit": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.5,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "string": 1
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 1,
+                "max": 1
+              }
+            },
+            "sampleValues": [
+              "%"
+            ]
+          },
+          "value": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.5,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "integer": 1
+            },
+            "constraints": {
+              "numericRange": {
+                "min": -999,
+                "max": -999
+              }
+            },
+            "sampleValues": [
+              "-999"
+            ]
+          }
+        },
+        "baseline": {
+          "acknowledged": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.5,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "boolean": 1
+            },
+            "constraints": {},
+            "sampleValues": [
+              true
+            ]
+          },
+          "acknowledgedAt": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 2,
+            "nullCount": 0,
+            "kinds": {
+              "timestamp": 2
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 24,
+                "max": 24
+              }
+            },
+            "sampleValues": [
+              "2026-04-24T07:43:53.019Z",
+              "2026-04-24T07:36:24.094Z"
+            ]
+          },
+          "acknowledgedBy": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 2,
+            "nullCount": 0,
+            "kinds": {
+              "string": 2
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 14,
+                "max": 14
+              }
+            },
+            "sampleValues": [
+              "Supervisor-App"
+            ]
+          },
+          "acknowledgedComment": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.5,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "string": 1
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 0,
+                "max": 0
+              }
+            },
+            "sampleValues": [
+              ""
+            ]
+          },
+          "acknowledgement_detail": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.5,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "string": 1
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 0,
+                "max": 0
+              }
+            },
+            "sampleValues": [
+              ""
+            ]
+          },
+          "approvalStatus": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 2,
+            "nullCount": 0,
+            "kinds": {
+              "string": 2
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 8,
+                "max": 8
+              }
+            },
+            "sampleValues": [
+              "approved"
+            ]
+          },
+          "approvedAt": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 2,
+            "nullCount": 0,
+            "kinds": {
+              "timestamp": 2
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 24,
+                "max": 24
+              }
+            },
+            "sampleValues": [
+              "2026-04-24T07:43:59.774Z",
+              "2026-04-24T07:36:29.007Z"
+            ]
+          },
+          "approvedBy": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 2,
+            "nullCount": 0,
+            "kinds": {
+              "string": 2
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 14,
+                "max": 14
+              }
+            },
+            "sampleValues": [
+              "Supervisor-App"
+            ]
+          },
+          "category": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 2,
+            "nullCount": 0,
+            "kinds": {
+              "string": 2
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 6,
+                "max": 13
+              }
+            },
+            "sampleValues": [
+              "Communication",
+              "Sensor"
+            ]
+          },
+          "equipment": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 2,
+            "nullCount": 0,
+            "kinds": {
+              "string": 2
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 5,
+                "max": 6
+              }
+            },
+            "sampleValues": [
+              "PLC-5",
+              "Tank-7"
+            ]
+          },
+          "id": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 2,
+            "nullCount": 0,
+            "kinds": {
+              "string": 2
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 6,
+                "max": 6
+              }
+            },
+            "sampleValues": [
+              "ALT004",
+              "ALT005"
+            ]
+          },
+          "isAcknowledged": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 2,
+            "nullCount": 0,
+            "kinds": {
+              "boolean": 2
+            },
+            "constraints": {},
+            "sampleValues": [
+              true
+            ]
+          },
+          "isActive": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 2,
+            "nullCount": 0,
+            "kinds": {
+              "boolean": 2
+            },
+            "constraints": {},
+            "sampleValues": [
+              true
+            ]
+          },
+          "location": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 2,
+            "nullCount": 0,
+            "kinds": {
+              "string": 2
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 12,
+                "max": 15
+              }
+            },
+            "sampleValues": [
+              "Control Room",
+              "Storage Area D3"
+            ]
+          },
+          "message": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 2,
+            "nullCount": 0,
+            "kinds": {
+              "string": 2
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 34,
+                "max": 37
+              }
+            },
+            "sampleValues": [
+              "Lost communication with remote PLC",
+              "Level sensor reporting invalid values"
+            ]
+          },
+          "priority": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 2,
+            "nullCount": 0,
+            "kinds": {
+              "integer": 2
+            },
+            "constraints": {
+              "numericRange": {
+                "min": 1,
+                "max": 1
+              }
+            },
+            "sampleValues": [
+              "1"
+            ]
+          },
+          "raisedAt": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 2,
+            "nullCount": 0,
+            "kinds": {
+              "timestamp": 2
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 20,
+                "max": 20
+              }
+            },
+            "sampleValues": [
+              "2026-01-26T10:25:00Z",
+              "2026-01-26T10:30:00Z"
+            ]
+          },
+          "severity": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 2,
+            "nullCount": 0,
+            "kinds": {
+              "string": 2
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 4,
+                "max": 4
+              }
+            },
+            "sampleValues": [
+              "High"
+            ]
+          },
+          "status": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 2,
+            "nullCount": 0,
+            "kinds": {
+              "string": 2
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 6,
+                "max": 8
+              }
+            },
+            "sampleValues": [
+              "Approved",
+              "Active"
+            ]
+          },
+          "title": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 2,
+            "nullCount": 0,
+            "kinds": {
+              "string": 2
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 27,
+                "max": 29
+              }
+            },
+            "sampleValues": [
+              "Communication Error - PLC 5",
+              "Level Sensor Failure - Tank 7"
+            ]
+          },
+          "unit": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.5,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "string": 1
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 1,
+                "max": 1
+              }
+            },
+            "sampleValues": [
+              "%"
+            ]
+          },
+          "value": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.5,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "integer": 1
+            },
+            "constraints": {
+              "numericRange": {
+                "min": -999,
+                "max": -999
+              }
+            },
+            "sampleValues": [
+              "-999"
+            ]
+          }
+        }
+      },
+      "normalization": {
+        "addsBaselineFieldsFromUnion": true,
+        "defaultScalarFill": null,
+        "defaultArrayFill": [],
+        "defaultMapFill": "recursive object with baseline keys"
+      },
+      "baselineShapeSummary": {
+        "dominantKind": "map",
+        "kindCounts": {
+          "map": 2
+        },
+        "children": {
+          "acknowledged": {
+            "dominantKind": "boolean",
+            "kindCounts": {
+              "boolean": 1
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "acknowledgedAt": {
+            "dominantKind": "string",
+            "kindCounts": {
+              "string": 2
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "acknowledgedBy": {
+            "dominantKind": "string",
+            "kindCounts": {
+              "string": 2
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "acknowledgedComment": {
+            "dominantKind": "string",
+            "kindCounts": {
+              "string": 1
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "acknowledgement_detail": {
+            "dominantKind": "string",
+            "kindCounts": {
+              "string": 1
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "approvalStatus": {
+            "dominantKind": "string",
+            "kindCounts": {
+              "string": 2
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "approvedAt": {
+            "dominantKind": "string",
+            "kindCounts": {
+              "string": 2
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "approvedBy": {
+            "dominantKind": "string",
+            "kindCounts": {
+              "string": 2
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "category": {
+            "dominantKind": "string",
+            "kindCounts": {
+              "string": 2
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "equipment": {
+            "dominantKind": "string",
+            "kindCounts": {
+              "string": 2
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "id": {
+            "dominantKind": "string",
+            "kindCounts": {
+              "string": 2
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "isAcknowledged": {
+            "dominantKind": "boolean",
+            "kindCounts": {
+              "boolean": 2
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "isActive": {
+            "dominantKind": "boolean",
+            "kindCounts": {
+              "boolean": 2
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "location": {
+            "dominantKind": "string",
+            "kindCounts": {
+              "string": 2
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "message": {
+            "dominantKind": "string",
+            "kindCounts": {
+              "string": 2
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "priority": {
+            "dominantKind": "number",
+            "kindCounts": {
+              "number": 2
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "raisedAt": {
+            "dominantKind": "string",
+            "kindCounts": {
+              "string": 2
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "severity": {
+            "dominantKind": "string",
+            "kindCounts": {
+              "string": 2
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "status": {
+            "dominantKind": "string",
+            "kindCounts": {
+              "string": 2
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "title": {
+            "dominantKind": "string",
+            "kindCounts": {
+              "string": 2
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "unit": {
+            "dominantKind": "string",
+            "kindCounts": {
+              "string": 1
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "value": {
+            "dominantKind": "number",
+            "kindCounts": {
+              "number": 1
+            },
+            "children": {},
+            "arrayItem": null
+          }
+        },
+        "arrayItem": null
+      }
+    },
+    "alerts_history": {
+      "collectionId": "alerts_history",
+      "pathPattern": "alerts_history",
+      "documentCount": 5,
+      "baselineDocumentCount": 3,
+      "baselineMonthDay": "01-26",
+      "baselineTimezone": "UTC",
+      "baselineAvailable": true,
+      "sampleDocumentIds": [
+        "ALT001",
+        "ALT002",
+        "ALT003",
+        "ALT_H001",
+        "ALT_H002"
+      ],
+      "sampleDocumentPaths": [
+        "alerts_history/ALT001",
+        "alerts_history/ALT002",
+        "alerts_history/ALT003",
+        "alerts_history/ALT_H001",
+        "alerts_history/ALT_H002"
+      ],
+      "subcollectionPatterns": [],
+      "repeatedStructures": [
+        {
+          "occurrences": 3,
+          "signature": "acknowledgedAt:timestamp,acknowledgedBy:string,acknowledgedComment:null,alertType:string,approvalStatus:string,approvedAt:timestamp,approvedBy:string,clearedAt:timestamp,condition:string,currentValue:double,description:string,equipment:string,escalatedAt:null,escalationCount:integer,escalationLevel:integer,isAcknowledged:boolean,isActive:boolean,isSuppressed:boolean,lastUpdatedTime:null,location:string,name:string,notes:null,raisedAt:timestamp,rejectedAt:null,rejectedBy:null,rejectionReason:null,relatedAlertIds:[],severity:string,source:string,status:string,suppressionCount:integer,tagName:string,threshold:double,trendData:[]"
+        },
+        {
+          "occurrences": 2,
+          "signature": "acknowledgedBy:string,category:string,clearedAt:timestamp,duration:integer,equipment:string,id:string,isActive:boolean,location:string,message:string,raisedAt:timestamp,severity:string,status:string,title:string"
+        }
+      ],
+      "timestampFieldsObserved": {
+        "raisedAt": 5
+      },
+      "baselineTimestampFieldsObserved": {
+        "raisedAt": 3
+      },
+      "fields": {
+        "full": {
+          "acknowledgedAt": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.6,
+            "presentInDocuments": 3,
+            "nullCount": 0,
+            "kinds": {
+              "timestamp": 3
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 20,
+                "max": 24
+              }
+            },
+            "sampleValues": [
+              "2026-01-26T12:20:12.377Z",
+              "2026-03-29T19:50:02.684Z",
+              "2026-01-26T10:20:00Z"
+            ]
+          },
+          "acknowledgedBy": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 5,
+            "nullCount": 0,
+            "kinds": {
+              "string": 5
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 8,
+                "max": 14
+              }
+            },
+            "sampleValues": [
+              "operator_user",
+              "User-App",
+              "operator_john",
+              "operator_sarah",
+              "operator_mike"
+            ]
+          },
+          "acknowledgedComment": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.6,
+            "presentInDocuments": 3,
+            "nullCount": 3,
+            "kinds": {
+              "null": 3
+            },
+            "constraints": {},
+            "sampleValues": [
+              null
+            ]
+          },
+          "alertType": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.6,
+            "presentInDocuments": 3,
+            "nullCount": 0,
+            "kinds": {
+              "string": 3
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 4,
+                "max": 11
+              }
+            },
+            "sampleValues": [
+              "Temperature",
+              "Pressure",
+              "Flow"
+            ]
+          },
+          "approvalStatus": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.6,
+            "presentInDocuments": 3,
+            "nullCount": 0,
+            "kinds": {
+              "string": 3
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 8,
+                "max": 8
+              }
+            },
+            "sampleValues": [
+              "approved"
+            ]
+          },
+          "approvedAt": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.6,
+            "presentInDocuments": 3,
+            "nullCount": 0,
+            "kinds": {
+              "timestamp": 3
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 27,
+                "max": 27
+              }
+            },
+            "sampleValues": [
+              "2026-04-24T09:34:41.879230Z",
+              "2026-04-24T09:34:19.313369Z",
+              "2026-04-24T08:16:01.703526Z"
+            ]
+          },
+          "approvedBy": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.6,
+            "presentInDocuments": 3,
+            "nullCount": 0,
+            "kinds": {
+              "string": 3
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 14,
+                "max": 14
+              }
+            },
+            "sampleValues": [
+              "Supervisor-App"
+            ]
+          },
+          "category": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.4,
+            "presentInDocuments": 2,
+            "nullCount": 0,
+            "kinds": {
+              "string": 2
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 10,
+                "max": 10
+              }
+            },
+            "sampleValues": [
+              "Electrical",
+              "Mechanical"
+            ]
+          },
+          "clearedAt": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 5,
+            "nullCount": 0,
+            "kinds": {
+              "timestamp": 5
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 20,
+                "max": 27
+              }
+            },
+            "sampleValues": [
+              "2026-04-24T09:34:41.879230Z",
+              "2026-04-24T09:34:19.313369Z",
+              "2026-04-24T08:16:01.703526Z",
+              "2026-01-25T14:30:00Z",
+              "2026-01-25T16:15:00Z"
+            ]
+          },
+          "condition": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.6,
+            "presentInDocuments": 3,
+            "nullCount": 0,
+            "kinds": {
+              "string": 3
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 4,
+                "max": 11
+              }
+            },
+            "sampleValues": [
+              "Temperature",
+              "Pressure",
+              "Flow"
+            ]
+          },
+          "currentValue": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.6,
+            "presentInDocuments": 3,
+            "nullCount": 0,
+            "kinds": {
+              "double": 3
+            },
+            "constraints": {
+              "numericRange": {
+                "min": 45,
+                "max": 185.5
+              }
+            },
+            "sampleValues": [
+              185.5,
+              95.2,
+              45
+            ]
+          },
+          "description": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.6,
+            "presentInDocuments": 3,
+            "nullCount": 0,
+            "kinds": {
+              "string": 3
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 32,
+                "max": 42
+              }
+            },
+            "sampleValues": [
+              "Temperature exceeds normal operating range",
+              "Pressure reading outside acceptable limits",
+              "Flow rate below minimum required"
+            ]
+          },
+          "duration": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.4,
+            "presentInDocuments": 2,
+            "nullCount": 0,
+            "kinds": {
+              "integer": 2
+            },
+            "constraints": {
+              "numericRange": {
+                "min": 900,
+                "max": 1800
+              }
+            },
+            "sampleValues": [
+              "1800",
+              "900"
+            ]
+          },
+          "equipment": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 5,
+            "nullCount": 0,
+            "kinds": {
+              "string": 5
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 6,
+                "max": 10
+              }
+            },
+            "sampleValues": [
+              "Reactor-1",
+              "Tank-3",
+              "Pump-2",
+              "Conveyor-1",
+              "Valve-103"
+            ]
+          },
+          "escalatedAt": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.6,
+            "presentInDocuments": 3,
+            "nullCount": 3,
+            "kinds": {
+              "null": 3
+            },
+            "constraints": {},
+            "sampleValues": [
+              null
+            ]
+          },
+          "escalationCount": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.6,
+            "presentInDocuments": 3,
+            "nullCount": 0,
+            "kinds": {
+              "integer": 3
+            },
+            "constraints": {
+              "numericRange": {
+                "min": 0,
+                "max": 0
+              }
+            },
+            "sampleValues": [
+              "0"
+            ]
+          },
+          "escalationLevel": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.6,
+            "presentInDocuments": 3,
+            "nullCount": 0,
+            "kinds": {
+              "integer": 3
+            },
+            "constraints": {
+              "numericRange": {
+                "min": 1,
+                "max": 2
+              }
+            },
+            "sampleValues": [
+              "1",
+              "2"
+            ]
+          },
+          "id": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.4,
+            "presentInDocuments": 2,
+            "nullCount": 0,
+            "kinds": {
+              "string": 2
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 8,
+                "max": 8
+              }
+            },
+            "sampleValues": [
+              "ALT_H001",
+              "ALT_H002"
+            ]
+          },
+          "isAcknowledged": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.6,
+            "presentInDocuments": 3,
+            "nullCount": 0,
+            "kinds": {
+              "boolean": 3
+            },
+            "constraints": {},
+            "sampleValues": [
+              true
+            ]
+          },
+          "isActive": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 5,
+            "nullCount": 0,
+            "kinds": {
+              "boolean": 5
+            },
+            "constraints": {},
+            "sampleValues": [
+              false
+            ]
+          },
+          "isSuppressed": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.6,
+            "presentInDocuments": 3,
+            "nullCount": 0,
+            "kinds": {
+              "boolean": 3
+            },
+            "constraints": {},
+            "sampleValues": [
+              false
+            ]
+          },
+          "lastUpdatedTime": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.6,
+            "presentInDocuments": 3,
+            "nullCount": 3,
+            "kinds": {
+              "null": 3
+            },
+            "constraints": {},
+            "sampleValues": [
+              null
+            ]
+          },
+          "location": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 5,
+            "nullCount": 0,
+            "kinds": {
+              "string": 5
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 14,
+                "max": 17
+              }
+            },
+            "sampleValues": [
+              "Reactor Area A1",
+              "Storage Area B2",
+              "Pump Station C1",
+              "Production Line 1",
+              "Process Area 2"
+            ]
+          },
+          "message": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.4,
+            "presentInDocuments": 2,
+            "nullCount": 0,
+            "kinds": {
+              "string": 2
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 37,
+                "max": 40
+              }
+            },
+            "sampleValues": [
+              "Motor current exceeded rated capacity",
+              "Valve failed to reach commanded position"
+            ]
+          },
+          "name": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.6,
+            "presentInDocuments": 3,
+            "nullCount": 0,
+            "kinds": {
+              "string": 3
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 22,
+                "max": 34
+              }
+            },
+            "sampleValues": [
+              "High Temperature Alert - Reactor 1",
+              "Pressure Anomaly - Tank 3",
+              "Flow Rate Low - Pump 2"
+            ]
+          },
+          "notes": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.6,
+            "presentInDocuments": 3,
+            "nullCount": 3,
+            "kinds": {
+              "null": 3
+            },
+            "constraints": {},
+            "sampleValues": [
+              null
+            ]
+          },
+          "raisedAt": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 5,
+            "nullCount": 0,
+            "kinds": {
+              "timestamp": 5
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 20,
+                "max": 20
+              }
+            },
+            "sampleValues": [
+              "2026-01-26T10:00:00Z",
+              "2026-01-26T10:15:00Z",
+              "2026-01-26T10:10:00Z",
+              "2026-01-25T14:00:00Z",
+              "2026-01-25T16:00:00Z"
+            ]
+          },
+          "rejectedAt": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.6,
+            "presentInDocuments": 3,
+            "nullCount": 3,
+            "kinds": {
+              "null": 3
+            },
+            "constraints": {},
+            "sampleValues": [
+              null
+            ]
+          },
+          "rejectedBy": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.6,
+            "presentInDocuments": 3,
+            "nullCount": 3,
+            "kinds": {
+              "null": 3
+            },
+            "constraints": {},
+            "sampleValues": [
+              null
+            ]
+          },
+          "rejectionReason": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.6,
+            "presentInDocuments": 3,
+            "nullCount": 3,
+            "kinds": {
+              "null": 3
+            },
+            "constraints": {},
+            "sampleValues": [
+              null
+            ]
+          },
+          "relatedAlertIds": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.6,
+            "presentInDocuments": 3,
+            "nullCount": 0,
+            "kinds": {
+              "array": 3
+            },
+            "constraints": {
+              "arrayLengthRange": {
+                "min": 0,
+                "max": 0
+              }
+            },
+            "sampleValues": [
+              "<array:0>"
+            ]
+          },
+          "severity": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 5,
+            "nullCount": 0,
+            "kinds": {
+              "string": 5
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 7,
+                "max": 8
+              }
+            },
+            "sampleValues": [
+              "Critical",
+              "Warning"
+            ]
+          },
+          "source": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.6,
+            "presentInDocuments": 3,
+            "nullCount": 0,
+            "kinds": {
+              "string": 3
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 6,
+                "max": 9
+              }
+            },
+            "sampleValues": [
+              "Reactor-1",
+              "Tank-3",
+              "Pump-2"
+            ]
+          },
+          "status": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 5,
+            "nullCount": 0,
+            "kinds": {
+              "string": 5
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 7,
+                "max": 8
+              }
+            },
+            "sampleValues": [
+              "approved",
+              "Approved",
+              "Cleared"
+            ]
+          },
+          "suppressionCount": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.6,
+            "presentInDocuments": 3,
+            "nullCount": 0,
+            "kinds": {
+              "integer": 3
+            },
+            "constraints": {
+              "numericRange": {
+                "min": 0,
+                "max": 0
+              }
+            },
+            "sampleValues": [
+              "0"
+            ]
+          },
+          "tagName": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.6,
+            "presentInDocuments": 3,
+            "nullCount": 0,
+            "kinds": {
+              "string": 3
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 6,
+                "max": 9
+              }
+            },
+            "sampleValues": [
+              "Reactor-1",
+              "Tank-3",
+              "Pump-2"
+            ]
+          },
+          "threshold": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.6,
+            "presentInDocuments": 3,
+            "nullCount": 0,
+            "kinds": {
+              "double": 3
+            },
+            "constraints": {
+              "numericRange": {
+                "min": 50,
+                "max": 150
+              }
+            },
+            "sampleValues": [
+              150,
+              100,
+              50
+            ]
+          },
+          "title": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.4,
+            "presentInDocuments": 2,
+            "nullCount": 0,
+            "kinds": {
+              "string": 2
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 27,
+                "max": 28
+              }
+            },
+            "sampleValues": [
+              "Motor Overload - Conveyor 1",
+              "Valve Position Error - V-103"
+            ]
+          },
+          "trendData": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.6,
+            "presentInDocuments": 3,
+            "nullCount": 0,
+            "kinds": {
+              "array": 3
+            },
+            "constraints": {
+              "arrayLengthRange": {
+                "min": 0,
+                "max": 0
+              }
+            },
+            "sampleValues": [
+              "<array:0>"
+            ]
+          }
+        },
+        "baseline": {
+          "acknowledgedAt": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 3,
+            "nullCount": 0,
+            "kinds": {
+              "timestamp": 3
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 20,
+                "max": 24
+              }
+            },
+            "sampleValues": [
+              "2026-01-26T12:20:12.377Z",
+              "2026-03-29T19:50:02.684Z",
+              "2026-01-26T10:20:00Z"
+            ]
+          },
+          "acknowledgedBy": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 3,
+            "nullCount": 0,
+            "kinds": {
+              "string": 3
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 8,
+                "max": 13
+              }
+            },
+            "sampleValues": [
+              "operator_user",
+              "User-App",
+              "operator_john"
+            ]
+          },
+          "acknowledgedComment": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 3,
+            "nullCount": 3,
+            "kinds": {
+              "null": 3
+            },
+            "constraints": {},
+            "sampleValues": [
+              null
+            ]
+          },
+          "alertType": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 3,
+            "nullCount": 0,
+            "kinds": {
+              "string": 3
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 4,
+                "max": 11
+              }
+            },
+            "sampleValues": [
+              "Temperature",
+              "Pressure",
+              "Flow"
+            ]
+          },
+          "approvalStatus": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 3,
+            "nullCount": 0,
+            "kinds": {
+              "string": 3
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 8,
+                "max": 8
+              }
+            },
+            "sampleValues": [
+              "approved"
+            ]
+          },
+          "approvedAt": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 3,
+            "nullCount": 0,
+            "kinds": {
+              "timestamp": 3
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 27,
+                "max": 27
+              }
+            },
+            "sampleValues": [
+              "2026-04-24T09:34:41.879230Z",
+              "2026-04-24T09:34:19.313369Z",
+              "2026-04-24T08:16:01.703526Z"
+            ]
+          },
+          "approvedBy": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 3,
+            "nullCount": 0,
+            "kinds": {
+              "string": 3
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 14,
+                "max": 14
+              }
+            },
+            "sampleValues": [
+              "Supervisor-App"
+            ]
+          },
+          "clearedAt": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 3,
+            "nullCount": 0,
+            "kinds": {
+              "timestamp": 3
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 27,
+                "max": 27
+              }
+            },
+            "sampleValues": [
+              "2026-04-24T09:34:41.879230Z",
+              "2026-04-24T09:34:19.313369Z",
+              "2026-04-24T08:16:01.703526Z"
+            ]
+          },
+          "condition": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 3,
+            "nullCount": 0,
+            "kinds": {
+              "string": 3
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 4,
+                "max": 11
+              }
+            },
+            "sampleValues": [
+              "Temperature",
+              "Pressure",
+              "Flow"
+            ]
+          },
+          "currentValue": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 3,
+            "nullCount": 0,
+            "kinds": {
+              "double": 3
+            },
+            "constraints": {
+              "numericRange": {
+                "min": 45,
+                "max": 185.5
+              }
+            },
+            "sampleValues": [
+              185.5,
+              95.2,
+              45
+            ]
+          },
+          "description": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 3,
+            "nullCount": 0,
+            "kinds": {
+              "string": 3
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 32,
+                "max": 42
+              }
+            },
+            "sampleValues": [
+              "Temperature exceeds normal operating range",
+              "Pressure reading outside acceptable limits",
+              "Flow rate below minimum required"
+            ]
+          },
+          "equipment": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 3,
+            "nullCount": 0,
+            "kinds": {
+              "string": 3
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 6,
+                "max": 9
+              }
+            },
+            "sampleValues": [
+              "Reactor-1",
+              "Tank-3",
+              "Pump-2"
+            ]
+          },
+          "escalatedAt": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 3,
+            "nullCount": 3,
+            "kinds": {
+              "null": 3
+            },
+            "constraints": {},
+            "sampleValues": [
+              null
+            ]
+          },
+          "escalationCount": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 3,
+            "nullCount": 0,
+            "kinds": {
+              "integer": 3
+            },
+            "constraints": {
+              "numericRange": {
+                "min": 0,
+                "max": 0
+              }
+            },
+            "sampleValues": [
+              "0"
+            ]
+          },
+          "escalationLevel": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 3,
+            "nullCount": 0,
+            "kinds": {
+              "integer": 3
+            },
+            "constraints": {
+              "numericRange": {
+                "min": 1,
+                "max": 2
+              }
+            },
+            "sampleValues": [
+              "1",
+              "2"
+            ]
+          },
+          "isAcknowledged": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 3,
+            "nullCount": 0,
+            "kinds": {
+              "boolean": 3
+            },
+            "constraints": {},
+            "sampleValues": [
+              true
+            ]
+          },
+          "isActive": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 3,
+            "nullCount": 0,
+            "kinds": {
+              "boolean": 3
+            },
+            "constraints": {},
+            "sampleValues": [
+              false
+            ]
+          },
+          "isSuppressed": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 3,
+            "nullCount": 0,
+            "kinds": {
+              "boolean": 3
+            },
+            "constraints": {},
+            "sampleValues": [
+              false
+            ]
+          },
+          "lastUpdatedTime": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 3,
+            "nullCount": 3,
+            "kinds": {
+              "null": 3
+            },
+            "constraints": {},
+            "sampleValues": [
+              null
+            ]
+          },
+          "location": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 3,
+            "nullCount": 0,
+            "kinds": {
+              "string": 3
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 15,
+                "max": 15
+              }
+            },
+            "sampleValues": [
+              "Reactor Area A1",
+              "Storage Area B2",
+              "Pump Station C1"
+            ]
+          },
+          "name": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 3,
+            "nullCount": 0,
+            "kinds": {
+              "string": 3
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 22,
+                "max": 34
+              }
+            },
+            "sampleValues": [
+              "High Temperature Alert - Reactor 1",
+              "Pressure Anomaly - Tank 3",
+              "Flow Rate Low - Pump 2"
+            ]
+          },
+          "notes": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 3,
+            "nullCount": 3,
+            "kinds": {
+              "null": 3
+            },
+            "constraints": {},
+            "sampleValues": [
+              null
+            ]
+          },
+          "raisedAt": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 3,
+            "nullCount": 0,
+            "kinds": {
+              "timestamp": 3
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 20,
+                "max": 20
+              }
+            },
+            "sampleValues": [
+              "2026-01-26T10:00:00Z",
+              "2026-01-26T10:15:00Z",
+              "2026-01-26T10:10:00Z"
+            ]
+          },
+          "rejectedAt": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 3,
+            "nullCount": 3,
+            "kinds": {
+              "null": 3
+            },
+            "constraints": {},
+            "sampleValues": [
+              null
+            ]
+          },
+          "rejectedBy": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 3,
+            "nullCount": 3,
+            "kinds": {
+              "null": 3
+            },
+            "constraints": {},
+            "sampleValues": [
+              null
+            ]
+          },
+          "rejectionReason": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 3,
+            "nullCount": 3,
+            "kinds": {
+              "null": 3
+            },
+            "constraints": {},
+            "sampleValues": [
+              null
+            ]
+          },
+          "relatedAlertIds": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 3,
+            "nullCount": 0,
+            "kinds": {
+              "array": 3
+            },
+            "constraints": {
+              "arrayLengthRange": {
+                "min": 0,
+                "max": 0
+              }
+            },
+            "sampleValues": [
+              "<array:0>"
+            ]
+          },
+          "severity": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 3,
+            "nullCount": 0,
+            "kinds": {
+              "string": 3
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 7,
+                "max": 8
+              }
+            },
+            "sampleValues": [
+              "Critical",
+              "Warning"
+            ]
+          },
+          "source": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 3,
+            "nullCount": 0,
+            "kinds": {
+              "string": 3
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 6,
+                "max": 9
+              }
+            },
+            "sampleValues": [
+              "Reactor-1",
+              "Tank-3",
+              "Pump-2"
+            ]
+          },
+          "status": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 3,
+            "nullCount": 0,
+            "kinds": {
+              "string": 3
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 8,
+                "max": 8
+              }
+            },
+            "sampleValues": [
+              "approved",
+              "Approved"
+            ]
+          },
+          "suppressionCount": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 3,
+            "nullCount": 0,
+            "kinds": {
+              "integer": 3
+            },
+            "constraints": {
+              "numericRange": {
+                "min": 0,
+                "max": 0
+              }
+            },
+            "sampleValues": [
+              "0"
+            ]
+          },
+          "tagName": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 3,
+            "nullCount": 0,
+            "kinds": {
+              "string": 3
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 6,
+                "max": 9
+              }
+            },
+            "sampleValues": [
+              "Reactor-1",
+              "Tank-3",
+              "Pump-2"
+            ]
+          },
+          "threshold": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 3,
+            "nullCount": 0,
+            "kinds": {
+              "double": 3
+            },
+            "constraints": {
+              "numericRange": {
+                "min": 50,
+                "max": 150
+              }
+            },
+            "sampleValues": [
+              150,
+              100,
+              50
+            ]
+          },
+          "trendData": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 3,
+            "nullCount": 0,
+            "kinds": {
+              "array": 3
+            },
+            "constraints": {
+              "arrayLengthRange": {
+                "min": 0,
+                "max": 0
+              }
+            },
+            "sampleValues": [
+              "<array:0>"
+            ]
+          }
+        }
+      },
+      "normalization": {
+        "addsBaselineFieldsFromUnion": true,
+        "defaultScalarFill": null,
+        "defaultArrayFill": [],
+        "defaultMapFill": "recursive object with baseline keys"
+      },
+      "baselineShapeSummary": {
+        "dominantKind": "map",
+        "kindCounts": {
+          "map": 3
+        },
+        "children": {
+          "acknowledgedAt": {
+            "dominantKind": "string",
+            "kindCounts": {
+              "string": 3
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "acknowledgedBy": {
+            "dominantKind": "string",
+            "kindCounts": {
+              "string": 3
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "acknowledgedComment": {
+            "dominantKind": "null",
+            "kindCounts": {
+              "null": 3
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "alertType": {
+            "dominantKind": "string",
+            "kindCounts": {
+              "string": 3
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "approvalStatus": {
+            "dominantKind": "string",
+            "kindCounts": {
+              "string": 3
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "approvedAt": {
+            "dominantKind": "string",
+            "kindCounts": {
+              "string": 3
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "approvedBy": {
+            "dominantKind": "string",
+            "kindCounts": {
+              "string": 3
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "clearedAt": {
+            "dominantKind": "string",
+            "kindCounts": {
+              "string": 3
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "condition": {
+            "dominantKind": "string",
+            "kindCounts": {
+              "string": 3
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "currentValue": {
+            "dominantKind": "number",
+            "kindCounts": {
+              "number": 3
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "description": {
+            "dominantKind": "string",
+            "kindCounts": {
+              "string": 3
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "equipment": {
+            "dominantKind": "string",
+            "kindCounts": {
+              "string": 3
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "escalatedAt": {
+            "dominantKind": "null",
+            "kindCounts": {
+              "null": 3
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "escalationCount": {
+            "dominantKind": "number",
+            "kindCounts": {
+              "number": 3
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "escalationLevel": {
+            "dominantKind": "number",
+            "kindCounts": {
+              "number": 3
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "isAcknowledged": {
+            "dominantKind": "boolean",
+            "kindCounts": {
+              "boolean": 3
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "isActive": {
+            "dominantKind": "boolean",
+            "kindCounts": {
+              "boolean": 3
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "isSuppressed": {
+            "dominantKind": "boolean",
+            "kindCounts": {
+              "boolean": 3
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "lastUpdatedTime": {
+            "dominantKind": "null",
+            "kindCounts": {
+              "null": 3
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "location": {
+            "dominantKind": "string",
+            "kindCounts": {
+              "string": 3
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "name": {
+            "dominantKind": "string",
+            "kindCounts": {
+              "string": 3
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "notes": {
+            "dominantKind": "null",
+            "kindCounts": {
+              "null": 3
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "raisedAt": {
+            "dominantKind": "string",
+            "kindCounts": {
+              "string": 3
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "rejectedAt": {
+            "dominantKind": "null",
+            "kindCounts": {
+              "null": 3
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "rejectedBy": {
+            "dominantKind": "null",
+            "kindCounts": {
+              "null": 3
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "rejectionReason": {
+            "dominantKind": "null",
+            "kindCounts": {
+              "null": 3
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "relatedAlertIds": {
+            "dominantKind": "array",
+            "kindCounts": {
+              "array": 3
+            },
+            "children": {},
+            "arrayItem": {
+              "dominantKind": "null",
+              "kindCounts": {},
+              "children": {},
+              "arrayItem": null
+            }
+          },
+          "severity": {
+            "dominantKind": "string",
+            "kindCounts": {
+              "string": 3
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "source": {
+            "dominantKind": "string",
+            "kindCounts": {
+              "string": 3
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "status": {
+            "dominantKind": "string",
+            "kindCounts": {
+              "string": 3
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "suppressionCount": {
+            "dominantKind": "number",
+            "kindCounts": {
+              "number": 3
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "tagName": {
+            "dominantKind": "string",
+            "kindCounts": {
+              "string": 3
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "threshold": {
+            "dominantKind": "number",
+            "kindCounts": {
+              "number": 3
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "trendData": {
+            "dominantKind": "array",
+            "kindCounts": {
+              "array": 3
+            },
+            "children": {},
+            "arrayItem": {
+              "dominantKind": "null",
+              "kindCounts": {},
+              "children": {},
+              "arrayItem": null
+            }
+          }
+        },
+        "arrayItem": null
+      }
+    },
+    "client_heartbeats": {
+      "collectionId": "client_heartbeats",
+      "pathPattern": "client_heartbeats",
+      "documentCount": 1,
+      "baselineDocumentCount": 0,
+      "baselineMonthDay": "01-26",
+      "baselineTimezone": "UTC",
+      "baselineAvailable": false,
+      "sampleDocumentIds": [
+        "windows_client"
+      ],
+      "sampleDocumentPaths": [
+        "client_heartbeats/windows_client"
+      ],
+      "subcollectionPatterns": [],
+      "repeatedStructures": [
+        {
+          "occurrences": 1,
+          "signature": "platform:string,status:string,timestamp:timestamp,version:string"
+        }
+      ],
+      "timestampFieldsObserved": {
+        "timestamp": 1
+      },
+      "baselineTimestampFieldsObserved": {},
+      "fields": {
+        "full": {
+          "platform": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "string": 1
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 7,
+                "max": 7
+              }
+            },
+            "sampleValues": [
+              "windows"
+            ]
+          },
+          "status": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "string": 1
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 6,
+                "max": 6
+              }
+            },
+            "sampleValues": [
+              "online"
+            ]
+          },
+          "timestamp": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "timestamp": 1
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 24,
+                "max": 24
+              }
+            },
+            "sampleValues": [
+              "2026-04-25T10:27:19.901Z"
+            ]
+          },
+          "version": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "string": 1
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 5,
+                "max": 5
+              }
+            },
+            "sampleValues": [
+              "1.2.0"
+            ]
+          }
+        },
+        "baseline": {}
+      },
+      "normalization": {
+        "addsBaselineFieldsFromUnion": false,
+        "defaultScalarFill": null,
+        "defaultArrayFill": [],
+        "defaultMapFill": "recursive object with baseline keys"
+      },
+      "baselineShapeSummary": {
+        "dominantKind": "null",
+        "kindCounts": {},
+        "children": {},
+        "arrayItem": null
+      }
+    },
+    "config": {
+      "collectionId": "config",
+      "pathPattern": "config",
+      "documentCount": 1,
+      "baselineDocumentCount": 1,
+      "baselineMonthDay": "01-26",
+      "baselineTimezone": "UTC",
+      "baselineAvailable": true,
+      "sampleDocumentIds": [
+        "sync_settings"
+      ],
+      "sampleDocumentPaths": [
+        "config/sync_settings"
+      ],
+      "subcollectionPatterns": [],
+      "repeatedStructures": [
+        {
+          "occurrences": 1,
+          "signature": "enableNotifications:boolean,heartbeatInterval:integer,lastUpdated:timestamp,maxOfflineQueueSize:integer,notificationSound:boolean,offlineQueueEnabled:boolean,syncInterval:integer"
+        }
+      ],
+      "timestampFieldsObserved": {
+        "lastUpdated": 1
+      },
+      "baselineTimestampFieldsObserved": {
+        "lastUpdated": 1
+      },
+      "fields": {
+        "full": {
+          "enableNotifications": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "boolean": 1
+            },
+            "constraints": {},
+            "sampleValues": [
+              true
+            ]
+          },
+          "heartbeatInterval": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "integer": 1
+            },
+            "constraints": {
+              "numericRange": {
+                "min": 30000,
+                "max": 30000
+              }
+            },
+            "sampleValues": [
+              "30000"
+            ]
+          },
+          "lastUpdated": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "timestamp": 1
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 24,
+                "max": 24
+              }
+            },
+            "sampleValues": [
+              "2026-01-26T11:15:04.587Z"
+            ]
+          },
+          "maxOfflineQueueSize": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "integer": 1
+            },
+            "constraints": {
+              "numericRange": {
+                "min": 1000,
+                "max": 1000
+              }
+            },
+            "sampleValues": [
+              "1000"
+            ]
+          },
+          "notificationSound": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "boolean": 1
+            },
+            "constraints": {},
+            "sampleValues": [
+              true
+            ]
+          },
+          "offlineQueueEnabled": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "boolean": 1
+            },
+            "constraints": {},
+            "sampleValues": [
+              true
+            ]
+          },
+          "syncInterval": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "integer": 1
+            },
+            "constraints": {
+              "numericRange": {
+                "min": 5000,
+                "max": 5000
+              }
+            },
+            "sampleValues": [
+              "5000"
+            ]
+          }
+        },
+        "baseline": {
+          "enableNotifications": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "boolean": 1
+            },
+            "constraints": {},
+            "sampleValues": [
+              true
+            ]
+          },
+          "heartbeatInterval": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "integer": 1
+            },
+            "constraints": {
+              "numericRange": {
+                "min": 30000,
+                "max": 30000
+              }
+            },
+            "sampleValues": [
+              "30000"
+            ]
+          },
+          "lastUpdated": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "timestamp": 1
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 24,
+                "max": 24
+              }
+            },
+            "sampleValues": [
+              "2026-01-26T11:15:04.587Z"
+            ]
+          },
+          "maxOfflineQueueSize": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "integer": 1
+            },
+            "constraints": {
+              "numericRange": {
+                "min": 1000,
+                "max": 1000
+              }
+            },
+            "sampleValues": [
+              "1000"
+            ]
+          },
+          "notificationSound": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "boolean": 1
+            },
+            "constraints": {},
+            "sampleValues": [
+              true
+            ]
+          },
+          "offlineQueueEnabled": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "boolean": 1
+            },
+            "constraints": {},
+            "sampleValues": [
+              true
+            ]
+          },
+          "syncInterval": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "integer": 1
+            },
+            "constraints": {
+              "numericRange": {
+                "min": 5000,
+                "max": 5000
+              }
+            },
+            "sampleValues": [
+              "5000"
+            ]
+          }
+        }
+      },
+      "normalization": {
+        "addsBaselineFieldsFromUnion": true,
+        "defaultScalarFill": null,
+        "defaultArrayFill": [],
+        "defaultMapFill": "recursive object with baseline keys"
+      },
+      "baselineShapeSummary": {
+        "dominantKind": "map",
+        "kindCounts": {
+          "map": 1
+        },
+        "children": {
+          "enableNotifications": {
+            "dominantKind": "boolean",
+            "kindCounts": {
+              "boolean": 1
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "heartbeatInterval": {
+            "dominantKind": "number",
+            "kindCounts": {
+              "number": 1
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "lastUpdated": {
+            "dominantKind": "string",
+            "kindCounts": {
+              "string": 1
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "maxOfflineQueueSize": {
+            "dominantKind": "number",
+            "kindCounts": {
+              "number": 1
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "notificationSound": {
+            "dominantKind": "boolean",
+            "kindCounts": {
+              "boolean": 1
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "offlineQueueEnabled": {
+            "dominantKind": "boolean",
+            "kindCounts": {
+              "boolean": 1
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "syncInterval": {
+            "dominantKind": "number",
+            "kindCounts": {
+              "number": 1
+            },
+            "children": {},
+            "arrayItem": null
+          }
+        },
+        "arrayItem": null
+      }
+    },
+    "device_tokens": {
+      "collectionId": "device_tokens",
+      "pathPattern": "device_tokens",
+      "documentCount": 11,
+      "baselineDocumentCount": 1,
+      "baselineMonthDay": "01-26",
+      "baselineTimezone": "UTC",
+      "baselineAvailable": true,
+      "sampleDocumentIds": [
+        "c6afYTIjV1a1_VjifVLADl:APA91bEKZT-EiAQ1lPZqNyoshIGfnnSPfX6vZwfXHq--LdiwHT8zKB8kFi7G7mMK8lzawMawHmp61CGwxo8s5o_Pk869CmiWZgSKYn4GNFAOGldut9LMUzM",
+        "cUcJO0FTX1xp6i7b3wVMDE:APA91bEfclizJRmVAP-6fAYr7HMT1S9qEFlZuJ2oNRLiAdzQmzm2FbOJxze4kWRE9KXApJiCQ5U6pCeVSFRkb531sYconFAABMp9iNP9FstD7lPyVgovgw8",
+        "c_5fLdUbYCfQCXqpx7kudX:APA91bFF96MFEjmyv8RH1gPVFnxzpNIW8KEiQ7TwEXfXZwaucMpxovjLuwYB1baeQ7guhixNvCOjTS9YyRoBV2ukEZxNHHh0IvV4Nw66GynxOqctCi3sdqU",
+        "dJzN0STTRVubjUiJY312TZ:APA91bEcZamBFj9mGAimV8Hrig3nhNYAPBaPWJGL75HGl2MERJWIS9YVH2Sdh1FWr1TWP7ctWRDDbGL07mVtJpXJ1qWlubvSmAk8oXVZekD8suyu11wOFX0",
+        "dWuk3iKKfH_RQ8JzSzjDRj:APA91bHO9Bd5M3FSmT71Pv5nFVg-SN0zxrshrNEiBfK04uFyQ23x4m2MVgx480oVQ0yB7wvG88UTxQBCbQl-gLnuayfGXsOg4ASy0qAkE9H0ru1d3yuww4c",
+        "d_vHyuiuSDmK1yGTKW-_4a:APA91bHeIbZu2DATnoOvogNP9W2nim8Ie7XrbM_A73NX5m68OLnCeDZj0ME-54ThVi3nLvmctIDpQWc4fucnImiTQYUMSYPQVhidRZ8mCA4qxW2UyDL1P8g",
+        "dxkS7DOInZzRKpM24ZODEh:APA91bHnDCc3OA4u7FVR4ihI0_vnigbnVehPF17-rRCJlq3w_-MWLJSRrNpuogmI-t7fIWZd8xqMWlkCjyGjsdq0X2aJ5fprlVsSIGuO6nRayxCK2rTd8GQ",
+        "eoM1eb1Cngd9ojcbOSZKJH:APA91bElUyqRmdDmR9KQZlcPVKpE1DaRK5iqaEBDjOmi8QMiv6tjFUo0BinzrvW5MEYIdRkj4E4Y7k4vrKnX6npKs5JRhcJD7epzqUqb5WYK_Oz8He7lLTU",
+        "f94G7Bzcx9QZxyhS1hH9cw:APA91bF577D2tMKUQEN5ZpI3JOARSUG-pZ0jpMyySBvtYrdTH1DfvAma_J-WyDeg_3DFmznMTB-uT9dpeB13nMZSwspCbca8J3-_jlDULeTCjG7eCSp6rwk",
+        "fIqw1UTm88vzWsPSOJMU7c:APA91bFY-31pQaeEW2VeVrFZWT2uyx92MLBSzoLCirmuZT7f0rTWh_68ALIf8WlRtvqfwwNivVp_ntgXEeM1iQadBh8_EVRzZ1zK3fX4YcPAxBgtf_6LHuY",
+        "fnPDplJUdwW3P0ZwPO4f7H:APA91bEZTgY6Qnlv9bQA5tgYRl5bJVPJUdVcBcufez-U3DXWqSyFvo92zGS1upBn7yZGkvvxysXjpkc1jmLjKI5W8b9uNzhF8LKjNuVTKgr0jYvUpZRhq2Q"
+      ],
+      "sampleDocumentPaths": [
+        "device_tokens/c6afYTIjV1a1_VjifVLADl:APA91bEKZT-EiAQ1lPZqNyoshIGfnnSPfX6vZwfXHq--LdiwHT8zKB8kFi7G7mMK8lzawMawHmp61CGwxo8s5o_Pk869CmiWZgSKYn4GNFAOGldut9LMUzM",
+        "device_tokens/cUcJO0FTX1xp6i7b3wVMDE:APA91bEfclizJRmVAP-6fAYr7HMT1S9qEFlZuJ2oNRLiAdzQmzm2FbOJxze4kWRE9KXApJiCQ5U6pCeVSFRkb531sYconFAABMp9iNP9FstD7lPyVgovgw8",
+        "device_tokens/c_5fLdUbYCfQCXqpx7kudX:APA91bFF96MFEjmyv8RH1gPVFnxzpNIW8KEiQ7TwEXfXZwaucMpxovjLuwYB1baeQ7guhixNvCOjTS9YyRoBV2ukEZxNHHh0IvV4Nw66GynxOqctCi3sdqU",
+        "device_tokens/dJzN0STTRVubjUiJY312TZ:APA91bEcZamBFj9mGAimV8Hrig3nhNYAPBaPWJGL75HGl2MERJWIS9YVH2Sdh1FWr1TWP7ctWRDDbGL07mVtJpXJ1qWlubvSmAk8oXVZekD8suyu11wOFX0",
+        "device_tokens/dWuk3iKKfH_RQ8JzSzjDRj:APA91bHO9Bd5M3FSmT71Pv5nFVg-SN0zxrshrNEiBfK04uFyQ23x4m2MVgx480oVQ0yB7wvG88UTxQBCbQl-gLnuayfGXsOg4ASy0qAkE9H0ru1d3yuww4c",
+        "device_tokens/d_vHyuiuSDmK1yGTKW-_4a:APA91bHeIbZu2DATnoOvogNP9W2nim8Ie7XrbM_A73NX5m68OLnCeDZj0ME-54ThVi3nLvmctIDpQWc4fucnImiTQYUMSYPQVhidRZ8mCA4qxW2UyDL1P8g",
+        "device_tokens/dxkS7DOInZzRKpM24ZODEh:APA91bHnDCc3OA4u7FVR4ihI0_vnigbnVehPF17-rRCJlq3w_-MWLJSRrNpuogmI-t7fIWZd8xqMWlkCjyGjsdq0X2aJ5fprlVsSIGuO6nRayxCK2rTd8GQ",
+        "device_tokens/eoM1eb1Cngd9ojcbOSZKJH:APA91bElUyqRmdDmR9KQZlcPVKpE1DaRK5iqaEBDjOmi8QMiv6tjFUo0BinzrvW5MEYIdRkj4E4Y7k4vrKnX6npKs5JRhcJD7epzqUqb5WYK_Oz8He7lLTU",
+        "device_tokens/f94G7Bzcx9QZxyhS1hH9cw:APA91bF577D2tMKUQEN5ZpI3JOARSUG-pZ0jpMyySBvtYrdTH1DfvAma_J-WyDeg_3DFmznMTB-uT9dpeB13nMZSwspCbca8J3-_jlDULeTCjG7eCSp6rwk",
+        "device_tokens/fIqw1UTm88vzWsPSOJMU7c:APA91bFY-31pQaeEW2VeVrFZWT2uyx92MLBSzoLCirmuZT7f0rTWh_68ALIf8WlRtvqfwwNivVp_ntgXEeM1iQadBh8_EVRzZ1zK3fX4YcPAxBgtf_6LHuY",
+        "device_tokens/fnPDplJUdwW3P0ZwPO4f7H:APA91bEZTgY6Qnlv9bQA5tgYRl5bJVPJUdVcBcufez-U3DXWqSyFvo92zGS1upBn7yZGkvvxysXjpkc1jmLjKI5W8b9uNzhF8LKjNuVTKgr0jYvUpZRhq2Q"
+      ],
+      "subcollectionPatterns": [],
+      "repeatedStructures": [
+        {
+          "occurrences": 11,
+          "signature": "active:boolean,lastUpdated:timestamp,platform:string,token:string"
+        }
+      ],
+      "timestampFieldsObserved": {
+        "lastUpdated": 11
+      },
+      "baselineTimestampFieldsObserved": {
+        "lastUpdated": 1
+      },
+      "fields": {
+        "full": {
+          "active": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 11,
+            "nullCount": 0,
+            "kinds": {
+              "boolean": 11
+            },
+            "constraints": {},
+            "sampleValues": [
+              true
+            ]
+          },
+          "lastUpdated": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 11,
+            "nullCount": 0,
+            "kinds": {
+              "timestamp": 11
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 24,
+                "max": 24
+              }
+            },
+            "sampleValues": [
+              "2026-04-24T13:59:25.457Z",
+              "2026-03-30T19:07:25.651Z",
+              "2026-04-01T20:00:36.413Z",
+              "2026-04-24T14:01:51.497Z",
+              "2026-04-01T19:56:08.893Z",
+              "2026-01-26T12:24:04.983Z",
+              "2026-04-05T06:52:31.138Z",
+              "2026-04-25T10:12:19.435Z",
+              "2026-04-24T21:21:57.652Z",
+              "2026-04-24T12:24:20.331Z",
+              "2026-03-30T18:02:44.754Z"
+            ]
+          },
+          "platform": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 11,
+            "nullCount": 0,
+            "kinds": {
+              "string": 11
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 7,
+                "max": 7
+              }
+            },
+            "sampleValues": [
+              "windows"
+            ]
+          },
+          "token": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 11,
+            "nullCount": 0,
+            "kinds": {
+              "string": 11
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 142,
+                "max": 142
+              }
+            },
+            "sampleValues": [
+              "c6afYTIjV1a1_VjifVLADl:APA91bEKZT-EiAQ1lPZqNyoshIGfnnSPfX6vZwfXHq--LdiwHT8zKB8kFi7G7mMK8lzawMawHmp61CGwxo8s5o_Pk869CmiWZgSKYn4GNFAOGldut9LMUzM",
+              "cUcJO0FTX1xp6i7b3wVMDE:APA91bEfclizJRmVAP-6fAYr7HMT1S9qEFlZuJ2oNRLiAdzQmzm2FbOJxze4kWRE9KXApJiCQ5U6pCeVSFRkb531sYconFAABMp9iNP9FstD7lPyVgovgw8",
+              "c_5fLdUbYCfQCXqpx7kudX:APA91bFF96MFEjmyv8RH1gPVFnxzpNIW8KEiQ7TwEXfXZwaucMpxovjLuwYB1baeQ7guhixNvCOjTS9YyRoBV2ukEZxNHHh0IvV4Nw66GynxOqctCi3sdqU",
+              "dJzN0STTRVubjUiJY312TZ:APA91bEcZamBFj9mGAimV8Hrig3nhNYAPBaPWJGL75HGl2MERJWIS9YVH2Sdh1FWr1TWP7ctWRDDbGL07mVtJpXJ1qWlubvSmAk8oXVZekD8suyu11wOFX0",
+              "dWuk3iKKfH_RQ8JzSzjDRj:APA91bHO9Bd5M3FSmT71Pv5nFVg-SN0zxrshrNEiBfK04uFyQ23x4m2MVgx480oVQ0yB7wvG88UTxQBCbQl-gLnuayfGXsOg4ASy0qAkE9H0ru1d3yuww4c",
+              "d_vHyuiuSDmK1yGTKW-_4a:APA91bHeIbZu2DATnoOvogNP9W2nim8Ie7XrbM_A73NX5m68OLnCeDZj0ME-54ThVi3nLvmctIDpQWc4fucnImiTQYUMSYPQVhidRZ8mCA4qxW2UyDL1P8g",
+              "dxkS7DOInZzRKpM24ZODEh:APA91bHnDCc3OA4u7FVR4ihI0_vnigbnVehPF17-rRCJlq3w_-MWLJSRrNpuogmI-t7fIWZd8xqMWlkCjyGjsdq0X2aJ5fprlVsSIGuO6nRayxCK2rTd8GQ",
+              "eoM1eb1Cngd9ojcbOSZKJH:APA91bElUyqRmdDmR9KQZlcPVKpE1DaRK5iqaEBDjOmi8QMiv6tjFUo0BinzrvW5MEYIdRkj4E4Y7k4vrKnX6npKs5JRhcJD7epzqUqb5WYK_Oz8He7lLTU",
+              "f94G7Bzcx9QZxyhS1hH9cw:APA91bF577D2tMKUQEN5ZpI3JOARSUG-pZ0jpMyySBvtYrdTH1DfvAma_J-WyDeg_3DFmznMTB-uT9dpeB13nMZSwspCbca8J3-_jlDULeTCjG7eCSp6rwk",
+              "fIqw1UTm88vzWsPSOJMU7c:APA91bFY-31pQaeEW2VeVrFZWT2uyx92MLBSzoLCirmuZT7f0rTWh_68ALIf8WlRtvqfwwNivVp_ntgXEeM1iQadBh8_EVRzZ1zK3fX4YcPAxBgtf_6LHuY",
+              "fnPDplJUdwW3P0ZwPO4f7H:APA91bEZTgY6Qnlv9bQA5tgYRl5bJVPJUdVcBcufez-U3DXWqSyFvo92zGS1upBn7yZGkvvxysXjpkc1jmLjKI5W8b9uNzhF8LKjNuVTKgr0jYvUpZRhq2Q"
+            ]
+          }
+        },
+        "baseline": {
+          "active": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "boolean": 1
+            },
+            "constraints": {},
+            "sampleValues": [
+              true
+            ]
+          },
+          "lastUpdated": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "timestamp": 1
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 24,
+                "max": 24
+              }
+            },
+            "sampleValues": [
+              "2026-01-26T12:24:04.983Z"
+            ]
+          },
+          "platform": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "string": 1
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 7,
+                "max": 7
+              }
+            },
+            "sampleValues": [
+              "windows"
+            ]
+          },
+          "token": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "string": 1
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 142,
+                "max": 142
+              }
+            },
+            "sampleValues": [
+              "d_vHyuiuSDmK1yGTKW-_4a:APA91bHeIbZu2DATnoOvogNP9W2nim8Ie7XrbM_A73NX5m68OLnCeDZj0ME-54ThVi3nLvmctIDpQWc4fucnImiTQYUMSYPQVhidRZ8mCA4qxW2UyDL1P8g"
+            ]
+          }
+        }
+      },
+      "normalization": {
+        "addsBaselineFieldsFromUnion": true,
+        "defaultScalarFill": null,
+        "defaultArrayFill": [],
+        "defaultMapFill": "recursive object with baseline keys"
+      },
+      "baselineShapeSummary": {
+        "dominantKind": "map",
+        "kindCounts": {
+          "map": 1
+        },
+        "children": {
+          "active": {
+            "dominantKind": "boolean",
+            "kindCounts": {
+              "boolean": 1
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "lastUpdated": {
+            "dominantKind": "string",
+            "kindCounts": {
+              "string": 1
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "platform": {
+            "dominantKind": "string",
+            "kindCounts": {
+              "string": 1
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "token": {
+            "dominantKind": "string",
+            "kindCounts": {
+              "string": 1
+            },
+            "children": {},
+            "arrayItem": null
+          }
+        },
+        "arrayItem": null
+      }
+    },
+    "statistics": {
+      "collectionId": "statistics",
+      "pathPattern": "statistics",
+      "documentCount": 1,
+      "baselineDocumentCount": 1,
+      "baselineMonthDay": "01-26",
+      "baselineTimezone": "UTC",
+      "baselineAvailable": true,
+      "sampleDocumentIds": [
+        "overview"
+      ],
+      "sampleDocumentPaths": [
+        "statistics/overview"
+      ],
+      "subcollectionPatterns": [],
+      "repeatedStructures": [
+        {
+          "occurrences": 1,
+          "signature": "acknowledgedAlerts:integer,criticalAlerts:integer,lastUpdated:timestamp,totalAlerts:integer,totalCleared24h:integer"
+        }
+      ],
+      "timestampFieldsObserved": {
+        "lastUpdated": 1
+      },
+      "baselineTimestampFieldsObserved": {
+        "lastUpdated": 1
+      },
+      "fields": {
+        "full": {
+          "acknowledgedAlerts": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "integer": 1
+            },
+            "constraints": {
+              "numericRange": {
+                "min": 1,
+                "max": 1
+              }
+            },
+            "sampleValues": [
+              "1"
+            ]
+          },
+          "criticalAlerts": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "integer": 1
+            },
+            "constraints": {
+              "numericRange": {
+                "min": 1,
+                "max": 1
+              }
+            },
+            "sampleValues": [
+              "1"
+            ]
+          },
+          "lastUpdated": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "timestamp": 1
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 24,
+                "max": 24
+              }
+            },
+            "sampleValues": [
+              "2026-01-26T11:15:03.473Z"
+            ]
+          },
+          "totalAlerts": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "integer": 1
+            },
+            "constraints": {
+              "numericRange": {
+                "min": 5,
+                "max": 5
+              }
+            },
+            "sampleValues": [
+              "5"
+            ]
+          },
+          "totalCleared24h": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "integer": 1
+            },
+            "constraints": {
+              "numericRange": {
+                "min": 2,
+                "max": 2
+              }
+            },
+            "sampleValues": [
+              "2"
+            ]
+          }
+        },
+        "baseline": {
+          "acknowledgedAlerts": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "integer": 1
+            },
+            "constraints": {
+              "numericRange": {
+                "min": 1,
+                "max": 1
+              }
+            },
+            "sampleValues": [
+              "1"
+            ]
+          },
+          "criticalAlerts": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "integer": 1
+            },
+            "constraints": {
+              "numericRange": {
+                "min": 1,
+                "max": 1
+              }
+            },
+            "sampleValues": [
+              "1"
+            ]
+          },
+          "lastUpdated": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "timestamp": 1
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 24,
+                "max": 24
+              }
+            },
+            "sampleValues": [
+              "2026-01-26T11:15:03.473Z"
+            ]
+          },
+          "totalAlerts": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "integer": 1
+            },
+            "constraints": {
+              "numericRange": {
+                "min": 5,
+                "max": 5
+              }
+            },
+            "sampleValues": [
+              "5"
+            ]
+          },
+          "totalCleared24h": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "integer": 1
+            },
+            "constraints": {
+              "numericRange": {
+                "min": 2,
+                "max": 2
+              }
+            },
+            "sampleValues": [
+              "2"
+            ]
+          }
+        }
+      },
+      "normalization": {
+        "addsBaselineFieldsFromUnion": true,
+        "defaultScalarFill": null,
+        "defaultArrayFill": [],
+        "defaultMapFill": "recursive object with baseline keys"
+      },
+      "baselineShapeSummary": {
+        "dominantKind": "map",
+        "kindCounts": {
+          "map": 1
+        },
+        "children": {
+          "acknowledgedAlerts": {
+            "dominantKind": "number",
+            "kindCounts": {
+              "number": 1
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "criticalAlerts": {
+            "dominantKind": "number",
+            "kindCounts": {
+              "number": 1
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "lastUpdated": {
+            "dominantKind": "string",
+            "kindCounts": {
+              "string": 1
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "totalAlerts": {
+            "dominantKind": "number",
+            "kindCounts": {
+              "number": 1
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "totalCleared24h": {
+            "dominantKind": "number",
+            "kindCounts": {
+              "number": 1
+            },
+            "children": {},
+            "arrayItem": null
+          }
+        },
+        "arrayItem": null
+      }
+    },
+    "system_status": {
+      "collectionId": "system_status",
+      "pathPattern": "system_status",
+      "documentCount": 5,
+      "baselineDocumentCount": 3,
+      "baselineMonthDay": "01-26",
+      "baselineTimezone": "UTC",
+      "baselineAvailable": true,
+      "sampleDocumentIds": [
+        "Alert Engine",
+        "Database Server",
+        "Notification Service",
+        "OPC UA Server",
+        "Windows Sync Service"
+      ],
+      "sampleDocumentPaths": [
+        "system_status/Alert Engine",
+        "system_status/Database Server",
+        "system_status/Notification Service",
+        "system_status/OPC UA Server",
+        "system_status/Windows Sync Service"
+      ],
+      "subcollectionPatterns": [],
+      "repeatedStructures": [
+        {
+          "occurrences": 1,
+          "signature": "componentName:string,lastHeartbeat:timestamp,metadata:{alertsGenerated:integer,processingTime:string,rulesLoaded:integer},status:string,version:string"
+        },
+        {
+          "occurrences": 1,
+          "signature": "componentName:string,lastHeartbeat:timestamp,metadata:{activeConnections:integer,lastBackup:timestamp,size:string},status:string,version:string"
+        },
+        {
+          "occurrences": 1,
+          "signature": "componentName:string,lastHeartbeat:timestamp,metadata:{deliveryRate:string,fcmTokens:integer,notificationsSent:integer},status:string,version:string"
+        },
+        {
+          "occurrences": 1,
+          "signature": ""
+        },
+        {
+          "occurrences": 1,
+          "signature": "componentName:string,lastHeartbeat:timestamp,metadata:{alertsProcessed:integer,syncedToCloud:integer,uptime:string},status:string,version:string"
+        }
+      ],
+      "timestampFieldsObserved": {
+        "lastHeartbeat": 3,
+        "version": 1
+      },
+      "baselineTimestampFieldsObserved": {
+        "lastHeartbeat": 3
+      },
+      "fields": {
+        "full": {
+          "componentName": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.8,
+            "presentInDocuments": 4,
+            "nullCount": 0,
+            "kinds": {
+              "string": 4
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 12,
+                "max": 20
+              }
+            },
+            "sampleValues": [
+              "Alert Engine",
+              "Database Server",
+              "Notification Service",
+              "Windows Sync Service"
+            ]
+          },
+          "lastHeartbeat": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.8,
+            "presentInDocuments": 4,
+            "nullCount": 0,
+            "kinds": {
+              "timestamp": 4
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 24,
+                "max": 24
+              }
+            },
+            "sampleValues": [
+              "2026-01-26T11:15:01.705Z",
+              "2026-01-26T11:15:01.704Z"
+            ]
+          },
+          "metadata": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.8,
+            "presentInDocuments": 4,
+            "nullCount": 0,
+            "kinds": {
+              "map": 4
+            },
+            "constraints": {},
+            "sampleValues": [
+              "<map:3>"
+            ]
+          },
+          "metadata.activeConnections": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.2,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "integer": 1
+            },
+            "constraints": {
+              "numericRange": {
+                "min": 2,
+                "max": 2
+              }
+            },
+            "sampleValues": [
+              "2"
+            ]
+          },
+          "metadata.alertsGenerated": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.2,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "integer": 1
+            },
+            "constraints": {
+              "numericRange": {
+                "min": 127,
+                "max": 127
+              }
+            },
+            "sampleValues": [
+              "127"
+            ]
+          },
+          "metadata.alertsProcessed": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.2,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "integer": 1
+            },
+            "constraints": {
+              "numericRange": {
+                "min": 1247,
+                "max": 1247
+              }
+            },
+            "sampleValues": [
+              "1247"
+            ]
+          },
+          "metadata.deliveryRate": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.2,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "string": 1
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 5,
+                "max": 5
+              }
+            },
+            "sampleValues": [
+              "98.9%"
+            ]
+          },
+          "metadata.fcmTokens": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.2,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "integer": 1
+            },
+            "constraints": {
+              "numericRange": {
+                "min": 5,
+                "max": 5
+              }
+            },
+            "sampleValues": [
+              "5"
+            ]
+          },
+          "metadata.lastBackup": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.2,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "timestamp": 1
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 20,
+                "max": 20
+              }
+            },
+            "sampleValues": [
+              "2026-01-26T02:00:00Z"
+            ]
+          },
+          "metadata.notificationsSent": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.2,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "integer": 1
+            },
+            "constraints": {
+              "numericRange": {
+                "min": 89,
+                "max": 89
+              }
+            },
+            "sampleValues": [
+              "89"
+            ]
+          },
+          "metadata.processingTime": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.2,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "string": 1
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 4,
+                "max": 4
+              }
+            },
+            "sampleValues": [
+              "15ms"
+            ]
+          },
+          "metadata.rulesLoaded": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.2,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "integer": 1
+            },
+            "constraints": {
+              "numericRange": {
+                "min": 48,
+                "max": 48
+              }
+            },
+            "sampleValues": [
+              "48"
+            ]
+          },
+          "metadata.size": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.2,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "string": 1
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 7,
+                "max": 7
+              }
+            },
+            "sampleValues": [
+              "45.2 MB"
+            ]
+          },
+          "metadata.syncedToCloud": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.2,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "integer": 1
+            },
+            "constraints": {
+              "numericRange": {
+                "min": 1247,
+                "max": 1247
+              }
+            },
+            "sampleValues": [
+              "1247"
+            ]
+          },
+          "metadata.uptime": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.2,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "string": 1
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 8,
+                "max": 8
+              }
+            },
+            "sampleValues": [
+              "24:15:30"
+            ]
+          },
+          "status": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.8,
+            "presentInDocuments": 4,
+            "nullCount": 0,
+            "kinds": {
+              "string": 4
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 6,
+                "max": 6
+              }
+            },
+            "sampleValues": [
+              "Online"
+            ]
+          },
+          "version": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.8,
+            "presentInDocuments": 4,
+            "nullCount": 0,
+            "kinds": {
+              "string": 4
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 5,
+                "max": 13
+              }
+            },
+            "sampleValues": [
+              "1.0.3",
+              "SQLite 3.41.0",
+              "1.1.2",
+              "1.2.0"
+            ]
+          }
+        },
+        "baseline": {
+          "componentName": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 3,
+            "nullCount": 0,
+            "kinds": {
+              "string": 3
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 12,
+                "max": 20
+              }
+            },
+            "sampleValues": [
+              "Alert Engine",
+              "Database Server",
+              "Notification Service"
+            ]
+          },
+          "lastHeartbeat": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 3,
+            "nullCount": 0,
+            "kinds": {
+              "timestamp": 3
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 24,
+                "max": 24
+              }
+            },
+            "sampleValues": [
+              "2026-01-26T11:15:01.705Z"
+            ]
+          },
+          "metadata": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 3,
+            "nullCount": 0,
+            "kinds": {
+              "map": 3
+            },
+            "constraints": {},
+            "sampleValues": [
+              "<map:3>"
+            ]
+          },
+          "metadata.activeConnections": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.3333,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "integer": 1
+            },
+            "constraints": {
+              "numericRange": {
+                "min": 2,
+                "max": 2
+              }
+            },
+            "sampleValues": [
+              "2"
+            ]
+          },
+          "metadata.alertsGenerated": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.3333,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "integer": 1
+            },
+            "constraints": {
+              "numericRange": {
+                "min": 127,
+                "max": 127
+              }
+            },
+            "sampleValues": [
+              "127"
+            ]
+          },
+          "metadata.deliveryRate": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.3333,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "string": 1
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 5,
+                "max": 5
+              }
+            },
+            "sampleValues": [
+              "98.9%"
+            ]
+          },
+          "metadata.fcmTokens": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.3333,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "integer": 1
+            },
+            "constraints": {
+              "numericRange": {
+                "min": 5,
+                "max": 5
+              }
+            },
+            "sampleValues": [
+              "5"
+            ]
+          },
+          "metadata.lastBackup": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.3333,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "timestamp": 1
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 20,
+                "max": 20
+              }
+            },
+            "sampleValues": [
+              "2026-01-26T02:00:00Z"
+            ]
+          },
+          "metadata.notificationsSent": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.3333,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "integer": 1
+            },
+            "constraints": {
+              "numericRange": {
+                "min": 89,
+                "max": 89
+              }
+            },
+            "sampleValues": [
+              "89"
+            ]
+          },
+          "metadata.processingTime": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.3333,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "string": 1
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 4,
+                "max": 4
+              }
+            },
+            "sampleValues": [
+              "15ms"
+            ]
+          },
+          "metadata.rulesLoaded": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.3333,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "integer": 1
+            },
+            "constraints": {
+              "numericRange": {
+                "min": 48,
+                "max": 48
+              }
+            },
+            "sampleValues": [
+              "48"
+            ]
+          },
+          "metadata.size": {
+            "required": false,
+            "optional": true,
+            "presenceRatio": 0.3333,
+            "presentInDocuments": 1,
+            "nullCount": 0,
+            "kinds": {
+              "string": 1
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 7,
+                "max": 7
+              }
+            },
+            "sampleValues": [
+              "45.2 MB"
+            ]
+          },
+          "status": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 3,
+            "nullCount": 0,
+            "kinds": {
+              "string": 3
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 6,
+                "max": 6
+              }
+            },
+            "sampleValues": [
+              "Online"
+            ]
+          },
+          "version": {
+            "required": true,
+            "optional": false,
+            "presenceRatio": 1,
+            "presentInDocuments": 3,
+            "nullCount": 0,
+            "kinds": {
+              "string": 3
+            },
+            "constraints": {
+              "stringLengthRange": {
+                "min": 5,
+                "max": 13
+              }
+            },
+            "sampleValues": [
+              "1.0.3",
+              "SQLite 3.41.0",
+              "1.1.2"
+            ]
+          }
+        }
+      },
+      "normalization": {
+        "addsBaselineFieldsFromUnion": true,
+        "defaultScalarFill": null,
+        "defaultArrayFill": [],
+        "defaultMapFill": "recursive object with baseline keys"
+      },
+      "baselineShapeSummary": {
+        "dominantKind": "map",
+        "kindCounts": {
+          "map": 3
+        },
+        "children": {
+          "componentName": {
+            "dominantKind": "string",
+            "kindCounts": {
+              "string": 3
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "lastHeartbeat": {
+            "dominantKind": "string",
+            "kindCounts": {
+              "string": 3
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "metadata": {
+            "dominantKind": "map",
+            "kindCounts": {
+              "map": 3
+            },
+            "children": {
+              "activeConnections": {
+                "dominantKind": "number",
+                "kindCounts": {
+                  "number": 1
+                },
+                "children": {},
+                "arrayItem": null
+              },
+              "alertsGenerated": {
+                "dominantKind": "number",
+                "kindCounts": {
+                  "number": 1
+                },
+                "children": {},
+                "arrayItem": null
+              },
+              "deliveryRate": {
+                "dominantKind": "string",
+                "kindCounts": {
+                  "string": 1
+                },
+                "children": {},
+                "arrayItem": null
+              },
+              "fcmTokens": {
+                "dominantKind": "number",
+                "kindCounts": {
+                  "number": 1
+                },
+                "children": {},
+                "arrayItem": null
+              },
+              "lastBackup": {
+                "dominantKind": "string",
+                "kindCounts": {
+                  "string": 1
+                },
+                "children": {},
+                "arrayItem": null
+              },
+              "notificationsSent": {
+                "dominantKind": "number",
+                "kindCounts": {
+                  "number": 1
+                },
+                "children": {},
+                "arrayItem": null
+              },
+              "processingTime": {
+                "dominantKind": "string",
+                "kindCounts": {
+                  "string": 1
+                },
+                "children": {},
+                "arrayItem": null
+              },
+              "rulesLoaded": {
+                "dominantKind": "number",
+                "kindCounts": {
+                  "number": 1
+                },
+                "children": {},
+                "arrayItem": null
+              },
+              "size": {
+                "dominantKind": "string",
+                "kindCounts": {
+                  "string": 1
+                },
+                "children": {},
+                "arrayItem": null
+              }
+            },
+            "arrayItem": null
+          },
+          "status": {
+            "dominantKind": "string",
+            "kindCounts": {
+              "string": 3
+            },
+            "children": {},
+            "arrayItem": null
+          },
+          "version": {
+            "dominantKind": "string",
+            "kindCounts": {
+              "string": 3
+            },
+            "children": {},
+            "arrayItem": null
+          }
+        },
+        "arrayItem": null
+      }
+    }
+  }
+}

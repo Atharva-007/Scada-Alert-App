@@ -12,7 +12,8 @@ class AlertCard extends StatefulWidget {
   State<AlertCard> createState() => _AlertCardState();
 }
 
-class _AlertCardState extends State<AlertCard> with SingleTickerProviderStateMixin {
+class _AlertCardState extends State<AlertCard>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
 
@@ -23,9 +24,10 @@ class _AlertCardState extends State<AlertCard> with SingleTickerProviderStateMix
       vsync: this,
       duration: const Duration(milliseconds: 100),
     );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.98).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.98,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -39,7 +41,8 @@ class _AlertCardState extends State<AlertCard> with SingleTickerProviderStateMix
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final severityColor = AppTheme.getSeverityColor(widget.alert.severity);
     final isAck = widget.alert.isAcknowledged;
-    
+    final statusKey = widget.alert.statusKey;
+
     // Solid background colors based on theme
     final bgColor = isDark ? AppTheme.surfaceDark : AppTheme.surfaceLight;
     final borderColor = isDark ? AppTheme.borderDark : AppTheme.borderLight;
@@ -59,12 +62,12 @@ class _AlertCardState extends State<AlertCard> with SingleTickerProviderStateMix
             color: bgColor,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: isAck ? borderColor : severityColor.withOpacity(0.6),
+              color: isAck ? borderColor : severityColor.withValues(alpha: 0.6),
               width: isAck ? 1 : 2,
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(isDark ? 0.4 : 0.08),
+                color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.08),
                 blurRadius: 12,
                 offset: const Offset(0, 4),
               ),
@@ -77,9 +80,14 @@ class _AlertCardState extends State<AlertCard> with SingleTickerProviderStateMix
               Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
-                      color: severityColor.withOpacity(isDark ? 0.1 : 0.08),
+                      color: severityColor.withValues(
+                        alpha: isDark ? 0.1 : 0.08,
+                      ),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Text(
@@ -93,6 +101,35 @@ class _AlertCardState extends State<AlertCard> with SingleTickerProviderStateMix
                     ),
                   ),
                   const Spacer(),
+                  if (statusKey != 'active') ...[
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: _getStatusColor(
+                          statusKey,
+                        ).withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(
+                          color: _getStatusColor(
+                            statusKey,
+                          ).withValues(alpha: 0.3),
+                        ),
+                      ),
+                      child: Text(
+                        widget.alert.statusLabel.toUpperCase(),
+                        style: TextStyle(
+                          fontSize: 9,
+                          fontWeight: FontWeight.w900,
+                          color: _getStatusColor(statusKey),
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                  ],
                   Text(
                     widget.alert.timeSinceRaised.toUpperCase(),
                     style: TextStyle(
@@ -105,7 +142,7 @@ class _AlertCardState extends State<AlertCard> with SingleTickerProviderStateMix
                 ],
               ),
               const SizedBox(height: 14),
-              
+
               // Main Alert Name & Status
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -119,7 +156,9 @@ class _AlertCardState extends State<AlertCard> with SingleTickerProviderStateMix
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w900,
-                            color: isDark ? Colors.white : const Color(0xFF1A1C1E),
+                            color: isDark
+                                ? Colors.white
+                                : const Color(0xFF1A1C1E),
                             letterSpacing: -0.4,
                           ),
                           maxLines: 1,
@@ -135,11 +174,52 @@ class _AlertCardState extends State<AlertCard> with SingleTickerProviderStateMix
                             fontFamily: 'monospace',
                           ),
                         ),
+                        if (widget.alert.location != null ||
+                            widget.alert.equipment != null) ...[
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              if (widget.alert.location != null) ...[
+                                Icon(
+                                  Icons.location_on_outlined,
+                                  size: 12,
+                                  color: secondaryTextColor,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  widget.alert.location!,
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: secondaryTextColor,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                              ],
+                              if (widget.alert.equipment != null) ...[
+                                Icon(
+                                  Icons.settings_outlined,
+                                  size: 12,
+                                  color: secondaryTextColor,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  widget.alert.equipment!,
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: secondaryTextColor,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                        ],
                       ],
                     ),
                   ),
                   const SizedBox(width: 12),
-                  _buildCompactStatus(isAck, severityColor, isDark),
+                  _buildCompactStatus(statusKey, isAck, severityColor),
                 ],
               ),
             ],
@@ -149,22 +229,37 @@ class _AlertCardState extends State<AlertCard> with SingleTickerProviderStateMix
     );
   }
 
-  Widget _buildCompactStatus(bool isAck, Color severityColor, bool isDark) {
-    final color = isAck ? AppTheme.normalColor : severityColor;
+  Widget _buildCompactStatus(
+    String statusKey,
+    bool isAck,
+    Color severityColor,
+  ) {
+    final color = _getStatusColor(statusKey);
+    final icon = switch (statusKey) {
+      'approved' || 'cleared' => Icons.task_alt_rounded,
+      'rejected' => Icons.block_rounded,
+      'acknowledged' => Icons.check_rounded,
+      _ => isAck ? Icons.check_rounded : Icons.priority_high_rounded,
+    };
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.05),
+        color: color.withValues(alpha: 0.05),
         shape: BoxShape.circle,
-        border: Border.all(color: color.withOpacity(0.2), width: 1.5),
+        border: Border.all(color: color.withValues(alpha: 0.2), width: 1.5),
       ),
-      child: Icon(
-        isAck ? Icons.check_rounded : Icons.priority_high_rounded,
-        size: 18,
-        color: color,
-      ),
+      child: Icon(icon, size: 18, color: color),
     );
   }
+
+  Color _getStatusColor(String status) {
+    if (status == 'active') {
+      return severityColorForActive();
+    }
+    return AppTheme.getStatusColor(status);
+  }
+
+  Color severityColorForActive() {
+    return AppTheme.getSeverityColor(widget.alert.severity);
+  }
 }
-
-

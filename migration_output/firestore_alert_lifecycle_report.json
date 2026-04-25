@@ -1,0 +1,120 @@
+{
+  "generatedAt": "2026-04-25T14:32:29.548Z",
+  "projectId": "scadadataserver",
+  "mode": "apply",
+  "credentialSource": "E:\\scada_alarm_client\\firebase-service-account.json",
+  "collections": {
+    "active": "alerts_active",
+    "history": "alerts_history"
+  },
+  "scanned": {
+    "activeDocuments": 2,
+    "historyDocuments": 5,
+    "uniqueAlerts": 7
+  },
+  "summary": {
+    "move_to_history": 2,
+    "move_to_active": 0,
+    "consolidate_history": 0,
+    "consolidate_active": 0,
+    "normalize_history": 5,
+    "normalize_active": 0,
+    "delete_active": 2,
+    "delete_history": 0,
+    "set_active": 0,
+    "set_history": 7
+  },
+  "actions": [
+    {
+      "id": "ALT001",
+      "action": "normalize_history",
+      "from": {
+        "active": false,
+        "history": true
+      },
+      "toCollection": "alerts_history",
+      "status": "approved",
+      "approvalStatus": "approved",
+      "isActive": false,
+      "isAcknowledged": true
+    },
+    {
+      "id": "ALT002",
+      "action": "normalize_history",
+      "from": {
+        "active": false,
+        "history": true
+      },
+      "toCollection": "alerts_history",
+      "status": "approved",
+      "approvalStatus": "approved",
+      "isActive": false,
+      "isAcknowledged": true
+    },
+    {
+      "id": "ALT003",
+      "action": "normalize_history",
+      "from": {
+        "active": false,
+        "history": true
+      },
+      "toCollection": "alerts_history",
+      "status": "approved",
+      "approvalStatus": "approved",
+      "isActive": false,
+      "isAcknowledged": true
+    },
+    {
+      "id": "ALT004",
+      "action": "move_to_history",
+      "from": {
+        "active": true,
+        "history": false
+      },
+      "toCollection": "alerts_history",
+      "status": "approved",
+      "approvalStatus": "approved",
+      "isActive": false,
+      "isAcknowledged": true
+    },
+    {
+      "id": "ALT005",
+      "action": "move_to_history",
+      "from": {
+        "active": true,
+        "history": false
+      },
+      "toCollection": "alerts_history",
+      "status": "approved",
+      "approvalStatus": "approved",
+      "isActive": false,
+      "isAcknowledged": true
+    },
+    {
+      "id": "ALT_H001",
+      "action": "normalize_history",
+      "from": {
+        "active": false,
+        "history": true
+      },
+      "toCollection": "alerts_history",
+      "status": "cleared",
+      "approvalStatus": "approved",
+      "isActive": false,
+      "isAcknowledged": true
+    },
+    {
+      "id": "ALT_H002",
+      "action": "normalize_history",
+      "from": {
+        "active": false,
+        "history": true
+      },
+      "toCollection": "alerts_history",
+      "status": "cleared",
+      "approvalStatus": "approved",
+      "isActive": false,
+      "isAcknowledged": true
+    }
+  ]
+}

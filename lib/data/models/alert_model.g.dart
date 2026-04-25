@@ -52,6 +52,17 @@ _$AlertModelImpl _$$AlertModelImplFromJson(Map<String, dynamic> json) =>
           : DateTime.parse(json['lastUpdatedTime'] as String),
       equipment: json['equipment'] as String?,
       location: json['location'] as String?,
+      status: json['status'] as String? ?? 'active',
+      approvalStatus: json['approvalStatus'] as String? ?? 'pending',
+      approvedBy: json['approvedBy'] as String?,
+      approvedAt: json['approvedAt'] == null
+          ? null
+          : DateTime.parse(json['approvedAt'] as String),
+      rejectedBy: json['rejectedBy'] as String?,
+      rejectedAt: json['rejectedAt'] == null
+          ? null
+          : DateTime.parse(json['rejectedAt'] as String),
+      rejectionReason: json['rejectionReason'] as String?,
     );
 
 Map<String, dynamic> _$$AlertModelImplToJson(_$AlertModelImpl instance) =>
@@ -84,4 +95,11 @@ Map<String, dynamic> _$$AlertModelImplToJson(_$AlertModelImpl instance) =>
       'lastUpdatedTime': instance.lastUpdatedTime?.toIso8601String(),
       'equipment': instance.equipment,
       'location': instance.location,
+      'status': instance.status,
+      'approvalStatus': instance.approvalStatus,
+      'approvedBy': instance.approvedBy,
+      'approvedAt': instance.approvedAt?.toIso8601String(),
+      'rejectedBy': instance.rejectedBy,
+      'rejectedAt': instance.rejectedAt?.toIso8601String(),
+      'rejectionReason': instance.rejectionReason,
     };

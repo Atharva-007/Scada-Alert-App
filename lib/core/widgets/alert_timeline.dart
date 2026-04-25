@@ -12,16 +12,16 @@ class AlertTimeline extends StatelessWidget {
     final events = _buildTimelineEvents();
 
     return Container(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppTheme.cardDark,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Color(0xFF3F3F3F), width: 1),
+        border: Border.all(color: const Color(0xFF3F3F3F), width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          const Row(
             children: [
               Icon(Icons.timeline, color: AppTheme.infoColor, size: 20),
               SizedBox(width: 8),
@@ -35,7 +35,7 @@ class AlertTimeline extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           ...events.map((event) => _TimelineEvent(event: event)),
         ],
       ),
@@ -89,7 +89,7 @@ class AlertTimeline extends StatelessWidget {
       events.add(
         _TimelineEventData(
           icon: Icons.radio_button_unchecked,
-          iconColor: Color(0xFF616161),
+          iconColor: const Color(0xFF616161),
           title: 'Pending Acknowledgement',
           subtitle: 'Awaiting operator action',
           timestamp: null,
@@ -114,7 +114,7 @@ class AlertTimeline extends StatelessWidget {
       events.add(
         _TimelineEventData(
           icon: Icons.radio_button_unchecked,
-          iconColor: Color(0xFF616161),
+          iconColor: const Color(0xFF616161),
           title: 'Awaiting Clearance',
           subtitle: 'Alert still active',
           timestamp: null,
@@ -163,13 +163,13 @@ class _TimelineEvent extends StatelessWidget {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: event.iconColor.withOpacity(
-                    event.isCompleted ? 0.15 : 0.08,
+                  color: event.iconColor.withValues(
+                    alpha: event.isCompleted ? 0.15 : 0.08,
                   ),
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: event.iconColor.withOpacity(
-                      event.isCompleted ? 0.4 : 0.2,
+                    color: event.iconColor.withValues(
+                      alpha: event.isCompleted ? 0.4 : 0.2,
                     ),
                     width: 2,
                   ),
@@ -179,14 +179,14 @@ class _TimelineEvent extends StatelessWidget {
               Expanded(
                 child: Container(
                   width: 2,
-                  margin: EdgeInsets.symmetric(vertical: 4),
+                  margin: const EdgeInsets.symmetric(vertical: 4),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: [
-                        event.iconColor.withOpacity(
-                          event.isCompleted ? 0.3 : 0.1,
+                        event.iconColor.withValues(
+                          alpha: event.isCompleted ? 0.3 : 0.1,
                         ),
                         Colors.transparent,
                       ],
@@ -196,12 +196,12 @@ class _TimelineEvent extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(width: 16),
+          const SizedBox(width: 16),
 
           // Content
           Expanded(
             child: Padding(
-              padding: EdgeInsets.only(bottom: 20),
+              padding: const EdgeInsets.only(bottom: 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -211,25 +211,25 @@ class _TimelineEvent extends StatelessWidget {
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
                       color: event.isCompleted
-                          ? Color(0xFFFFFFFF)
-                          : Color(0xFF9E9E9E),
+                          ? const Color(0xFFFFFFFF)
+                          : const Color(0xFF9E9E9E),
                     ),
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Text(
                     event.subtitle,
                     style: TextStyle(
                       fontSize: 13,
                       color: event.isCompleted
-                          ? Color(0xFFB0B0B0)
-                          : Color(0xFF757575),
+                          ? const Color(0xFFB0B0B0)
+                          : const Color(0xFF757575),
                     ),
                   ),
                   if (event.timestamp != null) ...[
-                    SizedBox(height: 6),
+                    const SizedBox(height: 6),
                     Text(
                       _formatTimestamp(event.timestamp!),
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 12,
                         color: Color(0xFF757575),
                         fontFamily: 'monospace',

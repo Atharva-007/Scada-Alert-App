@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/alert_card.dart';
 import '../../../data/models/alert_model.dart';
-import '../../../data/repositories/alert_repository.dart';
 import '../../alerts/presentation/alert_details_screen.dart';
 import '../../alerts/providers/alert_providers.dart';
 
@@ -57,20 +56,28 @@ class _AlertHistoryScreenState extends ConsumerState<AlertHistoryScreen> {
 
     try {
       final repository = ref.read(alertRepositoryProvider);
+      final inclusiveEndDate = _dateRange != null
+          ? DateTime(
+              _dateRange!.end.year,
+              _dateRange!.end.month,
+              _dateRange!.end.day,
+              23,
+              59,
+              59,
+              999,
+              999,
+            )
+          : null;
       final newAlerts = await repository.getAlertHistory(
         startDate: _dateRange?.start,
-        endDate: _dateRange?.end,
+        endDate: inclusiveEndDate,
         severity: _selectedSeverity,
-        limit: 50,
+        limit: 1000,
       );
 
       setState(() {
-        if (refresh) {
-          _alerts = newAlerts;
-        } else {
-          _alerts.addAll(newAlerts);
-        }
-        _hasMore = newAlerts.length >= 50;
+        _alerts = newAlerts;
+        _hasMore = false;
         _isLoading = false;
       });
     } catch (e) {
@@ -149,8 +156,12 @@ class _AlertHistoryScreenState extends ConsumerState<AlertHistoryScreen> {
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                           colors: [
-                            AppTheme.normalColor.withOpacity(isDark ? 0.15 : 0.12),
-                            isDark ? AppTheme.backgroundDark : AppTheme.backgroundLight,
+                            AppTheme.normalColor.withValues(
+                              alpha: isDark ? 0.15 : 0.12,
+                            ),
+                            isDark
+                                ? AppTheme.backgroundDark
+                                : AppTheme.backgroundLight,
                           ],
                         ),
                       ),
@@ -161,7 +172,9 @@ class _AlertHistoryScreenState extends ConsumerState<AlertHistoryScreen> {
                       child: Icon(
                         Icons.history_rounded,
                         size: 140,
-                        color: isDark ? Colors.white.withOpacity(0.03) : Colors.black.withOpacity(0.04),
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.03)
+                            : Colors.black.withValues(alpha: 0.04),
                       ),
                     ),
                   ],
@@ -189,11 +202,31 @@ class _AlertHistoryScreenState extends ConsumerState<AlertHistoryScreen> {
                     _loadAlerts(refresh: true);
                   },
                   itemBuilder: (context) => [
-                    _buildPopupItem('all', 'All Severities', Icons.list_alt, isDark ? Colors.white : Colors.black87),
+                    _buildPopupItem(
+                      'all',
+                      'All Severities',
+                      Icons.list_alt,
+                      isDark ? Colors.white : Colors.black87,
+                    ),
                     const PopupMenuDivider(),
-                    _buildPopupItem('critical', 'Critical', Icons.error_outline, AppTheme.criticalColor),
-                    _buildPopupItem('warning', 'Warning', Icons.warning_amber_rounded, AppTheme.warningColor),
-                    _buildPopupItem('info', 'Info', Icons.info_outline, AppTheme.infoColor),
+                    _buildPopupItem(
+                      'critical',
+                      'Critical',
+                      Icons.error_outline,
+                      AppTheme.criticalColor,
+                    ),
+                    _buildPopupItem(
+                      'warning',
+                      'Warning',
+                      Icons.warning_amber_rounded,
+                      AppTheme.warningColor,
+                    ),
+                    _buildPopupItem(
+                      'info',
+                      'Info',
+                      Icons.info_outline,
+                      AppTheme.infoColor,
+                    ),
                   ],
                 ),
                 const SizedBox(width: 8),
@@ -214,9 +247,18 @@ class _AlertHistoryScreenState extends ConsumerState<AlertHistoryScreen> {
                   decoration: BoxDecoration(
                     color: isDark ? AppTheme.surfaceDark : Colors.white,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: isDark ? AppTheme.borderDark : AppTheme.borderLight),
+                    border: Border.all(
+                      color: isDark
+                          ? AppTheme.borderDark
+                          : AppTheme.borderLight,
+                    ),
                     boxShadow: [
-                      if (!isDark) BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 4, offset: const Offset(0, 2)),
+                      if (!isDark)
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.05),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
                     ],
                   ),
                   child: Row(
@@ -253,7 +295,7 @@ class _AlertHistoryScreenState extends ConsumerState<AlertHistoryScreen> {
                             vertical: 6,
                           ),
                           decoration: BoxDecoration(
-                            color: AppTheme.infoColor.withOpacity(0.1),
+                            color: AppTheme.infoColor.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: const Text(
@@ -273,9 +315,7 @@ class _AlertHistoryScreenState extends ConsumerState<AlertHistoryScreen> {
               ),
 
             if (_alerts.isEmpty && !_isLoading)
-              SliverFillRemaining(
-                child: _buildEmptyState(isDark),
-              )
+              SliverFillRemaining(child: _buildEmptyState(isDark))
             else
               SliverPadding(
                 padding: const EdgeInsets.only(bottom: 100),
@@ -330,7 +370,12 @@ class _AlertHistoryScreenState extends ConsumerState<AlertHistoryScreen> {
     );
   }
 
-  PopupMenuItem<T> _buildPopupItem<T>(T value, String text, IconData icon, Color color) {
+  PopupMenuItem<T> _buildPopupItem<T>(
+    T value,
+    String text,
+    IconData icon,
+    Color color,
+  ) {
     return PopupMenuItem<T>(
       value: value,
       child: Row(
@@ -352,7 +397,9 @@ class _AlertHistoryScreenState extends ConsumerState<AlertHistoryScreen> {
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: isDark ? const Color(0xFF2D2D2D).withOpacity(0.5) : Colors.black.withOpacity(0.03),
+              color: isDark
+                  ? const Color(0xFF2D2D2D).withValues(alpha: 0.5)
+                  : Colors.black.withValues(alpha: 0.03),
             ),
             child: Icon(
               Icons.history_rounded,

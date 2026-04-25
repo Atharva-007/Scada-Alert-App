@@ -11,7 +11,7 @@ class AudioService {
 
   Future<void> playAlertSound(String severity) async {
     final settings = _ref.read(settingsProvider);
-    
+
     if (!settings.soundEnabled) return;
 
     switch (severity.toLowerCase()) {

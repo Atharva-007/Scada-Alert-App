@@ -6,6 +6,11 @@
   "scripts": {
     "seed": "node firebase_import.js",
     "sync": "node firebase_cloud_sync_service.js",
+    "firestore:migrate": "node scripts/enforce_alert_lifecycle.mjs --apply",
+    "firestore:migrate:dry-run": "node scripts/enforce_alert_lifecycle.mjs --dry-run",
+    "legacy:rtdb:migrate": "node scripts/firestore_to_rtdb_migration.mjs",
+    "legacy:rtdb:migrate:dry-run": "node scripts/firestore_to_rtdb_migration.mjs --dry-run",
+    "legacy:rtdb:sync": "node scripts/firestore_to_rtdb_sync.mjs",
     "deploy": "firebase deploy",
     "deploy:rules": "firebase deploy --only firestore:rules,storage",
     "deploy:indexes": "firebase deploy --only firestore:indexes",

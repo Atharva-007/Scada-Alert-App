@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../data/models/alert_model.dart';
+import '../../alerts/providers/alert_providers.dart';
 
 class AlertStatistics {
   final int totalAlerts;
@@ -30,9 +31,9 @@ class AlertStatistics {
 
   factory AlertStatistics.fromAlerts(List<AlertModel> alerts) {
     final total = alerts.length;
-    final critical = alerts.where((a) => a.severity == 'critical').length;
-    final warning = alerts.where((a) => a.severity == 'warning').length;
-    final info = alerts.where((a) => a.severity == 'info').length;
+    final critical = alerts.where((a) => a.isCriticalSeverity).length;
+    final warning = alerts.where((a) => a.isWarningSeverity).length;
+    final info = alerts.where((a) => a.severityBucket == 'info').length;
     final acked = alerts.where((a) => a.isAcknowledged).length;
     final unacked = total - acked;
     final ackRate = total > 0 ? (acked / total) * 100 : 0.0;
@@ -103,19 +104,9 @@ class AlertTrend {
 }
 
 final alertStatisticsProvider = Provider<AlertStatistics>((ref) {
-  // This would normally combine active and recent historical alerts
-  // For now, return empty statistics
-  return AlertStatistics(
-    totalAlerts: 0,
-    criticalCount: 0,
-    warningCount: 0,
-    infoCount: 0,
-    acknowledgedCount: 0,
-    unacknowledgedCount: 0,
-    acknowledgmentRate: 0.0,
-    averageResponseTime: Duration.zero,
-    alertsBySource: {},
-    alertsBySeverity: {},
-    hourlyTrends: [],
+  final alertsAsync = ref.watch(allLiveAlertsProvider);
+  return alertsAsync.maybeWhen(
+    data: AlertStatistics.fromAlerts,
+    orElse: () => AlertStatistics.fromAlerts(const <AlertModel>[]),
   );
 });

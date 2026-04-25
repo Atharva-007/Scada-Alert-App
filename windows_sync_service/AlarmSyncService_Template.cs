@@ -18,8 +18,8 @@ namespace ScadaAlarmSyncService
     {
         private Timer _syncTimer;
         private FirestoreDb _firestoreDb;
-        private readonly string _sqliteDbPath = @"C:\ScadaAlarms\alerts.db";
-        private readonly string _serviceAccountPath = @"C:\ScadaAlarms\firebase-service-account.json";
+        private readonly string _sqliteDbPath = @"C:\SCADA\alerts.db";
+        private readonly string _serviceAccountPath = @"C:\SCADA\firebase-service-account.json";
         private readonly int _syncIntervalSeconds = 5;
         
         public AlarmSyncService()
@@ -61,11 +61,10 @@ namespace ScadaAlarmSyncService
             FirebaseApp.Create(new AppOptions
             {
                 Credential = GoogleCredential.FromFile(_serviceAccountPath),
-                ProjectId = "scada-alarm-system"
+                ProjectId = "scadadataserver"
             });
-            
-            _firestoreDb = FirestoreDb.Create("scada-alarm-system");
-            LogMessage("Firebase initialized");
+
+            _firestoreDb = FirestoreDb.Create("scadadataserver");            LogMessage("Firebase initialized");
         }
 
         private async void OnSyncTimerElapsed(object sender, ElapsedEventArgs e)
@@ -105,14 +104,14 @@ namespace ScadaAlarmSyncService
 
         private void LogMessage(string message)
         {
-            var logPath = @"C:\ScadaAlarms\Logs\sync_service.log";
+            var logPath = @"C:\SCADA\Logs\sync_service.log";
             Directory.CreateDirectory(Path.GetDirectoryName(logPath));
             File.AppendAllText(logPath, $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} [INFO] {message}\n");
         }
 
         private void LogError(string message)
         {
-            var logPath = @"C:\ScadaAlarms\Logs\sync_service.log";
+            var logPath = @"C:\SCADA\Logs\sync_service.log";
             Directory.CreateDirectory(Path.GetDirectoryName(logPath));
             File.AppendAllText(logPath, $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} [ERROR] {message}\n");
         }

@@ -21,27 +21,27 @@ class StatusIndicator extends StatelessWidget {
     final statusIcon = AppTheme.getStatusIcon(status);
 
     return Container(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppTheme.cardDark,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Color(0xFF3F3F3F), width: 1),
+        border: Border.all(color: const Color(0xFF3F3F3F), width: 1),
       ),
       child: Row(
         children: [
           Container(
-            padding: EdgeInsets.all(10),
+            padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: statusColor.withOpacity(0.12),
+              color: statusColor.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(10),
               border: Border.all(
-                color: statusColor.withOpacity(0.25),
+                color: statusColor.withValues(alpha: 0.25),
                 width: 1,
               ),
             ),
             child: Icon(icon ?? statusIcon, size: 24, color: statusColor),
           ),
-          SizedBox(width: 14),
+          const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -51,15 +51,15 @@ class StatusIndicator extends StatelessWidget {
                   label,
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFFFFFFFF),
+                    color: const Color(0xFFFFFFFF),
                   ),
                 ),
                 if (subtitle != null) ...[
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Text(
                     subtitle!,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Color(0xFF9E9E9E),
+                      color: const Color(0xFF9E9E9E),
                       fontSize: 12,
                     ),
                   ),
@@ -68,11 +68,14 @@ class StatusIndicator extends StatelessWidget {
             ),
           ),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: statusColor.withOpacity(0.15),
+              color: statusColor.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: statusColor.withOpacity(0.3), width: 1),
+              border: Border.all(
+                color: statusColor.withValues(alpha: 0.3),
+                width: 1,
+              ),
             ),
             child: Text(
               status.toUpperCase(),

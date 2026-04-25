@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import '../theme/app_theme.dart';
+import '../utils/firebase_platform_support.dart';
 
 /// Enhanced notification service with local notifications
 class EnhancedNotificationService {
-  final FirebaseMessaging _messaging = FirebaseMessaging.instance;
+  final FirebaseMessaging? _messaging = firebaseMessagingOrNull;
   final FlutterLocalNotificationsPlugin _localNotifications =
       FlutterLocalNotificationsPlugin();
 
@@ -14,9 +16,14 @@ class EnhancedNotificationService {
 
   Future<void> initialize() async {
     if (_initialized) return;
+    final messaging = _messaging;
+    if (messaging == null) {
+      debugPrint('ℹ️ Firebase Messaging is not available on this platform');
+      return;
+    }
 
     // Request permissions
-    final settings = await _messaging.requestPermission(
+    final settings = await messaging.requestPermission(
       alert: true,
       badge: true,
       sound: true,
@@ -34,18 +41,18 @@ class EnhancedNotificationService {
       }
 
       // Get FCM token
-      final token = await _messaging.getToken();
+      final token = await messaging.getToken();
       debugPrint('📱 FCM Token: $token');
 
       // Subscribe to topics (Mobile only)
       if (!kIsWeb) {
-        await _messaging.subscribeToTopic('all_alerts');
-        await _messaging.subscribeToTopic('critical_alerts');
-        await _messaging.subscribeToTopic('warning_alerts');
+        await messaging.subscribeToTopic('scada_alerts');
+        await messaging.subscribeToTopic('critical_alerts');
+        await messaging.subscribeToTopic('warning_alerts');
       }
 
       // Configure foreground notifications
-      await _messaging.setForegroundNotificationPresentationOptions(
+      await messaging.setForegroundNotificationPresentationOptions(
         alert: true,
         badge: true,
         sound: true,
@@ -58,13 +65,13 @@ class EnhancedNotificationService {
       FirebaseMessaging.onMessageOpenedApp.listen(_handleBackgroundMessageTap);
 
       // Check if app was opened from terminated state
-      final initialMessage = await _messaging.getInitialMessage();
+      final initialMessage = await messaging.getInitialMessage();
       if (initialMessage != null) {
         _handleBackgroundMessageTap(initialMessage);
       }
 
       // Token refresh listener
-      _messaging.onTokenRefresh.listen((newToken) {
+      messaging.onTokenRefresh.listen((newToken) {
         debugPrint('🔄 FCM Token refreshed: $newToken');
         // TODO: Send to backend
       });
@@ -99,7 +106,7 @@ class EnhancedNotificationService {
 
   Future<void> _createNotificationChannels() async {
     // Critical alerts channel
-    const criticalChannel = AndroidNotificationChannel(
+    final criticalChannel = AndroidNotificationChannel(
       'critical_alerts',
       'Critical Alerts',
       description: 'Critical SCADA system alerts requiring immediate attention',
@@ -107,7 +114,7 @@ class EnhancedNotificationService {
       enableVibration: true,
       vibrationPattern: Int64List.fromList([0, 500, 200, 500]),
       playSound: true,
-      sound: RawResourceAndroidNotificationSound('alert_critical'),
+      sound: const RawResourceAndroidNotificationSound('alert_critical'),
     );
 
     // Warning alerts channel
@@ -186,7 +193,7 @@ class EnhancedNotificationService {
       priority: _getPriority(severity),
       color: _getNotificationColor(severity),
       icon: '@mipmap/ic_launcher',
-      largeIcon: DrawableResourceAndroidBitmap('@mipmap/ic_launcher'),
+      largeIcon: const DrawableResourceAndroidBitmap('@mipmap/ic_launcher'),
       styleInformation: BigTextStyleInformation(body),
       enableVibration: true,
       playSound: true,

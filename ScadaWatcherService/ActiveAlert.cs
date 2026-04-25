@@ -35,6 +35,16 @@ public class ActiveAlert
     public DateTime? AcknowledgedTime { get; private set; }
 
     /// <summary>
+    /// User or system that acknowledged the alert.
+    /// </summary>
+    public string? AcknowledgedBy { get; private set; }
+
+    /// <summary>
+    /// Detailed message provided during acknowledgement.
+    /// </summary>
+    public string? AcknowledgementDetail { get; private set; }
+
+    /// <summary>
     /// Timestamp when the alert condition cleared (UTC).
     /// Null if condition still active.
     /// </summary>
@@ -81,6 +91,17 @@ public class ActiveAlert
     public bool IsEscalated => EscalatedTime.HasValue;
 
     /// <summary>
+    /// Approval status: "pending", "approved", "rejected"
+    /// </summary>
+    public string ApprovalStatus { get; private set; } = "pending";
+
+    public string? ApprovedBy { get; private set; }
+    public DateTime? ApprovedAt { get; private set; }
+    public string? RejectedBy { get; private set; }
+    public DateTime? RejectedAt { get; private set; }
+    public string? RejectionReason { get; private set; }
+
+    /// <summary>
     /// Indicates if escalation timer should be running.
     /// </summary>
     public bool ShouldCheckEscalation => 
@@ -113,12 +134,14 @@ public class ActiveAlert
     /// <summary>
     /// Marks the alert as acknowledged.
     /// </summary>
-    public void Acknowledge()
+    public void Acknowledge(string? by = null, string? detail = null)
     {
         if (State == AlertState.Active)
         {
             State = AlertState.Acknowledged;
             AcknowledgedTime = DateTime.UtcNow;
+            AcknowledgedBy = by;
+            AcknowledgementDetail = detail;
             LastUpdatedTime = DateTime.UtcNow;
         }
     }
@@ -143,6 +166,29 @@ public class ActiveAlert
             EscalatedTime = DateTime.UtcNow;
             LastUpdatedTime = DateTime.UtcNow;
         }
+    }
+
+    /// <summary>
+    /// Marks the alert as approved by a supervisor.
+    /// </summary>
+    public void Approve(string by)
+    {
+        ApprovalStatus = "approved";
+        ApprovedBy = by;
+        ApprovedAt = DateTime.UtcNow;
+        LastUpdatedTime = DateTime.UtcNow;
+    }
+
+    /// <summary>
+    /// Marks the alert as rejected by a supervisor.
+    /// </summary>
+    public void Reject(string by, string reason)
+    {
+        ApprovalStatus = "rejected";
+        RejectedBy = by;
+        RejectedAt = DateTime.UtcNow;
+        RejectionReason = reason;
+        LastUpdatedTime = DateTime.UtcNow;
     }
 
     /// <summary>

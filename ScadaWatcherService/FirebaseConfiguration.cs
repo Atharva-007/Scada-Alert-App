@@ -8,6 +8,9 @@ namespace ScadaWatcherService;
 /// </summary>
 public class FirebaseConfiguration
 {
+    public const string ServiceAccountEnvVar = "FIREBASE_SERVICE_ACCOUNT_JSON";
+    public const string GoogleCredentialsEnvVar = "GOOGLE_APPLICATION_CREDENTIALS";
+
     /// <summary>
     /// Enables or disables the Firebase notification adapter.
     /// If disabled, all cloud synchronization and push notifications are suppressed.
@@ -15,15 +18,15 @@ public class FirebaseConfiguration
     public bool Enabled { get; set; } = false;
 
     /// <summary>
-    /// Google Cloud project ID (e.g., "my-scada-project-12345").
+    /// Google Cloud project ID (e.g., "scadadataserver").
     /// </summary>
     [Required]
     public string ProjectId { get; set; } = string.Empty;
 
     /// <summary>
-    /// Absolute path to the Firebase service account JSON key file.
-    /// Must have permissions for Firestore and Cloud Messaging.
-    /// Example: "C:\\SecureKeys\\firebase-service-account.json"
+    /// Path to the Firebase service account JSON key file.
+    /// Relative paths are resolved from the deployed service folder.
+    /// Example: "config\\firebase-service-account.json"
     /// </summary>
     [Required]
     public string ServiceAccountJsonPath { get; set; } = string.Empty;
@@ -125,11 +128,7 @@ public class FirebaseConfiguration
         if (string.IsNullOrWhiteSpace(ProjectId))
             throw new InvalidOperationException("Firebase ProjectId is required when Firebase is enabled.");
 
-        if (string.IsNullOrWhiteSpace(ServiceAccountJsonPath))
-            throw new InvalidOperationException("Firebase ServiceAccountJsonPath is required when Firebase is enabled.");
-
-        if (!File.Exists(ServiceAccountJsonPath))
-            throw new FileNotFoundException($"Firebase service account file not found: {ServiceAccountJsonPath}");
+        ResolveServiceAccountJsonPath();
 
         if (NotificationThrottleSeconds < 0)
             throw new InvalidOperationException("NotificationThrottleSeconds must be >= 0.");
@@ -139,5 +138,54 @@ public class FirebaseConfiguration
 
         if (RetryIntervalsSeconds == null || RetryIntervalsSeconds.Length == 0)
             throw new InvalidOperationException("RetryIntervalsSeconds must contain at least one interval.");
+    }
+
+    public string ResolveServiceAccountJsonPath()
+    {
+        var attemptedPaths = new List<string>();
+
+        foreach (var candidate in GetServiceAccountCandidates())
+        {
+            var resolvedPath = ResolveCandidatePath(candidate);
+            if (string.IsNullOrWhiteSpace(resolvedPath))
+                continue;
+
+            attemptedPaths.Add(resolvedPath);
+            if (File.Exists(resolvedPath))
+                return resolvedPath;
+        }
+
+        var checkedPaths = attemptedPaths.Count > 0
+            ? string.Join(", ", attemptedPaths.Distinct(StringComparer.OrdinalIgnoreCase))
+            : "no candidate paths were configured";
+
+        throw new FileNotFoundException(
+            $"Firebase service account file not found. Checked: {checkedPaths}");
+    }
+
+    private IEnumerable<string?> GetServiceAccountCandidates()
+    {
+        yield return ServiceAccountJsonPath;
+        yield return Environment.GetEnvironmentVariable(ServiceAccountEnvVar);
+        yield return Environment.GetEnvironmentVariable(GoogleCredentialsEnvVar);
+
+        var baseDirectory = AppContext.BaseDirectory;
+        var currentDirectory = Directory.GetCurrentDirectory();
+
+        yield return Path.Combine(baseDirectory, "firebase-service-account.json");
+        yield return Path.Combine(baseDirectory, "config", "firebase-service-account.json");
+        yield return Path.Combine(currentDirectory, "firebase-service-account.json");
+        yield return Path.Combine(currentDirectory, "config", "firebase-service-account.json");
+    }
+
+    private static string? ResolveCandidatePath(string? candidate)
+    {
+        if (string.IsNullOrWhiteSpace(candidate))
+            return null;
+
+        var expandedPath = Environment.ExpandEnvironmentVariables(candidate.Trim());
+        return Path.IsPathRooted(expandedPath)
+            ? expandedPath
+            : Path.GetFullPath(expandedPath, ServicePathResolver.BaseDirectory);
     }
 }

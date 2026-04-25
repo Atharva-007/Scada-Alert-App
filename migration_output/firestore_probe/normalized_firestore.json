@@ -1,0 +1,658 @@
+{
+  "metadata": {
+    "generatedAt": "2026-04-25T10:27:55.901Z",
+    "sourceProjectId": "scadadataserver",
+    "requestedSourceProjectId": "scadadataserver",
+    "databaseId": "(default)",
+    "targetProjectId": "scadadataserver",
+    "targetDatabaseUrl": "https://scadadataserver-default-rtdb.firebaseio.com",
+    "authType": "firebase_cli",
+    "sourceProjectCandidates": [
+      "scadadataserver",
+      "alert-systems-db"
+    ],
+    "accessibleProjectsViaCli": [],
+    "baselineMonthDay": "01-26",
+    "baselineTimezone": "UTC",
+    "warnings": [],
+    "projectResolutionErrors": [],
+    "totalDocuments": 26,
+    "totalCollections": 7,
+    "baselineDocuments": 11,
+    "collectionsWithBaseline": 6
+  },
+  "collections": {
+    "alerts_active": {
+      "ALT004": {
+        "__path": "alerts_active/ALT004",
+        "data": {
+          "severity": "High",
+          "approvalStatus": "approved",
+          "location": "Control Room",
+          "isActive": true,
+          "status": "Approved",
+          "acknowledgedAt": "2026-04-24T07:43:53.019Z",
+          "category": "Communication",
+          "equipment": "PLC-5",
+          "title": "Communication Error - PLC 5",
+          "acknowledgedBy": "Supervisor-App",
+          "priority": 1,
+          "approvedBy": "Supervisor-App",
+          "approvedAt": "2026-04-24T07:43:59.774Z",
+          "acknowledgedComment": "",
+          "id": "ALT004",
+          "message": "Lost communication with remote PLC",
+          "raisedAt": "2026-01-26T10:25:00.000Z",
+          "isAcknowledged": true,
+          "value": null,
+          "acknowledgement_detail": null,
+          "acknowledged": null,
+          "unit": null
+        },
+        "dateInfo": {
+          "field": "raisedAt",
+          "iso": "2026-01-26T10:25:00.000Z",
+          "matchesBaseline": true
+        }
+      },
+      "ALT005": {
+        "__path": "alerts_active/ALT005",
+        "data": {
+          "raisedAt": "2026-01-26T10:30:00.000Z",
+          "value": -999,
+          "acknowledgement_detail": "",
+          "isAcknowledged": true,
+          "id": "ALT005",
+          "message": "Level sensor reporting invalid values",
+          "acknowledged": true,
+          "acknowledgedBy": "Supervisor-App",
+          "priority": 1,
+          "approvedBy": "Supervisor-App",
+          "approvedAt": "2026-04-24T07:36:29.007Z",
+          "severity": "High",
+          "approvalStatus": "approved",
+          "location": "Storage Area D3",
+          "acknowledgedAt": "2026-04-24T07:36:24.094Z",
+          "category": "Sensor",
+          "isActive": true,
+          "status": "Active",
+          "equipment": "Tank-7",
+          "unit": "%",
+          "title": "Level Sensor Failure - Tank 7",
+          "acknowledgedComment": null
+        },
+        "dateInfo": {
+          "field": "raisedAt",
+          "iso": "2026-01-26T10:30:00.000Z",
+          "matchesBaseline": true
+        }
+      }
+    },
+    "alerts_history": {
+      "ALT001": {
+        "__path": "alerts_history/ALT001",
+        "data": {
+          "threshold": 150,
+          "tagName": "Reactor-1",
+          "rejectedAt": null,
+          "lastUpdatedTime": null,
+          "currentValue": 185.5,
+          "suppressionCount": 0,
+          "notes": null,
+          "isAcknowledged": true,
+          "approvedBy": "Supervisor-App",
+          "acknowledgedBy": "operator_user",
+          "equipment": "Reactor-1",
+          "rejectionReason": null,
+          "approvalStatus": "approved",
+          "condition": "Temperature",
+          "source": "Reactor-1",
+          "alertType": "Temperature",
+          "acknowledgedComment": null,
+          "rejectedBy": null,
+          "raisedAt": "2026-01-26T10:00:00.000Z",
+          "severity": "Critical",
+          "escalationLevel": 1,
+          "clearedAt": "2026-04-24T09:34:41.879Z",
+          "name": "High Temperature Alert - Reactor 1",
+          "location": "Reactor Area A1",
+          "escalationCount": 0,
+          "isActive": false,
+          "trendData": [],
+          "description": "Temperature exceeds normal operating range",
+          "escalatedAt": null,
+          "status": "approved",
+          "isSuppressed": false,
+          "acknowledgedAt": "2026-01-26T12:20:12.377Z",
+          "approvedAt": "2026-04-24T09:34:41.879Z",
+          "relatedAlertIds": []
+        },
+        "dateInfo": {
+          "field": "raisedAt",
+          "iso": "2026-01-26T10:00:00.000Z",
+          "matchesBaseline": true
+        }
+      },
+      "ALT002": {
+        "__path": "alerts_history/ALT002",
+        "data": {
+          "approvalStatus": "approved",
+          "alertType": "Pressure",
+          "source": "Tank-3",
+          "condition": "Pressure",
+          "raisedAt": "2026-01-26T10:15:00.000Z",
+          "rejectedBy": null,
+          "acknowledgedComment": null,
+          "acknowledgedBy": "User-App",
+          "equipment": "Tank-3",
+          "rejectionReason": null,
+          "suppressionCount": 0,
+          "notes": null,
+          "approvedBy": "Supervisor-App",
+          "isAcknowledged": true,
+          "threshold": 100,
+          "lastUpdatedTime": null,
+          "tagName": "Tank-3",
+          "rejectedAt": null,
+          "currentValue": 95.2,
+          "acknowledgedAt": "2026-03-29T19:50:02.684Z",
+          "approvedAt": "2026-04-24T09:34:19.313Z",
+          "relatedAlertIds": [],
+          "status": "approved",
+          "escalatedAt": null,
+          "isSuppressed": false,
+          "escalationCount": 0,
+          "isActive": false,
+          "description": "Pressure reading outside acceptable limits",
+          "trendData": [],
+          "severity": "Warning",
+          "escalationLevel": 2,
+          "name": "Pressure Anomaly - Tank 3",
+          "clearedAt": "2026-04-24T09:34:19.313Z",
+          "location": "Storage Area B2"
+        },
+        "dateInfo": {
+          "field": "raisedAt",
+          "iso": "2026-01-26T10:15:00.000Z",
+          "matchesBaseline": true
+        }
+      },
+      "ALT003": {
+        "__path": "alerts_history/ALT003",
+        "data": {
+          "location": "Pump Station C1",
+          "name": "Flow Rate Low - Pump 2",
+          "clearedAt": "2026-04-24T08:16:01.703Z",
+          "escalationLevel": 2,
+          "severity": "Warning",
+          "trendData": [],
+          "description": "Flow rate below minimum required",
+          "isActive": false,
+          "escalationCount": 0,
+          "isSuppressed": false,
+          "escalatedAt": null,
+          "status": "Approved",
+          "relatedAlertIds": [],
+          "approvedAt": "2026-04-24T08:16:01.703Z",
+          "acknowledgedAt": "2026-01-26T10:20:00.000Z",
+          "currentValue": 45,
+          "rejectedAt": null,
+          "tagName": "Pump-2",
+          "lastUpdatedTime": null,
+          "threshold": 50,
+          "isAcknowledged": true,
+          "approvedBy": "Supervisor-App",
+          "notes": null,
+          "suppressionCount": 0,
+          "rejectionReason": null,
+          "equipment": "Pump-2",
+          "acknowledgedBy": "operator_john",
+          "acknowledgedComment": null,
+          "raisedAt": "2026-01-26T10:10:00.000Z",
+          "rejectedBy": null,
+          "condition": "Flow",
+          "alertType": "Flow",
+          "source": "Pump-2",
+          "approvalStatus": "approved"
+        },
+        "dateInfo": {
+          "field": "raisedAt",
+          "iso": "2026-01-26T10:10:00.000Z",
+          "matchesBaseline": true
+        }
+      },
+      "ALT_H001": {
+        "__path": "alerts_history/ALT_H001",
+        "data": {
+          "location": "Production Line 1",
+          "clearedAt": "2026-01-25T14:30:00.000Z",
+          "severity": "Critical",
+          "title": "Motor Overload - Conveyor 1",
+          "id": "ALT_H001",
+          "isActive": false,
+          "category": "Electrical",
+          "equipment": "Conveyor-1",
+          "acknowledgedBy": "operator_sarah",
+          "status": "Cleared",
+          "message": "Motor current exceeded rated capacity",
+          "duration": 1800,
+          "raisedAt": "2026-01-25T14:00:00.000Z",
+          "threshold": null,
+          "tagName": null,
+          "rejectedAt": null,
+          "lastUpdatedTime": null,
+          "currentValue": null,
+          "suppressionCount": null,
+          "notes": null,
+          "isAcknowledged": null,
+          "approvedBy": null,
+          "rejectionReason": null,
+          "approvalStatus": null,
+          "condition": null,
+          "source": null,
+          "alertType": null,
+          "acknowledgedComment": null,
+          "rejectedBy": null,
+          "escalationLevel": null,
+          "name": null,
+          "escalationCount": null,
+          "trendData": [],
+          "description": null,
+          "escalatedAt": null,
+          "isSuppressed": null,
+          "acknowledgedAt": null,
+          "approvedAt": null,
+          "relatedAlertIds": []
+        },
+        "dateInfo": {
+          "field": "raisedAt",
+          "iso": "2026-01-25T14:00:00.000Z",
+          "matchesBaseline": false
+        }
+      },
+      "ALT_H002": {
+        "__path": "alerts_history/ALT_H002",
+        "data": {
+          "duration": 900,
+          "raisedAt": "2026-01-25T16:00:00.000Z",
+          "message": "Valve failed to reach commanded position",
+          "equipment": "Valve-103",
+          "status": "Cleared",
+          "acknowledgedBy": "operator_mike",
+          "title": "Valve Position Error - V-103",
+          "isActive": false,
+          "id": "ALT_H002",
+          "category": "Mechanical",
+          "clearedAt": "2026-01-25T16:15:00.000Z",
+          "location": "Process Area 2",
+          "severity": "Warning",
+          "threshold": null,
+          "tagName": null,
+          "rejectedAt": null,
+          "lastUpdatedTime": null,
+          "currentValue": null,
+          "suppressionCount": null,
+          "notes": null,
+          "isAcknowledged": null,
+          "approvedBy": null,
+          "rejectionReason": null,
+          "approvalStatus": null,
+          "condition": null,
+          "source": null,
+          "alertType": null,
+          "acknowledgedComment": null,
+          "rejectedBy": null,
+          "escalationLevel": null,
+          "name": null,
+          "escalationCount": null,
+          "trendData": [],
+          "description": null,
+          "escalatedAt": null,
+          "isSuppressed": null,
+          "acknowledgedAt": null,
+          "approvedAt": null,
+          "relatedAlertIds": []
+        },
+        "dateInfo": {
+          "field": "raisedAt",
+          "iso": "2026-01-25T16:00:00.000Z",
+          "matchesBaseline": false
+        }
+      }
+    },
+    "client_heartbeats": {
+      "windows_client": {
+        "__path": "client_heartbeats/windows_client",
+        "data": {
+          "timestamp": "2026-04-25T10:27:19.901Z",
+          "platform": "windows",
+          "status": "online",
+          "version": "1.2.0"
+        },
+        "dateInfo": {
+          "field": "timestamp",
+          "iso": "2026-04-25T10:27:19.901Z",
+          "matchesBaseline": false
+        }
+      }
+    },
+    "config": {
+      "sync_settings": {
+        "__path": "config/sync_settings",
+        "data": {
+          "offlineQueueEnabled": true,
+          "notificationSound": true,
+          "lastUpdated": "2026-01-26T11:15:04.587Z",
+          "maxOfflineQueueSize": 1000,
+          "heartbeatInterval": 30000,
+          "syncInterval": 5000,
+          "enableNotifications": true
+        },
+        "dateInfo": {
+          "field": "lastUpdated",
+          "iso": "2026-01-26T11:15:04.587Z",
+          "matchesBaseline": true
+        }
+      }
+    },
+    "device_tokens": {
+      "c6afYTIjV1a1_VjifVLADl:APA91bEKZT-EiAQ1lPZqNyoshIGfnnSPfX6vZwfXHq--LdiwHT8zKB8kFi7G7mMK8lzawMawHmp61CGwxo8s5o_Pk869CmiWZgSKYn4GNFAOGldut9LMUzM": {
+        "__path": "device_tokens/c6afYTIjV1a1_VjifVLADl:APA91bEKZT-EiAQ1lPZqNyoshIGfnnSPfX6vZwfXHq--LdiwHT8zKB8kFi7G7mMK8lzawMawHmp61CGwxo8s5o_Pk869CmiWZgSKYn4GNFAOGldut9LMUzM",
+        "data": {
+          "active": true,
+          "lastUpdated": "2026-04-24T13:59:25.457Z",
+          "platform": "windows",
+          "token": "c6afYTIjV1a1_VjifVLADl:APA91bEKZT-EiAQ1lPZqNyoshIGfnnSPfX6vZwfXHq--LdiwHT8zKB8kFi7G7mMK8lzawMawHmp61CGwxo8s5o_Pk869CmiWZgSKYn4GNFAOGldut9LMUzM"
+        },
+        "dateInfo": {
+          "field": "lastUpdated",
+          "iso": "2026-04-24T13:59:25.457Z",
+          "matchesBaseline": false
+        }
+      },
+      "cUcJO0FTX1xp6i7b3wVMDE:APA91bEfclizJRmVAP-6fAYr7HMT1S9qEFlZuJ2oNRLiAdzQmzm2FbOJxze4kWRE9KXApJiCQ5U6pCeVSFRkb531sYconFAABMp9iNP9FstD7lPyVgovgw8": {
+        "__path": "device_tokens/cUcJO0FTX1xp6i7b3wVMDE:APA91bEfclizJRmVAP-6fAYr7HMT1S9qEFlZuJ2oNRLiAdzQmzm2FbOJxze4kWRE9KXApJiCQ5U6pCeVSFRkb531sYconFAABMp9iNP9FstD7lPyVgovgw8",
+        "data": {
+          "active": true,
+          "platform": "windows",
+          "lastUpdated": "2026-03-30T19:07:25.651Z",
+          "token": "cUcJO0FTX1xp6i7b3wVMDE:APA91bEfclizJRmVAP-6fAYr7HMT1S9qEFlZuJ2oNRLiAdzQmzm2FbOJxze4kWRE9KXApJiCQ5U6pCeVSFRkb531sYconFAABMp9iNP9FstD7lPyVgovgw8"
+        },
+        "dateInfo": {
+          "field": "lastUpdated",
+          "iso": "2026-03-30T19:07:25.651Z",
+          "matchesBaseline": false
+        }
+      },
+      "c_5fLdUbYCfQCXqpx7kudX:APA91bFF96MFEjmyv8RH1gPVFnxzpNIW8KEiQ7TwEXfXZwaucMpxovjLuwYB1baeQ7guhixNvCOjTS9YyRoBV2ukEZxNHHh0IvV4Nw66GynxOqctCi3sdqU": {
+        "__path": "device_tokens/c_5fLdUbYCfQCXqpx7kudX:APA91bFF96MFEjmyv8RH1gPVFnxzpNIW8KEiQ7TwEXfXZwaucMpxovjLuwYB1baeQ7guhixNvCOjTS9YyRoBV2ukEZxNHHh0IvV4Nw66GynxOqctCi3sdqU",
+        "data": {
+          "active": true,
+          "token": "c_5fLdUbYCfQCXqpx7kudX:APA91bFF96MFEjmyv8RH1gPVFnxzpNIW8KEiQ7TwEXfXZwaucMpxovjLuwYB1baeQ7guhixNvCOjTS9YyRoBV2ukEZxNHHh0IvV4Nw66GynxOqctCi3sdqU",
+          "lastUpdated": "2026-04-01T20:00:36.413Z",
+          "platform": "windows"
+        },
+        "dateInfo": {
+          "field": "lastUpdated",
+          "iso": "2026-04-01T20:00:36.413Z",
+          "matchesBaseline": false
+        }
+      },
+      "dJzN0STTRVubjUiJY312TZ:APA91bEcZamBFj9mGAimV8Hrig3nhNYAPBaPWJGL75HGl2MERJWIS9YVH2Sdh1FWr1TWP7ctWRDDbGL07mVtJpXJ1qWlubvSmAk8oXVZekD8suyu11wOFX0": {
+        "__path": "device_tokens/dJzN0STTRVubjUiJY312TZ:APA91bEcZamBFj9mGAimV8Hrig3nhNYAPBaPWJGL75HGl2MERJWIS9YVH2Sdh1FWr1TWP7ctWRDDbGL07mVtJpXJ1qWlubvSmAk8oXVZekD8suyu11wOFX0",
+        "data": {
+          "token": "dJzN0STTRVubjUiJY312TZ:APA91bEcZamBFj9mGAimV8Hrig3nhNYAPBaPWJGL75HGl2MERJWIS9YVH2Sdh1FWr1TWP7ctWRDDbGL07mVtJpXJ1qWlubvSmAk8oXVZekD8suyu11wOFX0",
+          "platform": "windows",
+          "lastUpdated": "2026-04-24T14:01:51.497Z",
+          "active": true
+        },
+        "dateInfo": {
+          "field": "lastUpdated",
+          "iso": "2026-04-24T14:01:51.497Z",
+          "matchesBaseline": false
+        }
+      },
+      "dWuk3iKKfH_RQ8JzSzjDRj:APA91bHO9Bd5M3FSmT71Pv5nFVg-SN0zxrshrNEiBfK04uFyQ23x4m2MVgx480oVQ0yB7wvG88UTxQBCbQl-gLnuayfGXsOg4ASy0qAkE9H0ru1d3yuww4c": {
+        "__path": "device_tokens/dWuk3iKKfH_RQ8JzSzjDRj:APA91bHO9Bd5M3FSmT71Pv5nFVg-SN0zxrshrNEiBfK04uFyQ23x4m2MVgx480oVQ0yB7wvG88UTxQBCbQl-gLnuayfGXsOg4ASy0qAkE9H0ru1d3yuww4c",
+        "data": {
+          "active": true,
+          "token": "dWuk3iKKfH_RQ8JzSzjDRj:APA91bHO9Bd5M3FSmT71Pv5nFVg-SN0zxrshrNEiBfK04uFyQ23x4m2MVgx480oVQ0yB7wvG88UTxQBCbQl-gLnuayfGXsOg4ASy0qAkE9H0ru1d3yuww4c",
+          "platform": "windows",
+          "lastUpdated": "2026-04-01T19:56:08.893Z"
+        },
+        "dateInfo": {
+          "field": "lastUpdated",
+          "iso": "2026-04-01T19:56:08.893Z",
+          "matchesBaseline": false
+        }
+      },
+      "d_vHyuiuSDmK1yGTKW-_4a:APA91bHeIbZu2DATnoOvogNP9W2nim8Ie7XrbM_A73NX5m68OLnCeDZj0ME-54ThVi3nLvmctIDpQWc4fucnImiTQYUMSYPQVhidRZ8mCA4qxW2UyDL1P8g": {
+        "__path": "device_tokens/d_vHyuiuSDmK1yGTKW-_4a:APA91bHeIbZu2DATnoOvogNP9W2nim8Ie7XrbM_A73NX5m68OLnCeDZj0ME-54ThVi3nLvmctIDpQWc4fucnImiTQYUMSYPQVhidRZ8mCA4qxW2UyDL1P8g",
+        "data": {
+          "active": true,
+          "platform": "windows",
+          "lastUpdated": "2026-01-26T12:24:04.983Z",
+          "token": "d_vHyuiuSDmK1yGTKW-_4a:APA91bHeIbZu2DATnoOvogNP9W2nim8Ie7XrbM_A73NX5m68OLnCeDZj0ME-54ThVi3nLvmctIDpQWc4fucnImiTQYUMSYPQVhidRZ8mCA4qxW2UyDL1P8g"
+        },
+        "dateInfo": {
+          "field": "lastUpdated",
+          "iso": "2026-01-26T12:24:04.983Z",
+          "matchesBaseline": true
+        }
+      },
+      "dxkS7DOInZzRKpM24ZODEh:APA91bHnDCc3OA4u7FVR4ihI0_vnigbnVehPF17-rRCJlq3w_-MWLJSRrNpuogmI-t7fIWZd8xqMWlkCjyGjsdq0X2aJ5fprlVsSIGuO6nRayxCK2rTd8GQ": {
+        "__path": "device_tokens/dxkS7DOInZzRKpM24ZODEh:APA91bHnDCc3OA4u7FVR4ihI0_vnigbnVehPF17-rRCJlq3w_-MWLJSRrNpuogmI-t7fIWZd8xqMWlkCjyGjsdq0X2aJ5fprlVsSIGuO6nRayxCK2rTd8GQ",
+        "data": {
+          "token": "dxkS7DOInZzRKpM24ZODEh:APA91bHnDCc3OA4u7FVR4ihI0_vnigbnVehPF17-rRCJlq3w_-MWLJSRrNpuogmI-t7fIWZd8xqMWlkCjyGjsdq0X2aJ5fprlVsSIGuO6nRayxCK2rTd8GQ",
+          "lastUpdated": "2026-04-05T06:52:31.138Z",
+          "platform": "windows",
+          "active": true
+        },
+        "dateInfo": {
+          "field": "lastUpdated",
+          "iso": "2026-04-05T06:52:31.138Z",
+          "matchesBaseline": false
+        }
+      },
+      "eoM1eb1Cngd9ojcbOSZKJH:APA91bElUyqRmdDmR9KQZlcPVKpE1DaRK5iqaEBDjOmi8QMiv6tjFUo0BinzrvW5MEYIdRkj4E4Y7k4vrKnX6npKs5JRhcJD7epzqUqb5WYK_Oz8He7lLTU": {
+        "__path": "device_tokens/eoM1eb1Cngd9ojcbOSZKJH:APA91bElUyqRmdDmR9KQZlcPVKpE1DaRK5iqaEBDjOmi8QMiv6tjFUo0BinzrvW5MEYIdRkj4E4Y7k4vrKnX6npKs5JRhcJD7epzqUqb5WYK_Oz8He7lLTU",
+        "data": {
+          "active": true,
+          "lastUpdated": "2026-04-25T10:12:19.435Z",
+          "platform": "windows",
+          "token": "eoM1eb1Cngd9ojcbOSZKJH:APA91bElUyqRmdDmR9KQZlcPVKpE1DaRK5iqaEBDjOmi8QMiv6tjFUo0BinzrvW5MEYIdRkj4E4Y7k4vrKnX6npKs5JRhcJD7epzqUqb5WYK_Oz8He7lLTU"
+        },
+        "dateInfo": {
+          "field": "lastUpdated",
+          "iso": "2026-04-25T10:12:19.435Z",
+          "matchesBaseline": false
+        }
+      },
+      "f94G7Bzcx9QZxyhS1hH9cw:APA91bF577D2tMKUQEN5ZpI3JOARSUG-pZ0jpMyySBvtYrdTH1DfvAma_J-WyDeg_3DFmznMTB-uT9dpeB13nMZSwspCbca8J3-_jlDULeTCjG7eCSp6rwk": {
+        "__path": "device_tokens/f94G7Bzcx9QZxyhS1hH9cw:APA91bF577D2tMKUQEN5ZpI3JOARSUG-pZ0jpMyySBvtYrdTH1DfvAma_J-WyDeg_3DFmznMTB-uT9dpeB13nMZSwspCbca8J3-_jlDULeTCjG7eCSp6rwk",
+        "data": {
+          "lastUpdated": "2026-04-24T21:21:57.652Z",
+          "platform": "windows",
+          "token": "f94G7Bzcx9QZxyhS1hH9cw:APA91bF577D2tMKUQEN5ZpI3JOARSUG-pZ0jpMyySBvtYrdTH1DfvAma_J-WyDeg_3DFmznMTB-uT9dpeB13nMZSwspCbca8J3-_jlDULeTCjG7eCSp6rwk",
+          "active": true
+        },
+        "dateInfo": {
+          "field": "lastUpdated",
+          "iso": "2026-04-24T21:21:57.652Z",
+          "matchesBaseline": false
+        }
+      },
+      "fIqw1UTm88vzWsPSOJMU7c:APA91bFY-31pQaeEW2VeVrFZWT2uyx92MLBSzoLCirmuZT7f0rTWh_68ALIf8WlRtvqfwwNivVp_ntgXEeM1iQadBh8_EVRzZ1zK3fX4YcPAxBgtf_6LHuY": {
+        "__path": "device_tokens/fIqw1UTm88vzWsPSOJMU7c:APA91bFY-31pQaeEW2VeVrFZWT2uyx92MLBSzoLCirmuZT7f0rTWh_68ALIf8WlRtvqfwwNivVp_ntgXEeM1iQadBh8_EVRzZ1zK3fX4YcPAxBgtf_6LHuY",
+        "data": {
+          "platform": "windows",
+          "lastUpdated": "2026-04-24T12:24:20.331Z",
+          "token": "fIqw1UTm88vzWsPSOJMU7c:APA91bFY-31pQaeEW2VeVrFZWT2uyx92MLBSzoLCirmuZT7f0rTWh_68ALIf8WlRtvqfwwNivVp_ntgXEeM1iQadBh8_EVRzZ1zK3fX4YcPAxBgtf_6LHuY",
+          "active": true
+        },
+        "dateInfo": {
+          "field": "lastUpdated",
+          "iso": "2026-04-24T12:24:20.331Z",
+          "matchesBaseline": false
+        }
+      },
+      "fnPDplJUdwW3P0ZwPO4f7H:APA91bEZTgY6Qnlv9bQA5tgYRl5bJVPJUdVcBcufez-U3DXWqSyFvo92zGS1upBn7yZGkvvxysXjpkc1jmLjKI5W8b9uNzhF8LKjNuVTKgr0jYvUpZRhq2Q": {
+        "__path": "device_tokens/fnPDplJUdwW3P0ZwPO4f7H:APA91bEZTgY6Qnlv9bQA5tgYRl5bJVPJUdVcBcufez-U3DXWqSyFvo92zGS1upBn7yZGkvvxysXjpkc1jmLjKI5W8b9uNzhF8LKjNuVTKgr0jYvUpZRhq2Q",
+        "data": {
+          "token": "fnPDplJUdwW3P0ZwPO4f7H:APA91bEZTgY6Qnlv9bQA5tgYRl5bJVPJUdVcBcufez-U3DXWqSyFvo92zGS1upBn7yZGkvvxysXjpkc1jmLjKI5W8b9uNzhF8LKjNuVTKgr0jYvUpZRhq2Q",
+          "lastUpdated": "2026-03-30T18:02:44.754Z",
+          "platform": "windows",
+          "active": true
+        },
+        "dateInfo": {
+          "field": "lastUpdated",
+          "iso": "2026-03-30T18:02:44.754Z",
+          "matchesBaseline": false
+        }
+      }
+    },
+    "statistics": {
+      "overview": {
+        "__path": "statistics/overview",
+        "data": {
+          "acknowledgedAlerts": 1,
+          "criticalAlerts": 1,
+          "totalCleared24h": 2,
+          "lastUpdated": "2026-01-26T11:15:03.473Z",
+          "totalAlerts": 5
+        },
+        "dateInfo": {
+          "field": "lastUpdated",
+          "iso": "2026-01-26T11:15:03.473Z",
+          "matchesBaseline": true
+        }
+      }
+    },
+    "system_status": {
+      "Alert Engine": {
+        "__path": "system_status/Alert Engine",
+        "data": {
+          "status": "Online",
+          "metadata": {
+            "processingTime": "15ms",
+            "rulesLoaded": 48,
+            "alertsGenerated": 127,
+            "size": null,
+            "lastBackup": null,
+            "activeConnections": null,
+            "notificationsSent": null,
+            "fcmTokens": null,
+            "deliveryRate": null
+          },
+          "lastHeartbeat": "2026-01-26T11:15:01.705Z",
+          "version": "1.0.3",
+          "componentName": "Alert Engine"
+        },
+        "dateInfo": {
+          "field": "lastHeartbeat",
+          "iso": "2026-01-26T11:15:01.705Z",
+          "matchesBaseline": true
+        }
+      },
+      "Database Server": {
+        "__path": "system_status/Database Server",
+        "data": {
+          "componentName": "Database Server",
+          "version": "SQLite 3.41.0",
+          "lastHeartbeat": "2026-01-26T11:15:01.705Z",
+          "status": "Online",
+          "metadata": {
+            "size": "45.2 MB",
+            "lastBackup": "2026-01-26T02:00:00.000Z",
+            "activeConnections": 2,
+            "processingTime": null,
+            "rulesLoaded": null,
+            "alertsGenerated": null,
+            "notificationsSent": null,
+            "fcmTokens": null,
+            "deliveryRate": null
+          }
+        },
+        "dateInfo": {
+          "field": "lastHeartbeat",
+          "iso": "2026-01-26T11:15:01.705Z",
+          "matchesBaseline": true
+        }
+      },
+      "Notification Service": {
+        "__path": "system_status/Notification Service",
+        "data": {
+          "lastHeartbeat": "2026-01-26T11:15:01.705Z",
+          "metadata": {
+            "notificationsSent": 89,
+            "fcmTokens": 5,
+            "deliveryRate": "98.9%",
+            "processingTime": null,
+            "rulesLoaded": null,
+            "alertsGenerated": null,
+            "size": null,
+            "lastBackup": null,
+            "activeConnections": null
+          },
+          "status": "Online",
+          "componentName": "Notification Service",
+          "version": "1.1.2"
+        },
+        "dateInfo": {
+          "field": "lastHeartbeat",
+          "iso": "2026-01-26T11:15:01.705Z",
+          "matchesBaseline": true
+        }
+      },
+      "OPC UA Server": {
+        "__path": "system_status/OPC UA Server",
+        "data": {
+          "status": null,
+          "metadata": {
+            "activeConnections": null,
+            "alertsGenerated": null,
+            "deliveryRate": null,
+            "fcmTokens": null,
+            "lastBackup": null,
+            "notificationsSent": null,
+            "processingTime": null,
+            "rulesLoaded": null,
+            "size": null
+          },
+          "lastHeartbeat": null,
+          "version": null,
+          "componentName": null
+        },
+        "dateInfo": null
+      },
+      "Windows Sync Service": {
+        "__path": "system_status/Windows Sync Service",
+        "data": {
+          "componentName": "Windows Sync Service",
+          "version": "1.2.0",
+          "lastHeartbeat": "2026-01-26T11:15:01.704Z",
+          "status": "Online",
+          "metadata": {
+            "uptime": "24:15:30",
+            "alertsProcessed": 1247,
+            "syncedToCloud": 1247,
+            "processingTime": null,
+            "rulesLoaded": null,
+            "alertsGenerated": null,
+            "size": null,
+            "lastBackup": null,
+            "activeConnections": null,
+            "notificationsSent": null,
+            "fcmTokens": null,
+            "deliveryRate": null
+          }
+        },
+        "dateInfo": {
+          "field": "version",
+          "iso": "2000-01-01T18:30:00.000Z",
+          "matchesBaseline": false
+        }
+      }
+    }
+  }
+}

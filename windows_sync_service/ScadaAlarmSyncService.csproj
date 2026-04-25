@@ -20,4 +20,9 @@
     <PackageReference Include="System.ServiceProcess.ServiceController" Version="7.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="ProjectInstaller.cs" />
+    <Compile Remove="AlarmSyncService_Template.cs" />
+  </ItemGroup>
+
 </Project>

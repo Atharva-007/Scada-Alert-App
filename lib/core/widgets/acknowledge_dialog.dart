@@ -32,11 +32,11 @@ class _AcknowledgeDialogState extends State<AcknowledgeDialog> {
       backgroundColor: AppTheme.cardDark,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: Color(0xFF3F3F3F), width: 1),
+        side: const BorderSide(color: Color(0xFF3F3F3F), width: 1),
       ),
       child: Container(
-        constraints: BoxConstraints(maxWidth: 500),
-        padding: EdgeInsets.all(24),
+        constraints: const BoxConstraints(maxWidth: 500),
+        padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -45,22 +45,22 @@ class _AcknowledgeDialogState extends State<AcknowledgeDialog> {
             Row(
               children: [
                 Container(
-                  padding: EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: AppTheme.warningColor.withOpacity(0.15),
+                    color: AppTheme.warningColor.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: AppTheme.warningColor.withOpacity(0.3),
+                      color: AppTheme.warningColor.withValues(alpha: 0.3),
                       width: 1,
                     ),
                   ),
-                  child: Icon(
+                  child: const Icon(
                     Icons.task_alt,
                     color: AppTheme.warningColor,
                     size: 28,
                   ),
                 ),
-                SizedBox(width: 16),
+                const SizedBox(width: 16),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -69,14 +69,14 @@ class _AcknowledgeDialogState extends State<AcknowledgeDialog> {
                         'Acknowledge Alert',
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFFFFFFFF),
+                          color: const Color(0xFFFFFFFF),
                         ),
                       ),
-                      SizedBox(height: 4),
+                      const SizedBox(height: 4),
                       Text(
                         'Confirm operator acknowledgement',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Color(0xFF9E9E9E),
+                          color: const Color(0xFF9E9E9E),
                         ),
                       ),
                     ],
@@ -84,15 +84,15 @@ class _AcknowledgeDialogState extends State<AcknowledgeDialog> {
                 ),
               ],
             ),
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
 
             // Alert Info
             Container(
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: AppTheme.surfaceVariantDark,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Color(0xFF3F3F3F), width: 1),
+                border: Border.all(color: const Color(0xFF3F3F3F), width: 1),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -104,11 +104,11 @@ class _AcknowledgeDialogState extends State<AcknowledgeDialog> {
                         color: AppTheme.getSeverityColor(widget.alert.severity),
                         size: 20,
                       ),
-                      SizedBox(width: 8),
+                      const SizedBox(width: 8),
                       Expanded(
                         child: Text(
                           widget.alert.name,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                             color: Color(0xFFFFFFFF),
@@ -119,22 +119,22 @@ class _AcknowledgeDialogState extends State<AcknowledgeDialog> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 12),
+                  const SizedBox(height: 12),
                   _buildInfoRow('Source', widget.alert.source),
-                  SizedBox(height: 6),
+                  const SizedBox(height: 6),
                   _buildInfoRow('Tag', widget.alert.tagName),
-                  SizedBox(height: 6),
+                  const SizedBox(height: 6),
                   _buildInfoRow(
                     'Raised',
-                    widget.alert.timeSinceRaised + ' ago',
+                    '${widget.alert.timeSinceRaised} ago',
                   ),
                 ],
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             // Optional Comment
-            Text(
+            const Text(
               'Comment (Optional)',
               style: TextStyle(
                 fontSize: 14,
@@ -142,47 +142,50 @@ class _AcknowledgeDialogState extends State<AcknowledgeDialog> {
                 color: Color(0xFFB0B0B0),
               ),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             TextField(
               controller: _commentController,
               maxLines: 3,
               maxLength: 200,
               enabled: !_isSubmitting,
-              style: TextStyle(color: Color(0xFFFFFFFF)),
+              style: const TextStyle(color: Color(0xFFFFFFFF)),
               decoration: InputDecoration(
                 hintText: 'Add acknowledgement notes (optional)',
-                hintStyle: TextStyle(color: Color(0xFF757575)),
+                hintStyle: const TextStyle(color: Color(0xFF757575)),
                 filled: true,
                 fillColor: AppTheme.surfaceVariantDark,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(color: Color(0xFF3F3F3F)),
+                  borderSide: const BorderSide(color: Color(0xFF3F3F3F)),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(color: Color(0xFF3F3F3F)),
+                  borderSide: const BorderSide(color: Color(0xFF3F3F3F)),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(color: AppTheme.infoColor, width: 2),
+                  borderSide: const BorderSide(
+                    color: AppTheme.infoColor,
+                    width: 2,
+                  ),
                 ),
-                contentPadding: EdgeInsets.all(12),
+                contentPadding: const EdgeInsets.all(12),
               ),
             ),
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
 
             // Warning Notice
             Container(
-              padding: EdgeInsets.all(12),
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: AppTheme.warningColor.withOpacity(0.1),
+                color: AppTheme.warningColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: AppTheme.warningColor.withOpacity(0.3),
+                  color: AppTheme.warningColor.withValues(alpha: 0.3),
                   width: 1,
                 ),
               ),
-              child: Row(
+              child: const Row(
                 children: [
                   Icon(
                     Icons.info_outline,
@@ -203,7 +206,7 @@ class _AcknowledgeDialogState extends State<AcknowledgeDialog> {
                 ],
               ),
             ),
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
 
             // Actions
             Row(
@@ -214,21 +217,27 @@ class _AcknowledgeDialogState extends State<AcknowledgeDialog> {
                       ? null
                       : () => Navigator.pop(context),
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: Color(0xFFFFFFFF),
-                    side: BorderSide(color: Color(0xFF616161), width: 1),
-                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                    foregroundColor: const Color(0xFFFFFFFF),
+                    side: const BorderSide(color: Color(0xFF616161), width: 1),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 14,
+                    ),
                   ),
-                  child: Text('Cancel'),
+                  child: const Text('Cancel'),
                 ),
-                SizedBox(width: 12),
+                const SizedBox(width: 12),
                 FilledButton(
                   onPressed: _isSubmitting ? null : _handleAcknowledge,
                   style: FilledButton.styleFrom(
                     backgroundColor: AppTheme.normalColor,
-                    padding: EdgeInsets.symmetric(horizontal: 32, vertical: 14),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 32,
+                      vertical: 14,
+                    ),
                   ),
                   child: _isSubmitting
-                      ? SizedBox(
+                      ? const SizedBox(
                           width: 20,
                           height: 20,
                           child: CircularProgressIndicator(
@@ -236,7 +245,7 @@ class _AcknowledgeDialogState extends State<AcknowledgeDialog> {
                             valueColor: AlwaysStoppedAnimation(Colors.white),
                           ),
                         )
-                      : Text('Acknowledge'),
+                      : const Text('Acknowledge'),
                 ),
               ],
             ),
@@ -251,7 +260,7 @@ class _AcknowledgeDialogState extends State<AcknowledgeDialog> {
       children: [
         Text(
           '$label: ',
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 13,
             color: Color(0xFF9E9E9E),
             fontWeight: FontWeight.w500,
@@ -260,7 +269,7 @@ class _AcknowledgeDialogState extends State<AcknowledgeDialog> {
         Expanded(
           child: Text(
             value,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 13,
               color: Color(0xFFFFFFFF),
               fontWeight: FontWeight.w600,

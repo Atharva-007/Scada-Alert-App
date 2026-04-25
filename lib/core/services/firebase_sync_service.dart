@@ -1,16 +1,38 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart'
+    show TargetPlatform, defaultTargetPlatform, kIsWeb, debugPrint;
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import '../../data/models/alert_model.dart';
 
 class FirebaseSyncService {
   final FirebaseFirestore _firestore;
-  final FirebaseMessaging _messaging;
   final Connectivity _connectivity = Connectivity();
 
   bool _isOnline = false;
   bool get isOnline => _isOnline;
+
+  String get _clientPlatform {
+    if (kIsWeb) return 'web';
+
+    switch (defaultTargetPlatform) {
+      case TargetPlatform.android:
+        return 'android';
+      case TargetPlatform.iOS:
+        return 'ios';
+      case TargetPlatform.macOS:
+        return 'macos';
+      case TargetPlatform.windows:
+        return 'windows';
+      case TargetPlatform.linux:
+        return 'linux';
+      case TargetPlatform.fuchsia:
+        return 'fuchsia';
+    }
+  }
+
+  String get _heartbeatDocumentId => '${_clientPlatform}_client';
 
   StreamSubscription? _connectivitySubscription;
   Timer? _heartbeatTimer;
@@ -21,11 +43,10 @@ class FirebaseSyncService {
   FirebaseSyncService({
     FirebaseFirestore? firestore,
     FirebaseMessaging? messaging,
-  }) : _firestore = firestore ?? FirebaseFirestore.instance,
-       _messaging = messaging ?? FirebaseMessaging.instance;
+  }) : _firestore = firestore ?? FirebaseFirestore.instance;
 
   Future<void> initialize() async {
-    print('🔄 Initializing Firebase Sync Service...');
+    debugPrint('🔄 Initializing Firebase Sync Service...');
 
     // Check initial connectivity
     await _checkConnectivity();
@@ -35,13 +56,10 @@ class FirebaseSyncService {
       _handleConnectivityChange,
     );
 
-    // Configure FCM
-    await _configureFCM();
-
     // Start heartbeat
     _startHeartbeat();
 
-    print('✅ Firebase Sync Service initialized');
+    debugPrint('✅ Firebase Sync Service initialized');
   }
 
   Future<void> _checkConnectivity() async {
@@ -52,10 +70,10 @@ class FirebaseSyncService {
 
   void _handleConnectivityChange(dynamic results) {
     // Cast to List<ConnectivityResult> safely for Web/Mobile compatibility
-    final List<ConnectivityResult> connectivityResults = results is List 
+    final List<ConnectivityResult> connectivityResults = results is List
         ? List<ConnectivityResult>.from(results)
         : [ConnectivityResult.none];
-        
+
     final wasOnline = _isOnline;
     _isOnline = !connectivityResults.contains(ConnectivityResult.none);
 
@@ -71,73 +89,11 @@ class FirebaseSyncService {
     _updateSyncStatus();
   }
 
-  Future<void> _configureFCM() async {
-    try {
-      // Request notification permissions
-      NotificationSettings settings = await _messaging.requestPermission(
-        alert: true,
-        badge: true,
-        sound: true,
-        criticalAlert: true,
-      );
-
-      if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-        print('✅ FCM notifications authorized');
-
-        // Get FCM token - wrapped in try catch for Web Offline/Installation errors
-        try {
-          final token = await _messaging.getToken();
-          if (token != null) {
-            print('📱 FCM Token retrieved');
-            await _saveFCMToken(token);
-          }
-        } catch (e) {
-          print('ℹ️ FCM Token retrieval skipped (likely offline or local dev): $e');
-        }
-
-        // Handle token refresh
-        _messaging.onTokenRefresh.listen(_saveFCMToken);
-
-        // Configure message handlers
-        FirebaseMessaging.onMessage.listen(_handleForegroundMessage);
-        FirebaseMessaging.onMessageOpenedApp.listen(_handleMessageTap);
-      }
-    } catch (e) {
-      print('⚠️ FCM configuration error: $e');
-    }
-  }
-
-  Future<void> _saveFCMToken(String token) async {
-    try {
-      await _firestore.collection('device_tokens').doc(token).set({
-        'token': token,
-        'platform': 'windows',
-        'lastUpdated': FieldValue.serverTimestamp(),
-        'active': true,
-      }, SetOptions(merge: true));
-    } catch (e) {
-      print('⚠️ Error saving FCM token: $e');
-    }
-  }
-
-  void _handleForegroundMessage(RemoteMessage message) {
-    print('📨 Foreground message: ${message.notification?.title}');
-    _syncStatusController.add(
-      SyncStatus(
-        isOnline: _isOnline,
-        lastSync: DateTime.now(),
-        message: 'New alert: ${message.notification?.title}',
-      ),
-    );
-  }
-
-  void _handleMessageTap(RemoteMessage message) {
-    print('👆 Message tapped: ${message.notification?.title}');
-  }
-
   void _startHeartbeat() {
     _heartbeatTimer?.cancel();
-    _heartbeatTimer = Timer.periodic(Duration(seconds: 30), (timer) async {
+    _heartbeatTimer = Timer.periodic(const Duration(seconds: 30), (
+      timer,
+    ) async {
       if (_isOnline) {
         await _sendHeartbeat();
       }
@@ -148,15 +104,15 @@ class FirebaseSyncService {
     try {
       await _firestore
           .collection('client_heartbeats')
-          .doc('windows_client')
+          .doc(_heartbeatDocumentId)
           .set({
             'timestamp': FieldValue.serverTimestamp(),
             'status': 'online',
             'version': '1.2.0',
-            'platform': 'windows',
+            'platform': _clientPlatform,
           }, SetOptions(merge: true));
     } catch (e) {
-      print('⚠️ Heartbeat error: $e');
+      debugPrint('⚠️ Heartbeat error: $e');
       _isOnline = false;
       _updateSyncStatus();
     }
@@ -178,27 +134,18 @@ class FirebaseSyncService {
   }
 
   Future<void> _syncActiveAlerts() async {
-    final snapshot = await _firestore
-        .collection('alerts_active')
-        .where('isActive', isEqualTo: true)
-        .orderBy('raisedAt', descending: true)
-        .limit(100)
-        .get();
+    final snapshot = await _firestore.collection('alerts_active').get();
 
-    _updateSyncStatus(message: 'Synced ${snapshot.docs.length} active alerts');
+    final activeCount = snapshot.docs.map(AlertModel.fromFirestore).length;
+
+    _updateSyncStatus(message: 'Synced $activeCount active alerts');
   }
 
   Stream<List<AlertModel>> watchActiveAlerts() {
-    return _firestore
-        .collection('alerts_active')
-        .where('isActive', isEqualTo: true)
-        .orderBy('raisedAt', descending: true)
-        .snapshots()
-        .map((snapshot) {
-          return snapshot.docs
-              .map((doc) => AlertModel.fromFirestore(doc))
-              .toList();
-        });
+    return _firestore.collection('alerts_active').snapshots().map((snapshot) {
+      return snapshot.docs.map(AlertModel.fromFirestore).toList()
+        ..sort((a, b) => b.sortPriority.compareTo(a.sortPriority));
+    });
   }
 
   Future<void> acknowledgeAlert(
@@ -207,10 +154,17 @@ class FirebaseSyncService {
     String? comment,
   }) async {
     final updateData = {
+      'status': 'acknowledged',
+      'approvalStatus': 'pending',
       'isAcknowledged': true,
+      'acknowledged': true,
       'acknowledgedAt': FieldValue.serverTimestamp(),
       'acknowledgedBy': acknowledgedBy,
+      'acknowledged_by': acknowledgedBy,
       'acknowledgedComment': comment,
+      'acknowledgement_detail': comment,
+      'lastUpdatedTime': FieldValue.serverTimestamp(),
+      'updated_at': FieldValue.serverTimestamp(),
     };
 
     await _firestore
@@ -228,66 +182,26 @@ class FirebaseSyncService {
   }
 
   Future<void> syncAlertToHistory(AlertModel alert) async {
-    final alertData = {
-      'id': alert.id,
-      'name': alert.name,
-      'description': alert.description,
-      'severity': alert.severity,
-      'source': alert.source,
-      'tagName': alert.tagName,
-      'currentValue': alert.currentValue,
-      'threshold': alert.threshold,
-      'condition': alert.condition,
-      'isActive': alert.isActive,
-      'isAcknowledged': alert.isAcknowledged,
-      'raisedAt': Timestamp.fromDate(alert.raisedAt),
-      'archivedAt': FieldValue.serverTimestamp(),
-    };
+    final normalizedAlert = alert.copyWith(
+      isActive: false,
+      lastUpdatedTime: DateTime.now(),
+    );
 
-    if (alert.acknowledgedAt != null) {
-      alertData['acknowledgedAt'] = Timestamp.fromDate(alert.acknowledgedAt!);
-    }
-    if (alert.acknowledgedBy != null) {
-      alertData['acknowledgedBy'] = alert.acknowledgedBy!;
-    }
-    if (alert.acknowledgedComment != null) {
-      alertData['acknowledgedComment'] = alert.acknowledgedComment!;
-    }
-    if (alert.clearedAt != null) {
-      alertData['clearedAt'] = Timestamp.fromDate(alert.clearedAt!);
-    }
-    if (alert.escalatedAt != null) {
-      alertData['escalatedAt'] = Timestamp.fromDate(alert.escalatedAt!);
-    }
-
-    await _firestore.collection('alerts_history').add(alertData);
+    await _firestore
+        .collection('alerts_history')
+        .doc(alert.id)
+        .set(normalizedAlert.toFirestore(), SetOptions(merge: true));
+    await _firestore.collection('alerts_active').doc(alert.id).delete();
   }
 
   Future<Map<String, int>> getAlertStatistics() async {
-    final activeSnapshot = await _firestore
-        .collection('alerts_active')
-        .where('isActive', isEqualTo: true)
-        .count()
-        .get();
-
-    final criticalSnapshot = await _firestore
-        .collection('alerts_active')
-        .where('isActive', isEqualTo: true)
-        .where('severity', isEqualTo: 'Critical')
-        .count()
-        .get();
-
-    final acknowledgedSnapshot = await _firestore
-        .collection('alerts_active')
-        .where('isActive', isEqualTo: true)
-        .where('isAcknowledged', isEqualTo: true)
-        .count()
-        .get();
+    final activeSnapshot = await _firestore.collection('alerts_active').get();
+    final alerts = activeSnapshot.docs.map(AlertModel.fromFirestore).toList();
 
     return {
-      'total': activeSnapshot.count ?? 0,
-      'critical': criticalSnapshot.count ?? 0,
-      'acknowledged': acknowledgedSnapshot.count ?? 0,
+      'total': alerts.length,
+      'critical': alerts.where((alert) => alert.isCriticalSeverity).length,
+      'acknowledged': alerts.where((alert) => alert.isAcknowledged).length,
     };
   }
 

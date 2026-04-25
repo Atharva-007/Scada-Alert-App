@@ -63,6 +63,67 @@ The application utilizes a dark "Glassmorphism" aesthetic with specific semantic
 - **Normal/Resolved:** `#66BB6A` (Green)
 - **Surfaces:** Deep grays and true blacks (`#0F0F0F`, `#1A1A1A`)
 
+## Firestore CLI Analysis + Windows Service (Python)
+
+Python tooling is available in `windows_sync_service\python` for analyzing Firestore data in `scadadataserver` and running periodic analysis as a Windows service.
+
+### One-time CLI analysis
+
+```powershell
+python windows_sync_service\python\firestore_analyzer.py `
+  --project-id scadadataserver `
+  --database-id "(default)" `
+  --service-account C:\SCADA\firebase-service-account.json `
+  --all-collections `
+  --max-depth 8 `
+  --include-all-documents `
+  --output C:\SCADA\reports\firestore_full_analysis.json `
+  --pretty
+```
+
+This deep report includes:
+- top-level and deep nested field paths (`deep_field_profiles`)
+- inferred constraints per path (required/nullability/enum candidates/ranges)
+- top 3 deepest structural paths per collection
+- full document export when `--include-all-documents` is used
+
+### Install Windows service
+
+```powershell
+powershell -ExecutionPolicy Bypass -File windows_sync_service\python\install_scada_firestore_service.ps1 -StartService
+```
+
+This creates/uses config at `C:\SCADA\config\firestore_analyzer.json`. Update `service_account_path` there before first run.
+
+### Uninstall Windows service
+
+```powershell
+powershell -ExecutionPolicy Bypass -File windows_sync_service\python\uninstall_scada_firestore_service.ps1
+```
+
+## Future Roadmap & Technical Debt
+
+Based on the deep architectural audit and data-integrity check completed in April 2026, the following items are prioritized for future implementation:
+
+### 1. Security & Access Control
+- **RBAC Enforcement:** Transition Firestore and Storage rules from "Development Mode" to production-grade Role-Based Access Control. Implement the predefined `isAdmin`, `isOperator`, and `isAuthenticated` logic.
+- **Audit Logging:** Fully enable the `acknowledgment_logs` collection to track all supervisor actions for regulatory compliance (ISA-18.2).
+
+### 2. Industrial Protocol Expansion
+- **Native OPC UA Integration:** While the C# `ScadaWatcherService` provides a framework, full native integration with industrial PLCs via OPC UA or Modbus TCP is slated for the next phase to replace the current file-watcher dependency.
+- **Historian Activation:** Enable the SQLite-backed `SqliteHistorianService` in `appsettings.json` to allow for local sub-second data persistence during cloud outages.
+
+### 3. Architectural Optimizations
+- **Edge-to-Cloud Sync:** Refactor the Node.js middleware to handle bidirectional stream buffering, ensuring that high-frequency industrial data does not exceed Firebase's write quotas.
+- **Trend Visualization:** Leverage the `trendData` field in `AlertModel` to implement sparklines and historical graphs directly in the Alert Details screen.
+- **Canonical Schema Enforcement:** Complete the removal of legacy `snake_case` field fallbacks in any remaining secondary modules to maintain 100% `camelCase` consistency across the stack.
+
+### 4. Reliability & Testing
+- **Automated Lifecycle Tests:** Implement integration tests for the `enforce_alert_lifecycle.mjs` script to prevent "zombie" alerts from reappearing during mass data migrations.
+- **Heartbeat Monitoring:** Expand the `client_heartbeats` logic to include system-level metrics (CPU/RAM usage) for the Windows Sync Service.
+
+---
+
 ## License
 
-Copyright © 2024. All Rights Reserved.
+Copyright © 2026. All Rights Reserved.

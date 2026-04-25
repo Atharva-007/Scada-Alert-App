@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ScadaWatcherService")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+83f67ff4f84c280cec7351aadb3e661962af6426")]
 [assembly: System.Reflection.AssemblyProductAttribute("ScadaWatcherService")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ScadaWatcherService")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

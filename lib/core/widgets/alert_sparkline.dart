@@ -24,11 +24,11 @@ class AlertSparkline extends StatelessWidget {
 
     return Container(
       height: height,
-      padding: EdgeInsets.all(12),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: AppTheme.surfaceVariantDark,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Color(0xFF3F3F3F), width: 1),
+        border: Border.all(color: const Color(0xFF3F3F3F), width: 1),
       ),
       child: CustomPaint(
         painter: _SparklinePainter(
@@ -45,13 +45,13 @@ class AlertSparkline extends StatelessWidget {
   Widget _buildNoDataView() {
     return Container(
       height: height,
-      padding: EdgeInsets.all(12),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: AppTheme.surfaceVariantDark,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Color(0xFF3F3F3F), width: 1),
+        border: Border.all(color: const Color(0xFF3F3F3F), width: 1),
       ),
-      child: Center(
+      child: const Center(
         child: Text(
           'No trend data available',
           style: TextStyle(fontSize: 12, color: Color(0xFF757575)),
@@ -91,7 +91,7 @@ class _SparklinePainter extends CustomPainter {
         size.height - ((threshold - minValue) / valueRange) * size.height;
     if (thresholdY >= 0 && thresholdY <= size.height) {
       final thresholdPaint = Paint()
-        ..color = thresholdColor.withOpacity(0.5)
+        ..color = thresholdColor.withValues(alpha: 0.5)
         ..strokeWidth = 1
         ..style = PaintingStyle.stroke
         ..strokeCap = StrokeCap.round;
@@ -146,7 +146,10 @@ class _SparklinePainter extends CustomPainter {
     final gradient = LinearGradient(
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
-      colors: [lineColor.withOpacity(0.3), lineColor.withOpacity(0.0)],
+      colors: [
+        lineColor.withValues(alpha: 0.3),
+        lineColor.withValues(alpha: 0.0),
+      ],
     );
 
     final fillPaint = Paint()

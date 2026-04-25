@@ -43,7 +43,9 @@ class SettingsScreen extends ConsumerWidget {
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                         colors: [
-                          AppTheme.infoColor.withOpacity(isDark ? 0.15 : 0.05),
+                          AppTheme.infoColor.withValues(
+                            alpha: isDark ? 0.15 : 0.05,
+                          ),
                           Theme.of(context).scaffoldBackgroundColor,
                         ],
                       ),
@@ -55,7 +57,9 @@ class SettingsScreen extends ConsumerWidget {
                     child: Icon(
                       Icons.settings_outlined,
                       size: 160,
-                      color: isDark ? Colors.white.withOpacity(0.03) : Colors.black.withOpacity(0.02),
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.03)
+                          : Colors.black.withValues(alpha: 0.02),
                     ),
                   ),
                 ],
@@ -68,11 +72,16 @@ class SettingsScreen extends ConsumerWidget {
               delegate: SliverChildListDelegate([
                 _SectionHeader(title: 'APPEARANCE', isDark: isDark),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 8,
+                  ),
                   child: Container(
                     padding: const EdgeInsets.all(4),
                     decoration: BoxDecoration(
-                      color: isDark ? const Color(0xFF1E1E1E) : Colors.black.withOpacity(0.03),
+                      color: isDark
+                          ? const Color(0xFF1E1E1E)
+                          : Colors.black.withValues(alpha: 0.03),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Row(
@@ -81,8 +90,11 @@ class SettingsScreen extends ConsumerWidget {
                           child: _ThemeOption(
                             label: 'Light',
                             icon: Icons.light_mode_outlined,
-                            isSelected: ref.watch(themeModeProvider) == ThemeMode.light,
-                            onTap: () => ref.read(themeModeProvider.notifier).state = ThemeMode.light,
+                            isSelected:
+                                ref.watch(themeModeProvider) == ThemeMode.light,
+                            onTap: () =>
+                                ref.read(themeModeProvider.notifier).state =
+                                    ThemeMode.light,
                             isDark: isDark,
                           ),
                         ),
@@ -90,8 +102,11 @@ class SettingsScreen extends ConsumerWidget {
                           child: _ThemeOption(
                             label: 'Dark',
                             icon: Icons.dark_mode_outlined,
-                            isSelected: ref.watch(themeModeProvider) == ThemeMode.dark,
-                            onTap: () => ref.read(themeModeProvider.notifier).state = ThemeMode.dark,
+                            isSelected:
+                                ref.watch(themeModeProvider) == ThemeMode.dark,
+                            onTap: () =>
+                                ref.read(themeModeProvider.notifier).state =
+                                    ThemeMode.dark,
                             isDark: isDark,
                           ),
                         ),
@@ -104,42 +119,97 @@ class SettingsScreen extends ConsumerWidget {
                 _SettingsTile(
                   icon: Icons.person_outline,
                   title: 'User',
-                  subtitle: 'Mobile Operator',
+                  subtitle: 'SCADA Operations Client',
                   isDark: isDark,
                 ),
                 _SettingsTile(
                   icon: Icons.badge_outlined,
                   title: 'Role',
-                  subtitle: 'View & Acknowledge',
+                  subtitle: 'Monitor, Acknowledge, Approve',
                   isDark: isDark,
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                  child: Divider(color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE0E4E9)),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 8,
+                  ),
+                  child: Divider(
+                    color: isDark
+                        ? const Color(0xFF1E1E1E)
+                        : const Color(0xFFE0E4E9),
+                  ),
                 ),
                 _SectionHeader(title: 'NOTIFICATIONS', isDark: isDark),
                 SwitchListTile(
-                  secondary: Icon(Icons.notifications_none, color: isDark ? Colors.white70 : Colors.black54),
-                  title: Text('Push Notifications', style: TextStyle(fontWeight: FontWeight.w700, color: isDark ? Colors.white : Colors.black87)),
-                  subtitle: Text('Receive alerts on device', style: TextStyle(color: isDark ? Colors.white54 : Colors.black45, fontSize: 13, fontWeight: FontWeight.w500)),
+                  secondary: Icon(
+                    Icons.notifications_none,
+                    color: isDark ? Colors.white70 : Colors.black54,
+                  ),
+                  title: Text(
+                    'Push Notifications',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      color: isDark ? Colors.white : Colors.black87,
+                    ),
+                  ),
+                  subtitle: Text(
+                    'Receive alerts on device',
+                    style: TextStyle(
+                      color: isDark ? Colors.white54 : Colors.black45,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
                   value: true,
                   activeColor: AppTheme.infoColor,
                   onChanged: (val) {},
                   contentPadding: const EdgeInsets.symmetric(horizontal: 20),
                 ),
                 SwitchListTile(
-                  secondary: Icon(Icons.vibration, color: isDark ? Colors.white70 : Colors.black54),
-                  title: Text('Vibration', style: TextStyle(fontWeight: FontWeight.w700, color: isDark ? Colors.white : Colors.black87)),
-                  subtitle: Text('Vibrate on critical alerts', style: TextStyle(color: isDark ? Colors.white54 : Colors.black45, fontSize: 13, fontWeight: FontWeight.w500)),
+                  secondary: Icon(
+                    Icons.vibration,
+                    color: isDark ? Colors.white70 : Colors.black54,
+                  ),
+                  title: Text(
+                    'Vibration',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      color: isDark ? Colors.white : Colors.black87,
+                    ),
+                  ),
+                  subtitle: Text(
+                    'Vibrate on critical alerts',
+                    style: TextStyle(
+                      color: isDark ? Colors.white54 : Colors.black45,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
                   value: settings.vibrationEnabled,
                   activeColor: AppTheme.infoColor,
                   onChanged: (val) => settingsNotifier.toggleVibration(val),
                   contentPadding: const EdgeInsets.symmetric(horizontal: 20),
                 ),
                 SwitchListTile(
-                  secondary: Icon(Icons.volume_up_outlined, color: isDark ? Colors.white70 : Colors.black54),
-                  title: Text('Sound', style: TextStyle(fontWeight: FontWeight.w700, color: isDark ? Colors.white : Colors.black87)),
-                  subtitle: Text('Alert sound on notifications', style: TextStyle(color: isDark ? Colors.white54 : Colors.black45, fontSize: 13, fontWeight: FontWeight.w500)),
+                  secondary: Icon(
+                    Icons.volume_up_outlined,
+                    color: isDark ? Colors.white70 : Colors.black54,
+                  ),
+                  title: Text(
+                    'Sound',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      color: isDark ? Colors.white : Colors.black87,
+                    ),
+                  ),
+                  subtitle: Text(
+                    'Alert sound on notifications',
+                    style: TextStyle(
+                      color: isDark ? Colors.white54 : Colors.black45,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
                   value: settings.soundEnabled,
                   activeColor: AppTheme.infoColor,
                   onChanged: (val) => settingsNotifier.toggleSound(val),
@@ -151,21 +221,39 @@ class SettingsScreen extends ConsumerWidget {
                     title: 'Critical Alert Sound',
                     subtitle: settings.criticalSound,
                     isDark: isDark,
-                    onTap: () => _showSoundPicker(context, ref, 'Critical', settings.criticalSound, (s) => settingsNotifier.setCriticalSound(s)),
+                    onTap: () => _showSoundPicker(
+                      context,
+                      ref,
+                      'Critical',
+                      settings.criticalSound,
+                      (s) => settingsNotifier.setCriticalSound(s),
+                    ),
                   ),
                   _SettingsTile(
                     icon: Icons.warning_amber_rounded,
                     title: 'Warning Alert Sound',
                     subtitle: settings.warningSound,
                     isDark: isDark,
-                    onTap: () => _showSoundPicker(context, ref, 'Warning', settings.warningSound, (s) => settingsNotifier.setWarningSound(s)),
+                    onTap: () => _showSoundPicker(
+                      context,
+                      ref,
+                      'Warning',
+                      settings.warningSound,
+                      (s) => settingsNotifier.setWarningSound(s),
+                    ),
                   ),
                   _SettingsTile(
                     icon: Icons.info_outline,
                     title: 'Info Alert Sound',
                     subtitle: settings.infoSound,
                     isDark: isDark,
-                    onTap: () => _showSoundPicker(context, ref, 'Info', settings.infoSound, (s) => settingsNotifier.setInfoSound(s)),
+                    onTap: () => _showSoundPicker(
+                      context,
+                      ref,
+                      'Info',
+                      settings.infoSound,
+                      (s) => settingsNotifier.setInfoSound(s),
+                    ),
                   ),
                 ],
                 const Padding(
@@ -176,14 +264,19 @@ class SettingsScreen extends ConsumerWidget {
                 _SettingsTile(
                   icon: Icons.cloud_outlined,
                   title: 'Firebase Project',
-                  subtitle: 'scada-alarm-system',
+                  subtitle: 'scadadataserver',
                   isDark: isDark,
                   trailing: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
-                      color: AppTheme.normalColor.withOpacity(0.1),
+                      color: AppTheme.normalColor.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(6),
-                      border: Border.all(color: AppTheme.normalColor.withOpacity(0.3)),
+                      border: Border.all(
+                        color: AppTheme.normalColor.withValues(alpha: 0.3),
+                      ),
                     ),
                     child: const Text(
                       'CONNECTED',
@@ -203,8 +296,15 @@ class SettingsScreen extends ConsumerWidget {
                   isDark: isDark,
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                  child: Divider(color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFE0E4E9)),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 8,
+                  ),
+                  child: Divider(
+                    color: isDark
+                        ? const Color(0xFF1E1E1E)
+                        : const Color(0xFFE0E4E9),
+                  ),
                 ),
                 _SectionHeader(title: 'ABOUT', isDark: isDark),
                 Padding(
@@ -214,9 +314,18 @@ class SettingsScreen extends ConsumerWidget {
                     decoration: BoxDecoration(
                       color: isDark ? const Color(0xFF151515) : Colors.white,
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: isDark ? const Color(0xFF252525) : const Color(0xFFE0E4E9)),
+                      border: Border.all(
+                        color: isDark
+                            ? const Color(0xFF252525)
+                            : const Color(0xFFE0E4E9),
+                      ),
                       boxShadow: [
-                        if (!isDark) BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4)),
+                        if (!isDark)
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.05),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
                       ],
                     ),
                     child: Column(
@@ -231,7 +340,7 @@ class SettingsScreen extends ConsumerWidget {
                         ),
                         const SizedBox(height: 12),
                         Text(
-                          'Industrial alarm monitoring system\nRead-only mobile client for operators',
+                          'Industrial alarm monitoring system\nRealtime client for acknowledgement and approval workflows',
                           style: TextStyle(
                             color: isDark ? Colors.white54 : Colors.black45,
                             fontSize: 13,
@@ -242,9 +351,12 @@ class SettingsScreen extends ConsumerWidget {
                         ),
                         const SizedBox(height: 24),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 10,
+                          ),
                           decoration: BoxDecoration(
-                            color: AppTheme.normalColor.withOpacity(0.05),
+                            color: AppTheme.normalColor.withValues(alpha: 0.05),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: const Row(
@@ -257,7 +369,7 @@ class SettingsScreen extends ConsumerWidget {
                               ),
                               SizedBox(width: 10),
                               Text(
-                                'View & Acknowledge Only',
+                                'Realtime Firestore Workflow',
                                 style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w800,
@@ -279,9 +391,21 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  void _showSoundPicker(BuildContext context, WidgetRef ref, String type, String current, Function(String) onSelect) {
-    final sounds = ['Industrial Siren', 'Digital Beep', 'Subtle Chime', 'Electronic Pulse', 'Mechanical Alarm'];
-    
+  void _showSoundPicker(
+    BuildContext context,
+    WidgetRef ref,
+    String type,
+    String current,
+    Function(String) onSelect,
+  ) {
+    final sounds = [
+      'Industrial Siren',
+      'Digital Beep',
+      'Subtle Chime',
+      'Electronic Pulse',
+      'Mechanical Alarm',
+    ];
+
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -294,19 +418,40 @@ class SettingsScreen extends ConsumerWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             const SizedBox(height: 12),
-            Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.white24, borderRadius: BorderRadius.circular(2))),
+            Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.white24,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
             const SizedBox(height: 20),
-            Text('Select $type Sound', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text(
+              'Select $type Sound',
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 12),
-            ...sounds.map((sound) => ListTile(
-              title: Text(sound, style: TextStyle(fontWeight: sound == current ? FontWeight.bold : FontWeight.normal)),
-              trailing: sound == current ? const Icon(Icons.check_circle, color: AppTheme.infoColor) : null,
-              onTap: () {
-                onSelect(sound);
-                ref.read(audioServiceProvider).testSound(sound);
-                Navigator.pop(context);
-              },
-            )),
+            ...sounds.map(
+              (sound) => ListTile(
+                title: Text(
+                  sound,
+                  style: TextStyle(
+                    fontWeight: sound == current
+                        ? FontWeight.bold
+                        : FontWeight.normal,
+                  ),
+                ),
+                trailing: sound == current
+                    ? const Icon(Icons.check_circle, color: AppTheme.infoColor)
+                    : null,
+                onTap: () {
+                  onSelect(sound);
+                  ref.read(audioServiceProvider).testSound(sound);
+                  Navigator.pop(context);
+                },
+              ),
+            ),
             const SizedBox(height: 24),
           ],
         ),
@@ -333,8 +478,8 @@ class _ThemeOption extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final selectedColor = isSelected ? AppTheme.infoColor : Colors.transparent;
-    final contentColor = isSelected 
-        ? Colors.white 
+    final contentColor = isSelected
+        ? Colors.white
         : (isDark ? Colors.white54 : Colors.black45);
 
     return AnimatedContainer(
@@ -353,7 +498,7 @@ class _ThemeOption extends StatelessWidget {
               boxShadow: [
                 if (isSelected)
                   BoxShadow(
-                    color: AppTheme.infoColor.withOpacity(0.3),
+                    color: AppTheme.infoColor.withValues(alpha: 0.3),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -428,10 +573,16 @@ class _SettingsTile extends StatelessWidget {
       leading: Container(
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1E1E1E) : Colors.black.withOpacity(0.03),
+          color: isDark
+              ? const Color(0xFF1E1E1E)
+              : Colors.black.withValues(alpha: 0.03),
           borderRadius: BorderRadius.circular(10),
         ),
-        child: Icon(icon, color: isDark ? Colors.white70 : Colors.black54, size: 20),
+        child: Icon(
+          icon,
+          color: isDark ? Colors.white70 : Colors.black54,
+          size: 20,
+        ),
       ),
       title: Text(
         title,
@@ -449,8 +600,9 @@ class _SettingsTile extends StatelessWidget {
           fontWeight: FontWeight.w500,
         ),
       ),
-      trailing: trailing ?? (onTap != null ? const Icon(Icons.chevron_right, size: 20) : null),
+      trailing:
+          trailing ??
+          (onTap != null ? const Icon(Icons.chevron_right, size: 20) : null),
     );
   }
 }
-

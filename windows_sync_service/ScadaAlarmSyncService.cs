@@ -24,8 +24,8 @@ namespace ScadaAlarmSyncService
         private Timer _syncTimer;
         private FirestoreDb _firestoreDb;
         private FirebaseAuth _firebaseAuth;
-        private readonly string _sqliteDbPath = @"C:\ScadaAlarms\alerts.db";
-        private readonly string _serviceAccountPath = @"C:\ScadaAlarms\firebase-service-account.json";
+        private readonly string _sqliteDbPath = @"C:\SCADA\alerts.db";
+        private readonly string _serviceAccountPath = @"C:\SCADA\firebase-service-account.json";
         private readonly int _syncIntervalSeconds = 5;
         private DateTime _lastSyncTime = DateTime.MinValue;
         private HashSet<string> _syncedAlertIds = new HashSet<string>();
@@ -272,13 +272,25 @@ namespace ScadaAlarmSyncService
                 LogMessage($"⬆ Pushing {unsynced.Count} local alerts to cloud...");
                 
                 var batch = _firestoreDb.StartBatch();
-                var alertsCollection = _firestoreDb.Collection("alerts");
                 
                 foreach (var alert in unsynced)
                 {
-                    var docRef = alertsCollection.Document(alert["id"].ToString());
-                    batch.Set(docRef, alert);
-                    _syncedAlertIds.Add(alert["id"].ToString());
+                    var alertId = alert["id"].ToString();
+                    var firestoreAlert = NormalizeAlertForFirestore(alert);
+                    var status = GetNormalizedString(firestoreAlert, "status", "active");
+                    var isArchived = status == "approved" || status == "rejected" || status == "cleared";
+
+                    if (isArchived)
+                    {
+                        batch.Set(_firestoreDb.Collection("alerts_history").Document(alertId), firestoreAlert);
+                        batch.Delete(_firestoreDb.Collection("alerts_active").Document(alertId));
+                    }
+                    else
+                    {
+                        batch.Set(_firestoreDb.Collection("alerts_active").Document(alertId), firestoreAlert);
+                    }
+
+                    _syncedAlertIds.Add(alertId);
                 }
                 
                 await batch.CommitAsync();
@@ -298,31 +310,33 @@ namespace ScadaAlarmSyncService
         {
             try
             {
-                var alertsRef = _firestoreDb.Collection("alerts");
-                var lastSyncTimestamp = _lastSyncTime != DateTime.MinValue 
-                    ? new Timestamp(_lastSyncTime) 
-                    : Timestamp.FromDateTime(DateTime.UtcNow.AddHours(-24));
-                
-                var query = alertsRef
-                    .WhereGreaterThan("timestamp", lastSyncTimestamp)
-                    .OrderByDescending("timestamp")
-                    .Limit(100);
-                
-                var snapshot = await query.GetSnapshotAsync();
-                
-                if (snapshot.Count == 0)
+                var documents = new Dictionary<string, DocumentSnapshot>();
+                foreach (var collectionName in new[] { "alerts_active", "alerts_history" })
+                {
+                    var snapshot = await _firestoreDb.Collection(collectionName)
+                        .OrderByDescending("lastUpdatedTime")
+                        .Limit(100)
+                        .GetSnapshotAsync();
+
+                    foreach (var document in snapshot.Documents)
+                    {
+                        documents[document.Id] = document;
+                    }
+                }
+
+                if (documents.Count == 0)
                 {
                     return;
                 }
                 
-                LogMessage($"⬇ Fetching {snapshot.Count} alerts from cloud...");
+                LogMessage($"⬇ Fetching {documents.Count} alerts from cloud...");
                 
                 var newAlerts = 0;
                 using (var connection = new SQLiteConnection($"Data Source={_sqliteDbPath};Version=3;"))
                 {
                     connection.Open();
                     
-                    foreach (var document in snapshot.Documents)
+                    foreach (var document in documents.Values)
                     {
                         var alertId = document.Id;
                         
@@ -331,8 +345,9 @@ namespace ScadaAlarmSyncService
                             continue; // Skip alerts we just pushed
                         }
                         
-                        var data = document.ToDictionary();
-                        InsertOrUpdateAlert(connection, alertId, data);
+                        var sqliteData = NormalizeAlertForSqlite(alertId, document.ToDictionary());
+
+                        InsertOrUpdateAlert(connection, alertId, sqliteData);
                         newAlerts++;
                     }
                 }
@@ -410,18 +425,19 @@ namespace ScadaAlarmSyncService
                         var alert = new Dictionary<string, object>
                         {
                             ["id"] = reader["id"].ToString(),
-                            ["title"] = reader["title"].ToString(),
-                            ["description"] = reader["description"].ToString(),
+                            ["alert"] = reader["title"].ToString(),
+                            ["detail"] = reader["description"].ToString(),
                             ["severity"] = reader["severity"].ToString(),
                             ["location"] = reader["location"].ToString(),
                             ["equipment"] = reader["equipment"].ToString(),
                             ["timestamp"] = Timestamp.FromDateTimeOffset(
                                 DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt64(reader["timestamp"]))),
                             ["status"] = reader["status"].ToString(),
-                            ["acknowledged_by"] = reader.IsDBNull(reader.GetOrdinal("acknowledged_by")) 
+                            ["acknowledgedBy"] = reader.IsDBNull(reader.GetOrdinal("acknowledged_by")) 
                                 ? null : reader["acknowledged_by"].ToString(),
-                            ["acknowledged_at"] = reader.IsDBNull(reader.GetOrdinal("acknowledged_at")) 
-                                ? null : (long?)Convert.ToInt64(reader["acknowledged_at"]),
+                            ["acknowledgedAt"] = reader.IsDBNull(reader.GetOrdinal("acknowledged_at")) 
+                                ? null : Timestamp.FromDateTimeOffset(DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt64(reader["acknowledged_at"]))),
+                            ["acknowledged"] = !reader.IsDBNull(reader.GetOrdinal("acknowledged_at")),
                             ["notes"] = reader.IsDBNull(reader.GetOrdinal("notes")) 
                                 ? "" : reader["notes"].ToString()
                         };
@@ -457,11 +473,11 @@ namespace ScadaAlarmSyncService
             var insertQuery = @"
                 INSERT INTO alerts (
                     id, title, description, severity, location, equipment, 
-                    timestamp, status, acknowledged_by, acknowledged_at, notes, 
+                    timestamp, status, acknowledged_by, acknowledged_at, resolved_at, notes, 
                     synced_to_cloud, last_cloud_sync
                 ) VALUES (
                     @id, @title, @description, @severity, @location, @equipment,
-                    @timestamp, @status, @acknowledged_by, @acknowledged_at, @notes,
+                    @timestamp, @status, @acknowledged_by, @acknowledged_at, @resolved_at, @notes,
                     1, @last_cloud_sync
                 )";
             
@@ -477,6 +493,7 @@ namespace ScadaAlarmSyncService
                 cmd.Parameters.AddWithValue("@status", GetValue(data, "status", "active"));
                 cmd.Parameters.AddWithValue("@acknowledged_by", GetValue(data, "acknowledged_by", DBNull.Value));
                 cmd.Parameters.AddWithValue("@acknowledged_at", GetValue(data, "acknowledged_at", DBNull.Value));
+                cmd.Parameters.AddWithValue("@resolved_at", GetValue(data, "resolved_at", DBNull.Value));
                 cmd.Parameters.AddWithValue("@notes", GetValue(data, "notes", ""));
                 cmd.Parameters.AddWithValue("@last_cloud_sync", DateTimeOffset.UtcNow.ToUnixTimeSeconds());
                 cmd.ExecuteNonQuery();
@@ -549,7 +566,7 @@ namespace ScadaAlarmSyncService
                         SUM(CASE WHEN severity = 'medium' THEN 1 ELSE 0 END) as medium,
                         SUM(CASE WHEN severity = 'low' THEN 1 ELSE 0 END) as low
                     FROM alerts 
-                    WHERE status = 'active'";
+                    WHERE status IN ('active', 'acknowledged')";
                 
                 using (var command = new SQLiteCommand(query, connection))
                 using (var reader = command.ExecuteReader())
@@ -634,8 +651,8 @@ namespace ScadaAlarmSyncService
                         alerts.Add(new Dictionary<string, object>
                         {
                             ["id"] = reader["id"].ToString(),
-                            ["title"] = reader["title"].ToString(),
-                            ["description"] = reader["description"].ToString(),
+                            ["alert"] = reader["title"].ToString(),
+                            ["detail"] = reader["description"].ToString(),
                             ["location"] = reader["location"].ToString()
                         });
                     }
@@ -658,8 +675,8 @@ namespace ScadaAlarmSyncService
                     Topic = "critical_alerts",
                     Notification = new Notification
                     {
-                        Title = $"🚨 CRITICAL: {alert["title"]}",
-                        Body = alert["description"].ToString()
+                        Title = $"🚨 CRITICAL: {alert["alert"]}",
+                        Body = alert["detail"].ToString()
                     },
                     Data = new Dictionary<string, string>
                     {
@@ -736,6 +753,163 @@ namespace ScadaAlarmSyncService
             return dict.ContainsKey(key) && dict[key] != null ? dict[key] : defaultValue;
         }
 
+        private Dictionary<string, object> NormalizeAlertForFirestore(Dictionary<string, object> localAlert)
+        {
+            var alertId = GetNormalizedString(localAlert, "id", Guid.NewGuid().ToString("N"));
+            var title = GetNormalizedString(localAlert, "title", GetNormalizedString(localAlert, "alert", "SCADA Alarm"));
+            var description = GetNormalizedString(localAlert, "description", GetNormalizedString(localAlert, "detail", string.Empty));
+            var severity = GetNormalizedString(localAlert, "severity", "warning").ToLowerInvariant();
+            var location = GetNormalizedString(localAlert, "location", string.Empty);
+            var equipment = GetNormalizedString(localAlert, "equipment", string.Empty);
+            var raisedAt = Timestamp.FromDateTimeOffset(DateTimeOffset.FromUnixTimeSeconds(GetTimestampValue(localAlert, "timestamp")));
+            var acknowledgedAt = GetOptionalTimestamp(localAlert, "acknowledgedAt", "acknowledged_at");
+            var resolvedAt = GetOptionalTimestamp(localAlert, "clearedAt", "clearedTime", "resolved_at");
+            var status = GetNormalizedString(localAlert, "status", "active");
+            var isAcknowledged = acknowledgedAt != null || GetOptionalBool(localAlert, "isAcknowledged", "acknowledged");
+            var now = Timestamp.FromDateTime(DateTime.UtcNow);
+
+            return new Dictionary<string, object>
+            {
+                ["id"] = alertId,
+                ["alertId"] = alertId,
+                ["alert"] = title,
+                ["name"] = title,
+                ["detail"] = description,
+                ["description"] = description,
+                ["severity"] = severity,
+                ["source"] = equipment,
+                ["location"] = location,
+                ["equipment"] = equipment,
+                ["tagName"] = equipment,
+                ["nodeId"] = equipment,
+                ["timestamp"] = raisedAt,
+                ["raisedAt"] = raisedAt,
+                ["status"] = status,
+                ["approvalStatus"] = status switch
+                {
+                    "approved" => "approved",
+                    "rejected" => "rejected",
+                    "cleared" => "approved",
+                    _ => "pending"
+                },
+                ["isActive"] = status == "active" || status == "acknowledged",
+                ["isAcknowledged"] = isAcknowledged,
+                ["acknowledged"] = isAcknowledged,
+                ["acknowledgedBy"] = GetOptionalString(localAlert, "acknowledgedBy", "acknowledged_by"),
+                ["acknowledged_by"] = GetOptionalString(localAlert, "acknowledgedBy", "acknowledged_by"),
+                ["acknowledgedAt"] = acknowledgedAt,
+                ["acknowledged_at"] = acknowledgedAt,
+                ["acknowledgedComment"] = GetOptionalString(localAlert, "acknowledgedComment", "notes"),
+                ["acknowledgement_detail"] = GetOptionalString(localAlert, "acknowledgedComment", "notes"),
+                ["currentValue"] = 0.0,
+                ["triggerValue"] = 0.0,
+                ["threshold"] = 0.0,
+                ["condition"] = "sqlite_sync",
+                ["clearedAt"] = resolvedAt,
+                ["clearedTime"] = resolvedAt,
+                ["notes"] = GetNormalizedString(localAlert, "notes", string.Empty),
+                ["created_at"] = raisedAt,
+                ["updated_at"] = now,
+                ["lastUpdatedTime"] = now
+            };
+        }
+
+        private Dictionary<string, object> NormalizeAlertForSqlite(string alertId, Dictionary<string, object> firestoreData)
+        {
+            var acknowledgedAt = GetOptionalTimestamp(firestoreData, "acknowledgedAt", "acknowledged_at");
+            var resolvedAt = GetOptionalTimestamp(firestoreData, "clearedAt", "clearedTime", "resolved_at");
+
+            return new Dictionary<string, object>
+            {
+                ["title"] = GetNormalizedString(firestoreData, "name", GetNormalizedString(firestoreData, "alert", "SCADA Alarm")),
+                ["description"] = GetNormalizedString(firestoreData, "description", GetNormalizedString(firestoreData, "detail", string.Empty)),
+                ["severity"] = GetNormalizedString(firestoreData, "severity", "warning"),
+                ["location"] = GetNormalizedString(firestoreData, "location", string.Empty),
+                ["equipment"] = GetNormalizedString(firestoreData, "equipment", string.Empty),
+                ["timestamp"] = GetTimestampValue(firestoreData, "raisedAt"),
+                ["status"] = GetNormalizedString(firestoreData, "status", "active"),
+                ["acknowledged_by"] = GetOptionalString(firestoreData, "acknowledgedBy", "acknowledged_by"),
+                ["acknowledged_at"] = acknowledgedAt != null
+                    ? acknowledgedAt.Value.ToDateTimeOffset().ToUnixTimeSeconds()
+                    : (object)DBNull.Value,
+                ["resolved_at"] = resolvedAt != null
+                    ? resolvedAt.Value.ToDateTimeOffset().ToUnixTimeSeconds()
+                    : (object)DBNull.Value,
+                ["notes"] = GetNormalizedString(firestoreData, "notes", GetNormalizedString(firestoreData, "acknowledgedComment", string.Empty))
+            };
+        }
+
+        private string GetNormalizedString(Dictionary<string, object> dict, string key, string defaultValue)
+        {
+            return dict.ContainsKey(key) && dict[key] != null
+                ? dict[key].ToString()
+                : defaultValue;
+        }
+
+        private string GetOptionalString(Dictionary<string, object> dict, params string[] keys)
+        {
+            foreach (var key in keys)
+            {
+                if (dict.ContainsKey(key) && dict[key] != null)
+                {
+                    return dict[key].ToString();
+                }
+            }
+
+            return null;
+        }
+
+        private bool GetOptionalBool(Dictionary<string, object> dict, params string[] keys)
+        {
+            foreach (var key in keys)
+            {
+                if (!dict.ContainsKey(key) || dict[key] == null)
+                {
+                    continue;
+                }
+
+                if (dict[key] is bool boolValue)
+                {
+                    return boolValue;
+                }
+
+                if (bool.TryParse(dict[key].ToString(), out var parsed))
+                {
+                    return parsed;
+                }
+            }
+
+            return false;
+        }
+
+        private Timestamp? GetOptionalTimestamp(Dictionary<string, object> dict, params string[] keys)
+        {
+            foreach (var key in keys)
+            {
+                if (!dict.ContainsKey(key) || dict[key] == null)
+                {
+                    continue;
+                }
+
+                if (dict[key] is Timestamp timestamp)
+                {
+                    return timestamp;
+                }
+
+                if (dict[key] is long longValue)
+                {
+                    return Timestamp.FromDateTimeOffset(DateTimeOffset.FromUnixTimeSeconds(longValue));
+                }
+
+                if (dict[key] is int intValue)
+                {
+                    return Timestamp.FromDateTimeOffset(DateTimeOffset.FromUnixTimeSeconds(intValue));
+                }
+            }
+
+            return null;
+        }
+
         private long GetTimestampValue(Dictionary<string, object> dict, string key)
         {
             if (dict.ContainsKey(key) && dict[key] != null)
@@ -748,13 +922,17 @@ namespace ScadaAlarmSyncService
                 {
                     return l;
                 }
+                if (dict[key] is int i)
+                {
+                    return i;
+                }
             }
             return DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         }
 
         private void LogMessage(string message)
         {
-            var logPath = @"C:\ScadaAlarms\Logs\sync_service.log";
+            var logPath = @"C:\SCADA\Logs\sync_service.log";
             try
             {
                 Directory.CreateDirectory(Path.GetDirectoryName(logPath));
@@ -770,7 +948,7 @@ namespace ScadaAlarmSyncService
 
         private void LogError(string message)
         {
-            var logPath = @"C:\ScadaAlarms\Logs\sync_service.log";
+            var logPath = @"C:\SCADA\Logs\sync_service.log";
             try
             {
                 Directory.CreateDirectory(Path.GetDirectoryName(logPath));

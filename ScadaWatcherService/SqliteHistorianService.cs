@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
 using System.Data;
 using System.Diagnostics;
-using Microsoft.Data.Sqlite;
+using System.Data.SQLite;
 using Microsoft.Extensions.Options;
 
 namespace ScadaWatcherService;
@@ -12,23 +12,19 @@ namespace ScadaWatcherService;
 /// Designed for continuous multi-year operation with millions of data points.
 /// 
 /// Key Features:
-/// - Non-blocking OPC UA data ingestion via lock-free queue
 /// - Batched writes with configurable size and flush interval
 /// - WAL mode for concurrent access and crash recovery
 /// - Automatic schema creation and migration
 /// - Retry logic for transient database locks
 /// - Graceful degradation on errors
 /// - Comprehensive logging and diagnostics
-/// - Zero impact on OPC UA client or Flutter watchdog
 /// </summary>
 public class SqliteHistorianService : IDisposable
 {
     private readonly ILogger<SqliteHistorianService> _logger;
     private readonly HistorianConfiguration _config;
+    private readonly string _databasePath;
 
-    // Lock-free concurrent queue for OPC UA data events
-    private readonly ConcurrentQueue<OpcUaDataValue> _dataQueue;
-    
     // Background writer task
     private Task? _writerTask;
     private CancellationTokenSource? _writerCts;
@@ -37,7 +33,7 @@ public class SqliteHistorianService : IDisposable
     private Task? _maintenanceTask;
     
     // Database connection (dedicated for writer thread)
-    private SqliteConnection? _connection;
+    private SQLiteConnection? _connection;
     
     // State tracking
     private bool _isRunning = false;
@@ -55,7 +51,7 @@ public class SqliteHistorianService : IDisposable
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _config = config?.Value ?? throw new ArgumentNullException(nameof(config));
-        _dataQueue = new ConcurrentQueue<OpcUaDataValue>();
+        _databasePath = _config.ResolveDatabasePath();
     }
 
     /// <summary>
@@ -77,7 +73,7 @@ public class SqliteHistorianService : IDisposable
         }
 
         _logger.LogInformation("=== SQLite Historian Service Starting ===");
-        _logger.LogInformation("Database Path: {Path}", _config.DatabasePath);
+        _logger.LogInformation("Database Path: {Path}", _databasePath);
         _logger.LogInformation("Batch Size: {Size}, Flush Interval: {Interval}ms", 
             _config.BatchSize, _config.FlushIntervalMs);
         _logger.LogInformation("Max Queue Size: {Size}", _config.MaxQueueSize);
@@ -157,51 +153,13 @@ public class SqliteHistorianService : IDisposable
     }
 
     /// <summary>
-    /// Enqueue OPC UA data point for persistence.
-    /// Non-blocking - returns immediately.
-    /// Called from OPC UA callback thread - MUST be fast.
-    /// </summary>
-    public void EnqueueDataPoint(OpcUaDataValue dataPoint)
-    {
-        if (!_isRunning || dataPoint == null)
-        {
-            return;
-        }
-
-        try
-        {
-            // Check queue size to prevent unbounded growth
-            if (_dataQueue.Count >= _config.MaxQueueSize)
-            {
-                _totalDropped++;
-                
-                if (_totalDropped % 1000 == 1) // Log every 1000 drops
-                {
-                    _logger.LogWarning(
-                        "Historian queue full ({Size}). Dropping data point: {NodeId}. Total dropped: {Total}",
-                        _config.MaxQueueSize, dataPoint.NodeId, _totalDropped);
-                }
-                return;
-            }
-
-            // Enqueue (lock-free, non-blocking)
-            _dataQueue.Enqueue(dataPoint);
-        }
-        catch (Exception ex)
-        {
-            // CRITICAL: Never throw from enqueue method
-            _logger.LogError(ex, "Error enqueueing data point for {NodeId}", dataPoint.NodeId);
-        }
-    }
-
-    /// <summary>
     /// Ensure database directory exists.
     /// </summary>
     private void EnsureDatabaseDirectory()
     {
         try
         {
-            var directory = Path.GetDirectoryName(_config.DatabasePath);
+            var directory = Path.GetDirectoryName(_databasePath);
             if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
             {
                 Directory.CreateDirectory(directory);
@@ -222,17 +180,12 @@ public class SqliteHistorianService : IDisposable
     {
         try
         {
-            var connectionString = new SqliteConnectionStringBuilder
-            {
-                DataSource = _config.DatabasePath,
-                Mode = SqliteOpenMode.ReadWriteCreate,
-                Cache = SqliteCacheMode.Shared
-            }.ToString();
+            var connectionString = $"Data Source={_databasePath};Version=3;";
 
-            _connection = new SqliteConnection(connectionString);
+            _connection = new SQLiteConnection(connectionString);
             await _connection.OpenAsync();
 
-            _logger.LogInformation("Database connection opened: {Path}", _config.DatabasePath);
+            _logger.LogInformation("Database connection opened: {Path}", _databasePath);
         }
         catch (Exception ex)
         {
@@ -391,252 +344,24 @@ public class SqliteHistorianService : IDisposable
 
     /// <summary>
     /// Background writer loop.
-    /// Continuously processes queued data points and writes them in batches.
     /// </summary>
     private async Task WriterLoopAsync(CancellationToken cancellationToken)
     {
         _logger.LogInformation("Historian writer loop started.");
 
-        var batch = new List<OpcUaDataValue>(_config.BatchSize);
-        _flushStopwatch.Start();
-
-        while (!cancellationToken.IsCancellationRequested || !_dataQueue.IsEmpty)
+        while (!cancellationToken.IsCancellationRequested)
         {
             try
             {
-                // Collect batch or wait for flush interval
-                while (batch.Count < _config.BatchSize && _flushStopwatch.ElapsedMilliseconds < _config.FlushIntervalMs)
-                {
-                    if (_dataQueue.TryDequeue(out var dataPoint))
-                    {
-                        batch.Add(dataPoint);
-                    }
-                    else if (batch.Count == 0)
-                    {
-                        // Queue empty, wait briefly
-                        await Task.Delay(100, cancellationToken);
-                        break;
-                    }
-                    else
-                    {
-                        // Have some data, wait for more
-                        await Task.Delay(50, cancellationToken);
-                    }
-                }
-
-                // Write batch if we have data and (batch full OR flush interval elapsed)
-                if (batch.Count > 0 && (batch.Count >= _config.BatchSize || _flushStopwatch.ElapsedMilliseconds >= _config.FlushIntervalMs))
-                {
-                    await WriteBatchAsync(batch);
-                    batch.Clear();
-                    _flushStopwatch.Restart();
-                }
+                await Task.Delay(1000, cancellationToken);
             }
             catch (OperationCanceledException)
             {
-                // Expected during shutdown
                 break;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error in historian writer loop. Continuing...");
-                await Task.Delay(1000, cancellationToken);
-            }
-        }
-
-        // Final flush on shutdown
-        if (batch.Count > 0)
-        {
-            try
-            {
-                _logger.LogInformation("Flushing {Count} remaining data points on shutdown...", batch.Count);
-                await WriteBatchAsync(batch);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to flush remaining data on shutdown");
             }
         }
 
         _logger.LogInformation("Historian writer loop stopped.");
-    }
-
-    /// <summary>
-    /// Write batch of data points to database with retry logic.
-    /// Uses transaction for atomicity and performance.
-    /// </summary>
-    private async Task WriteBatchAsync(List<OpcUaDataValue> batch)
-    {
-        if (batch.Count == 0 || _connection == null)
-        {
-            return;
-        }
-
-        var attempt = 0;
-        var stopwatch = Stopwatch.StartNew();
-
-        while (attempt < _config.MaxRetryAttempts)
-        {
-            try
-            {
-                var transaction = (SqliteTransaction)await _connection.BeginTransactionAsync();
-                using var cmd = _connection.CreateCommand();
-                cmd.Transaction = transaction;
-
-                // Prepare insert statement
-                cmd.CommandText = @"
-                    INSERT INTO data_points (
-                        node_id, display_name, source_timestamp, received_timestamp,
-                        value_numeric, value_text, value_boolean, data_type,
-                        status_code, status_description, is_good_quality
-                    ) VALUES (
-                        $node_id, $display_name, $source_ts, $received_ts,
-                        $value_numeric, $value_text, $value_boolean, $data_type,
-                        $status_code, $status_desc, $is_good_quality
-                    );";
-
-                // Add parameters
-                cmd.Parameters.Add("$node_id", SqliteType.Text);
-                cmd.Parameters.Add("$display_name", SqliteType.Text);
-                cmd.Parameters.Add("$source_ts", SqliteType.Integer);
-                cmd.Parameters.Add("$received_ts", SqliteType.Integer);
-                cmd.Parameters.Add("$value_numeric", SqliteType.Real);
-                cmd.Parameters.Add("$value_text", SqliteType.Text);
-                cmd.Parameters.Add("$value_boolean", SqliteType.Integer);
-                cmd.Parameters.Add("$data_type", SqliteType.Text);
-                cmd.Parameters.Add("$status_code", SqliteType.Integer);
-                cmd.Parameters.Add("$status_desc", SqliteType.Text);
-                cmd.Parameters.Add("$is_good_quality", SqliteType.Integer);
-
-                await cmd.PrepareAsync();
-
-                // Execute batch inserts
-                foreach (var dataPoint in batch)
-                {
-                    cmd.Parameters["$node_id"].Value = dataPoint.NodeId;
-                    cmd.Parameters["$display_name"].Value = dataPoint.DisplayName;
-                    cmd.Parameters["$source_ts"].Value = new DateTimeOffset(dataPoint.SourceTimestamp).ToUnixTimeMilliseconds();
-                    cmd.Parameters["$received_ts"].Value = new DateTimeOffset(dataPoint.ReceivedTimestamp).ToUnixTimeMilliseconds();
-                    
-                    // Store value based on type
-                    if (dataPoint.TryGetDouble(out double numericValue))
-                    {
-                        cmd.Parameters["$value_numeric"].Value = numericValue;
-                        cmd.Parameters["$value_text"].Value = DBNull.Value;
-                        cmd.Parameters["$value_boolean"].Value = DBNull.Value;
-                    }
-                    else if (dataPoint.TryGetBoolean(out bool boolValue))
-                    {
-                        cmd.Parameters["$value_numeric"].Value = DBNull.Value;
-                        cmd.Parameters["$value_text"].Value = DBNull.Value;
-                        cmd.Parameters["$value_boolean"].Value = boolValue ? 1 : 0;
-                    }
-                    else
-                    {
-                        cmd.Parameters["$value_numeric"].Value = DBNull.Value;
-                        cmd.Parameters["$value_text"].Value = dataPoint.ValueAsString;
-                        cmd.Parameters["$value_boolean"].Value = DBNull.Value;
-                    }
-
-                    cmd.Parameters["$data_type"].Value = dataPoint.DataType;
-                    cmd.Parameters["$status_code"].Value = dataPoint.StatusCode;
-                    cmd.Parameters["$status_desc"].Value = dataPoint.StatusDescription;
-                    cmd.Parameters["$is_good_quality"].Value = dataPoint.IsGoodQuality ? 1 : 0;
-
-                    await cmd.ExecuteNonQueryAsync();
-                }
-
-                // Commit transaction
-                await transaction.CommitAsync();
-                transaction.Dispose();
-
-                _totalWritten += batch.Count;
-                stopwatch.Stop();
-
-                if (_config.VerboseLogging)
-                {
-                    _logger.LogInformation(
-                        "Wrote batch of {Count} data points in {Ms}ms. Total written: {Total}",
-                        batch.Count, stopwatch.ElapsedMilliseconds, _totalWritten);
-                }
-
-                // Update tag metadata
-                await UpdateTagMetadataAsync(batch);
-
-                return; // Success
-            }
-            catch (SqliteException ex) when (ex.SqliteErrorCode == 5) // SQLITE_BUSY
-            {
-                attempt++;
-                _logger.LogWarning(
-                    "Database busy (attempt {Attempt}/{Max}). Retrying in {Delay}ms...",
-                    attempt, _config.MaxRetryAttempts, _config.RetryDelayMs);
-
-                if (attempt < _config.MaxRetryAttempts)
-                {
-                    await Task.Delay(_config.RetryDelayMs);
-                }
-                else
-                {
-                    _logger.LogError(ex, "Failed to write batch after {Attempts} attempts. Data lost.", attempt);
-                    _totalDropped += batch.Count;
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to write batch to database. Data lost.");
-                _totalDropped += batch.Count;
-                return;
-            }
-        }
-    }
-
-    /// <summary>
-    /// Update tag metadata with latest information.
-    /// Tracks first/last seen timestamps and sample counts.
-    /// </summary>
-    private async Task UpdateTagMetadataAsync(List<OpcUaDataValue> batch)
-    {
-        if (_connection == null || batch.Count == 0)
-        {
-            return;
-        }
-
-        try
-        {
-            using var cmd = _connection.CreateCommand();
-            cmd.CommandText = @"
-                INSERT INTO tag_metadata (node_id, display_name, data_type, first_seen, last_seen, sample_count)
-                VALUES ($node_id, $display_name, $data_type, $timestamp, $timestamp, 1)
-                ON CONFLICT(node_id) DO UPDATE SET
-                    display_name = $display_name,
-                    data_type = $data_type,
-                    last_seen = $timestamp,
-                    sample_count = sample_count + 1;";
-
-            cmd.Parameters.Add("$node_id", SqliteType.Text);
-            cmd.Parameters.Add("$display_name", SqliteType.Text);
-            cmd.Parameters.Add("$data_type", SqliteType.Text);
-            cmd.Parameters.Add("$timestamp", SqliteType.Integer);
-
-            await cmd.PrepareAsync();
-
-            // Update metadata for unique tags in batch
-            var uniqueTags = batch.GroupBy(d => d.NodeId).Select(g => g.First());
-            foreach (var dataPoint in uniqueTags)
-            {
-                cmd.Parameters["$node_id"].Value = dataPoint.NodeId;
-                cmd.Parameters["$display_name"].Value = dataPoint.DisplayName;
-                cmd.Parameters["$data_type"].Value = dataPoint.DataType;
-                cmd.Parameters["$timestamp"].Value = new DateTimeOffset(dataPoint.SourceTimestamp).ToUnixTimeMilliseconds();
-                
-                await cmd.ExecuteNonQueryAsync();
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, "Failed to update tag metadata (non-critical)");
-        }
     }
 
     /// <summary>
@@ -779,7 +504,7 @@ public class SqliteHistorianService : IDisposable
             cmd.Parameters.AddWithValue("$total_points", totalPoints);
             cmd.Parameters.AddWithValue("$total_dropped", _totalDropped);
             cmd.Parameters.AddWithValue("$db_size", dbSize);
-            cmd.Parameters.AddWithValue("$queue_size", _dataQueue.Count);
+            cmd.Parameters.AddWithValue("$queue_size", 0); // Queue removed
 
             await cmd.ExecuteNonQueryAsync();
         }
@@ -796,9 +521,9 @@ public class SqliteHistorianService : IDisposable
     {
         try
         {
-            if (File.Exists(_config.DatabasePath))
+            if (File.Exists(_databasePath))
             {
-                return await Task.Run(() => new FileInfo(_config.DatabasePath).Length / (1024.0 * 1024.0));
+                return await Task.Run(() => new FileInfo(_databasePath).Length / (1024.0 * 1024.0));
             }
         }
         catch (Exception ex)

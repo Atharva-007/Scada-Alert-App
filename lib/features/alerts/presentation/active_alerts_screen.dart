@@ -20,7 +20,6 @@ class _ActiveAlertsScreenState extends ConsumerState<ActiveAlertsScreen>
     with AutomaticKeepAliveClientMixin {
   String? _selectedSeverity;
   bool? _filterAcknowledged;
-  bool _isRefreshing = false;
 
   @override
   bool get wantKeepAlive => true;
@@ -36,10 +35,8 @@ class _ActiveAlertsScreenState extends ConsumerState<ActiveAlertsScreen>
     return Scaffold(
       body: RefreshIndicator(
         onRefresh: () async {
-          setState(() => _isRefreshing = true);
-          ref.invalidate(activeAlertsProvider);
+          ref.invalidate(allLiveAlertsProvider);
           await Future.delayed(const Duration(milliseconds: 600));
-          setState(() => _isRefreshing = false);
         },
         child: CustomScrollView(
           physics: const BouncingScrollPhysics(
@@ -84,8 +81,12 @@ class _ActiveAlertsScreenState extends ConsumerState<ActiveAlertsScreen>
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                           colors: [
-                            AppTheme.criticalColor.withOpacity(isDark ? 0.15 : 0.12),
-                            isDark ? AppTheme.backgroundDark : AppTheme.backgroundLight,
+                            AppTheme.criticalColor.withValues(
+                              alpha: isDark ? 0.15 : 0.12,
+                            ),
+                            isDark
+                                ? AppTheme.backgroundDark
+                                : AppTheme.backgroundLight,
                           ],
                         ),
                       ),
@@ -96,7 +97,9 @@ class _ActiveAlertsScreenState extends ConsumerState<ActiveAlertsScreen>
                       child: Icon(
                         Icons.notifications_active_outlined,
                         size: 140,
-                        color: isDark ? Colors.white.withOpacity(0.03) : Colors.black.withOpacity(0.04),
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.03)
+                            : Colors.black.withValues(alpha: 0.04),
                       ),
                     ),
                   ],
@@ -104,8 +107,12 @@ class _ActiveAlertsScreenState extends ConsumerState<ActiveAlertsScreen>
               ),
               actions: [
                 IconButton(
-                  icon: Icon(Icons.search_rounded, color: isDark ? Colors.white70 : Colors.black54),
-                  onPressed: () => _showSearchDialog(context, alertsAsync.value ?? []),
+                  icon: Icon(
+                    Icons.search_rounded,
+                    color: isDark ? Colors.white70 : Colors.black54,
+                  ),
+                  onPressed: () =>
+                      _showSearchDialog(context, alertsAsync.value ?? []),
                 ),
                 _buildFilterMenu(isDark),
                 _buildStatusMenu(isDark),
@@ -131,7 +138,10 @@ class _ActiveAlertsScreenState extends ConsumerState<ActiveAlertsScreen>
 
   Widget _buildFilterMenu(bool isDark) {
     return PopupMenuButton<String>(
-      icon: Icon(Icons.filter_list_rounded, color: isDark ? Colors.white70 : Colors.black54),
+      icon: Icon(
+        Icons.filter_list_rounded,
+        color: isDark ? Colors.white70 : Colors.black54,
+      ),
       tooltip: 'Filter by Severity',
       onSelected: (value) {
         setState(() {
@@ -139,7 +149,12 @@ class _ActiveAlertsScreenState extends ConsumerState<ActiveAlertsScreen>
         });
       },
       itemBuilder: (context) => [
-        _buildPopupItem('all', 'All Severities', Icons.list_alt, isDark ? Colors.white : Colors.black87),
+        _buildPopupItem(
+          'all',
+          'All Severities',
+          Icons.list_alt,
+          isDark ? Colors.white : Colors.black87,
+        ),
         const PopupMenuDivider(),
         _buildPopupItem(
           'critical',
@@ -165,7 +180,10 @@ class _ActiveAlertsScreenState extends ConsumerState<ActiveAlertsScreen>
 
   Widget _buildStatusMenu(bool isDark) {
     return PopupMenuButton<bool?>(
-      icon: Icon(Icons.check_circle_outline, color: isDark ? Colors.white70 : Colors.black54),
+      icon: Icon(
+        Icons.check_circle_outline,
+        color: isDark ? Colors.white70 : Colors.black54,
+      ),
       tooltip: 'Filter by Status',
       onSelected: (value) {
         setState(() {
@@ -173,7 +191,12 @@ class _ActiveAlertsScreenState extends ConsumerState<ActiveAlertsScreen>
         });
       },
       itemBuilder: (context) => [
-        _buildPopupItem(null, 'All Alerts', Icons.all_inclusive, isDark ? Colors.white : Colors.black87),
+        _buildPopupItem(
+          null,
+          'All Alerts',
+          Icons.all_inclusive,
+          isDark ? Colors.white : Colors.black87,
+        ),
         const PopupMenuDivider(),
         _buildPopupItem(
           false,
@@ -219,9 +242,7 @@ class _ActiveAlertsScreenState extends ConsumerState<ActiveAlertsScreen>
 
     if (_selectedSeverity != null) {
       filteredAlerts = filteredAlerts
-          .where(
-            (a) => a.severity.toLowerCase() == _selectedSeverity!.toLowerCase(),
-          )
+          .where((a) => a.severityBucket == _selectedSeverity!.toLowerCase())
           .toList();
     }
 
@@ -271,9 +292,16 @@ class _ActiveAlertsScreenState extends ConsumerState<ActiveAlertsScreen>
       decoration: BoxDecoration(
         color: isDark ? AppTheme.surfaceDark : Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: isDark ? AppTheme.borderDark : AppTheme.borderLight),
+        border: Border.all(
+          color: isDark ? AppTheme.borderDark : AppTheme.borderLight,
+        ),
         boxShadow: [
-          if (!isDark) BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 4, offset: const Offset(0, 2)),
+          if (!isDark)
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
         ],
       ),
       child: Row(
@@ -305,7 +333,7 @@ class _ActiveAlertsScreenState extends ConsumerState<ActiveAlertsScreen>
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: AppTheme.infoColor.withOpacity(0.1),
+                color: AppTheme.infoColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: const Text(
@@ -333,7 +361,7 @@ class _ActiveAlertsScreenState extends ConsumerState<ActiveAlertsScreen>
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: AppTheme.normalColor.withOpacity(0.1),
+              color: AppTheme.normalColor.withValues(alpha: 0.1),
             ),
             child: const Icon(
               Icons.task_alt_rounded,
@@ -397,7 +425,7 @@ class _ActiveAlertsScreenState extends ConsumerState<ActiveAlertsScreen>
             const SizedBox(height: 24),
             OutlinedButton.icon(
               onPressed: () {
-                ref.invalidate(activeAlertsProvider);
+                ref.invalidate(allLiveAlertsProvider);
               },
               icon: const Icon(Icons.refresh_rounded),
               label: const Text('RETRY'),
@@ -436,7 +464,7 @@ class _ActiveAlertsScreenState extends ConsumerState<ActiveAlertsScreen>
       ),
     ).then((_) {
       if (mounted) {
-        ref.invalidate(activeAlertsProvider);
+        ref.invalidate(allLiveAlertsProvider);
       }
     });
   }
@@ -450,7 +478,9 @@ class _ActiveAlertsScreenState extends ConsumerState<ActiveAlertsScreen>
       delegate: AlertSearchDelegate(alerts),
     );
 
-    if (result != null && mounted) {
+    if (!context.mounted) return;
+
+    if (result != null) {
       _navigateToDetails(context, result, ref.read(audioServiceProvider));
     }
   }

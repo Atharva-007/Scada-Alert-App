@@ -95,31 +95,114 @@ class AppTheme {
 
   static TextTheme _buildTextTheme(Color baseColor) {
     return TextTheme(
-      displayLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: baseColor),
-      titleLarge: TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: baseColor, letterSpacing: -0.5),
-      titleMedium: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: baseColor),
+      displayLarge: TextStyle(
+        fontSize: 32,
+        fontWeight: FontWeight.bold,
+        color: baseColor,
+      ),
+      titleLarge: TextStyle(
+        fontSize: 20,
+        fontWeight: FontWeight.w800,
+        color: baseColor,
+        letterSpacing: -0.5,
+      ),
+      titleMedium: TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w700,
+        color: baseColor,
+      ),
       bodyLarge: TextStyle(fontSize: 16, color: baseColor),
-      bodyMedium: TextStyle(fontSize: 14, color: baseColor.withOpacity(0.85)),
-      bodySmall: TextStyle(fontSize: 12, color: baseColor.withOpacity(0.65)),
-      labelLarge: TextStyle(fontSize: 12, fontWeight: FontWeight.w900, letterSpacing: 1.2, color: baseColor),
+      bodyMedium: TextStyle(
+        fontSize: 14,
+        color: baseColor.withValues(alpha: 0.85),
+      ),
+      bodySmall: TextStyle(
+        fontSize: 12,
+        color: baseColor.withValues(alpha: 0.65),
+      ),
+      labelLarge: TextStyle(
+        fontSize: 12,
+        fontWeight: FontWeight.w900,
+        letterSpacing: 1.2,
+        color: baseColor,
+      ),
     );
   }
 
   static Color getSeverityColor(String severity) {
     switch (severity.toLowerCase()) {
-      case 'critical': return criticalColor;
-      case 'warning': return warningColor;
-      case 'info': return infoColor;
-      default: return normalColor;
+      case 'critical':
+      case 'high':
+        return criticalColor;
+      case 'warning':
+      case 'medium':
+        return warningColor;
+      case 'info':
+      case 'low':
+        return infoColor;
+      default:
+        return normalColor;
     }
   }
 
   static IconData getSeverityIcon(String severity) {
     switch (severity.toLowerCase()) {
-      case 'critical': return Icons.error_rounded;
-      case 'warning': return Icons.warning_rounded;
-      case 'info': return Icons.info_rounded;
-      default: return Icons.check_circle_rounded;
+      case 'critical':
+      case 'high':
+        return Icons.error_rounded;
+      case 'warning':
+      case 'medium':
+        return Icons.warning_rounded;
+      case 'info':
+      case 'low':
+        return Icons.info_rounded;
+      default:
+        return Icons.check_circle_rounded;
+    }
+  }
+
+  static const Color cardDark = Color(0xFF1E1E1E);
+  static const Color surfaceVariantDark = Color(0xFF2D2D2D);
+  static const Color cardLight = Colors.white;
+  static const Color surfaceVariantLight = Color(0xFFF5F5F5);
+
+  static Color getStatusColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'critical':
+      case 'active':
+        return criticalColor;
+      case 'warning':
+        return warningColor;
+      case 'acknowledged':
+        return infoColor;
+      case 'approved':
+      case 'cleared':
+      case 'normal':
+        return normalColor;
+      case 'rejected':
+        return criticalColor;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  static IconData getStatusIcon(String status) {
+    switch (status.toLowerCase()) {
+      case 'critical':
+      case 'active':
+        return Icons.error_outline;
+      case 'warning':
+        return Icons.warning_amber_rounded;
+      case 'acknowledged':
+        return Icons.check_circle_outline;
+      case 'approved':
+      case 'cleared':
+      case 'normal':
+        return Icons.task_alt;
+      case 'rejected':
+        return Icons.block_flipped;
+      default:
+        return Icons.help_outline;
     }
   }
 }

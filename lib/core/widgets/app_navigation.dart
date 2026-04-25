@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../features/dashboard/presentation/dashboard_screen.dart';
 import '../../features/alerts/presentation/active_alerts_screen.dart';
+import '../../features/alerts/presentation/pending_approvals_screen.dart';
 import '../../features/history/presentation/alert_history_screen.dart';
 import '../../features/settings/presentation/settings_screen.dart';
 import '../theme/app_theme.dart';
@@ -28,6 +29,11 @@ class _AppNavigationState extends State<AppNavigation> {
       label: 'Active',
     ),
     _NavItem(
+      icon: Icons.rate_review_outlined,
+      selectedIcon: Icons.rate_review,
+      label: 'Pending',
+    ),
+    _NavItem(
       icon: Icons.history,
       selectedIcon: Icons.history,
       label: 'History',
@@ -49,6 +55,11 @@ class _AppNavigationState extends State<AppNavigation> {
       icon: Icon(Icons.notification_important_outlined),
       selectedIcon: Icon(Icons.notification_important),
       label: Text('Active Alerts'),
+    ),
+    NavigationRailDestination(
+      icon: Icon(Icons.rate_review_outlined),
+      selectedIcon: Icon(Icons.rate_review),
+      label: Text('Pending Approval'),
     ),
     NavigationRailDestination(
       icon: Icon(Icons.history),
@@ -129,8 +140,10 @@ class _AppNavigationState extends State<AppNavigation> {
       case 1:
         return const ActiveAlertsScreen();
       case 2:
-        return const AlertHistoryScreen();
+        return const PendingApprovalsScreen();
       case 3:
+        return const AlertHistoryScreen();
+      case 4:
         return const SettingsScreen();
       default:
         return const DashboardScreen();
@@ -166,10 +179,9 @@ class _FloatingNavBar extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     // Theme adaptive colors
-    final bgColor =
-        isDark
-            ? const Color(0xFF1E1E1E).withOpacity(0.95)
-            : Colors.white.withOpacity(0.95);
+    final bgColor = isDark
+        ? const Color(0xFF1E1E1E).withValues(alpha: 0.95)
+        : Colors.white.withValues(alpha: 0.95);
     final unselectedColor = isDark ? const Color(0xFF9E9E9E) : Colors.black38;
     final shadowColor = isDark ? Colors.black45 : Colors.black12;
 
@@ -185,10 +197,9 @@ class _FloatingNavBar extends StatelessWidget {
               color: bgColor,
               borderRadius: BorderRadius.circular(32),
               border: Border.all(
-                color:
-                    isDark
-                        ? Colors.white.withOpacity(0.1)
-                        : Colors.black.withOpacity(0.05),
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.1)
+                    : Colors.black.withValues(alpha: 0.05),
                 width: 1,
               ),
               boxShadow: [
@@ -211,8 +222,8 @@ class _FloatingNavBar extends StatelessWidget {
                     child: InkWell(
                       onTap: () => onTap(index),
                       borderRadius: BorderRadius.circular(32),
-                      highlightColor: AppTheme.infoColor.withOpacity(0.1),
-                      splashColor: AppTheme.infoColor.withOpacity(0.2),
+                      highlightColor: AppTheme.infoColor.withValues(alpha: 0.1),
+                      splashColor: AppTheme.infoColor.withValues(alpha: 0.2),
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 250),
                         curve: Curves.easeInOut,
@@ -232,10 +243,9 @@ class _FloatingNavBar extends StatelessWidget {
                               child: Icon(
                                 isSelected ? item.selectedIcon : item.icon,
                                 key: ValueKey<bool>(isSelected),
-                                color:
-                                    isSelected
-                                        ? AppTheme.infoColor
-                                        : unselectedColor,
+                                color: isSelected
+                                    ? AppTheme.infoColor
+                                    : unselectedColor,
                                 size: isSelected ? 26 : 24,
                               ),
                             ),
@@ -244,14 +254,12 @@ class _FloatingNavBar extends StatelessWidget {
                               item.label,
                               style: TextStyle(
                                 fontSize: 10,
-                                fontWeight:
-                                    isSelected
-                                        ? FontWeight.w900
-                                        : FontWeight.w600,
-                                color:
-                                    isSelected
-                                        ? AppTheme.infoColor
-                                        : unselectedColor,
+                                fontWeight: isSelected
+                                    ? FontWeight.w900
+                                    : FontWeight.w600,
+                                color: isSelected
+                                    ? AppTheme.infoColor
+                                    : unselectedColor,
                                 letterSpacing: 0.2,
                               ),
                               maxLines: 1,

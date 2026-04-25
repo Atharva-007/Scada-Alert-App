@@ -1,0 +1,23 @@
+# 1. Authenticate the Firebase CLI
+firebase login
+
+# 2. List projects to verify access
+firebase projects:list
+
+# 3. Try the requested source project first
+firebase use scadadataserver
+
+# 4. Source project is accessible; keep that CLI context
+# firebase use scadadataserver
+
+# 5. Run the full export + baseline normalization + transform step
+node scripts/firestore_to_rtdb_migration.mjs --source-project-id scadadataserver --source-candidates alert-systems-db --baseline-month-day 01-26 --target-project-id scadadataserver --target-database-url https://scadadataserver-default-rtdb.firebaseio.com --out-dir "migration_output\firestore_probe"
+
+# 6. Optional interactive CLI import
+firebase database:set / "E:\scada_alarm_client\migration_output\firestore_probe\realtime_db_ready.json" --project scadadataserver
+
+# 6b. Noninteractive import through the migration tool REST path
+node scripts/firestore_to_rtdb_migration.mjs --source-project-id scadadataserver --source-candidates alert-systems-db --baseline-month-day 01-26 --target-project-id scadadataserver --target-database-url https://scadadataserver-default-rtdb.firebaseio.com --out-dir "migration_output\firestore_probe" --import-method rest --execute-import
+
+# 7. Optional live mirror from Firestore to Realtime Database
+node scripts/firestore_to_rtdb_sync.mjs --source-project-id scadadataserver --target-database-url https://scadadataserver-default-rtdb.firebaseio.com --verbose

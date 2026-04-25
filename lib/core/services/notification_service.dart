@@ -1,22 +1,27 @@
+import 'dart:async';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../utils/firebase_platform_support.dart';
 
 /// Background message handler (must be top-level function)
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   if (kDebugMode) {
-    print('Background message: ${message.messageId}');
+    debugPrint('Background message: ${message.messageId}');
   }
 }
 
 class NotificationService {
-  final FirebaseMessaging _messaging = FirebaseMessaging.instance;
+  final FirebaseMessaging? _messaging = firebaseMessagingOrNull;
 
   // Use dynamic for the plugin to avoid web compilation issues with missing platform methods
   late final dynamic _localNotifications;
+  bool _initialized = false;
+  bool _listenersRegistered = false;
 
   NotificationService() {
     if (!kIsWeb) {
@@ -29,8 +34,18 @@ class NotificationService {
   static const _alarmChannelName = 'Critical SCADA Alarms';
 
   Future<void> initialize() async {
+    if (_initialized) return;
+
+    final messaging = _messaging;
+    if (messaging == null) {
+      if (kDebugMode) {
+        debugPrint('ℹ️ Firebase Messaging is not available on this platform');
+      }
+      return;
+    }
+
     // 1. Request Firebase Permissions
-    final settings = await _messaging.requestPermission(
+    final settings = await messaging.requestPermission(
       alert: true,
       badge: true,
       sound: true,
@@ -38,74 +53,102 @@ class NotificationService {
       criticalAlert: true,
     );
 
-    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-      // 2. Initialize Local Notifications (Mobile Only)
-      if (!kIsWeb) {
-        const initializationSettingsAndroid = AndroidInitializationSettings(
-          '@mipmap/ic_launcher',
+    if (settings.authorizationStatus != AuthorizationStatus.authorized) {
+      if (kDebugMode) {
+        debugPrint(
+          'ℹ️ Notification permission not granted: ${settings.authorizationStatus}',
         );
-        const initializationSettingsIOS = DarwinInitializationSettings(
-          requestAlertPermission: true,
-          requestBadgePermission: true,
-          requestSoundPermission: true,
-          requestCriticalPermission: true,
-        );
-
-        const initializationSettings = InitializationSettings(
-          android: initializationSettingsAndroid,
-          iOS: initializationSettingsIOS,
-        );
-
-        await _localNotifications.initialize(
-          initializationSettings,
-          onDidReceiveNotificationResponse: (NotificationResponse details) {
-            // Handle tap
-          },
-        );
-
-        // 3. Create High-Priority Channel (Android only)
-        if (defaultTargetPlatform == TargetPlatform.android) {
-          final androidPlugin = _localNotifications
-              .resolvePlatformSpecificPlugin<
-                AndroidFlutterLocalNotificationsPlugin
-              >();
-
-          if (androidPlugin != null) {
-            await androidPlugin.createNotificationChannel(
-              const AndroidNotificationChannel(
-                _alarmChannelId,
-                _alarmChannelName,
-                description: 'Used for mission-critical industrial alerts',
-                importance: Importance.max,
-                playSound: true,
-                enableVibration: true,
-                showBadge: true,
-              ),
-            );
-          }
-        }
       }
+      return;
+    }
 
-      // 4. Configure FCM
-      final token = await _messaging.getToken();
-      if (kDebugMode) print('FCM Token: $token');
+    await _initializeLocalNotifications();
+    await messaging.setForegroundNotificationPresentationOptions(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
 
-      await _messaging.setForegroundNotificationPresentationOptions(
-        alert: true,
-        badge: true,
-        sound: true,
-      );
+    _registerMessageListeners();
+    _initialized = true;
 
-      // 5. LISTEN FOR FOREGROUND MESSAGES
-      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-        _showForegroundNotification(message);
-      });
+    unawaited(_completeMessagingSetup(messaging));
+  }
 
-      // Subscribe to topics (Mobile only)
-      if (!kIsWeb) {
-        await _messaging.subscribeToTopic('scada_alerts');
-        await _messaging.subscribeToTopic('critical_alerts');
+  Future<void> _initializeLocalNotifications() async {
+    if (kIsWeb) return;
+
+    const initializationSettingsAndroid = AndroidInitializationSettings(
+      '@mipmap/ic_launcher',
+    );
+    const initializationSettingsIOS = DarwinInitializationSettings(
+      requestAlertPermission: true,
+      requestBadgePermission: true,
+      requestSoundPermission: true,
+      requestCriticalPermission: true,
+    );
+
+    const initializationSettings = InitializationSettings(
+      android: initializationSettingsAndroid,
+      iOS: initializationSettingsIOS,
+    );
+
+    await _localNotifications.initialize(
+      initializationSettings,
+      onDidReceiveNotificationResponse: (NotificationResponse details) {
+        // Handle tap
+      },
+    );
+
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      final androidPlugin = _localNotifications
+          .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin
+          >();
+
+      if (androidPlugin != null) {
+        await androidPlugin.createNotificationChannel(
+          const AndroidNotificationChannel(
+            _alarmChannelId,
+            _alarmChannelName,
+            description: 'Used for mission-critical industrial alerts',
+            importance: Importance.max,
+            playSound: true,
+            enableVibration: true,
+            showBadge: true,
+          ),
+        );
       }
+    }
+  }
+
+  void _registerMessageListeners() {
+    if (_listenersRegistered) return;
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      _showForegroundNotification(message);
+    });
+    _listenersRegistered = true;
+  }
+
+  Future<void> _completeMessagingSetup(FirebaseMessaging messaging) async {
+    try {
+      final token = await messaging.getToken();
+      if (kDebugMode) {
+        debugPrint('FCM Token: $token');
+      }
+    } catch (e) {
+      debugPrint('⚠️ Unable to fetch FCM token: $e');
+    }
+
+    if (kIsWeb) return;
+
+    try {
+      await messaging.subscribeToTopic('scada_alerts');
+      await messaging.subscribeToTopic('critical_alerts');
+      await messaging.subscribeToTopic('warning_alerts');
+    } catch (e) {
+      debugPrint('⚠️ Topic subscription failed: $e');
     }
   }
 
@@ -137,7 +180,10 @@ class NotificationService {
             interruptionLevel: InterruptionLevel.critical,
           ),
         ),
-        payload: message.data['alertId'],
+        payload:
+            message.data['alert_id'] ??
+            message.data['alertId'] ??
+            message.data['id'],
       );
     }
   }
@@ -146,14 +192,17 @@ class NotificationService {
     bool critical = true,
     bool warning = true,
   }) async {
-    if (kIsWeb) return;
-    if (critical) await _messaging.subscribeToTopic('critical_alerts');
-    if (warning) await _messaging.subscribeToTopic('warning_alerts');
+    final messaging = _messaging;
+    if (kIsWeb || messaging == null) return;
+    if (critical) await messaging.subscribeToTopic('critical_alerts');
+    if (warning) await messaging.subscribeToTopic('warning_alerts');
   }
 
-  Stream<RemoteMessage> get onMessageStream => FirebaseMessaging.onMessage;
-  Stream<RemoteMessage> get onMessageOpenedAppStream =>
-      FirebaseMessaging.onMessageOpenedApp;
+  Stream<RemoteMessage> get onMessageStream =>
+      _messaging != null ? FirebaseMessaging.onMessage : const Stream.empty();
+  Stream<RemoteMessage> get onMessageOpenedAppStream => _messaging != null
+      ? FirebaseMessaging.onMessageOpenedApp
+      : const Stream.empty();
 }
 
 final notificationServiceProvider = Provider<NotificationService>((ref) {

@@ -1,0 +1,21 @@
+{
+  "project_id": "scadadataserver",
+  "database_id": "(default)",
+  "service_account_path": "C:\\SCADA\\firebase-service-account.json",
+  "all_collections": true,
+  "collections": [
+    "alerts_active",
+    "alerts_history",
+    "client_heartbeats",
+    "config",
+    "device_tokens",
+    "statistics",
+    "system_status"
+  ],
+  "sample_size": 5,
+  "max_depth": 8,
+  "include_all_documents": true,
+  "interval_seconds": 60,
+  "output_path": "C:\\SCADA\\reports\\firestore_analysis_latest.json",
+  "log_path": "C:\\SCADA\\Logs\\firestore_analysis_service.log"
+}

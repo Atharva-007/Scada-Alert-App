@@ -29,6 +29,8 @@ public class AlarmFileWatcherService : BackgroundService
     private readonly ILogger<AlarmFileWatcherService> _logger;
     private readonly AlarmFileWatcherConfiguration _config;
     private readonly FirebaseConfiguration _firebaseConfig;
+    private readonly string _watchFolder;
+    private readonly string _databasePath;
     
     private readonly ConcurrentDictionary<string, DateTime> _processedAlarms = new();
     private FileSystemWatcher? _fileWatcher;
@@ -44,6 +46,8 @@ public class AlarmFileWatcherService : BackgroundService
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _config = config ?? throw new ArgumentNullException(nameof(config));
         _firebaseConfig = firebaseConfig ?? throw new ArgumentNullException(nameof(firebaseConfig));
+        _watchFolder = _config.ResolveWatchFolder();
+        _databasePath = _config.ResolveDatabasePath();
     }
     
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -57,15 +61,15 @@ public class AlarmFileWatcherService : BackgroundService
         try
         {
             _logger.LogInformation("Starting Alarm File Watcher Service...");
-            _logger.LogInformation($"  Watch Folder: {_config.WatchFolder}");
-            _logger.LogInformation($"  Database: {_config.DatabasePath}");
+            _logger.LogInformation($"  Watch Folder: {_watchFolder}");
+            _logger.LogInformation($"  Database: {_databasePath}");
             _logger.LogInformation($"  Poll Interval: {_config.PollIntervalSeconds}s");
             
             // Validate configuration
             _config.Validate();
             
             // Create watch folder if it doesn't exist
-            Directory.CreateDirectory(_config.WatchFolder);
+            Directory.CreateDirectory(_watchFolder);
             
             // Initialize SQLite database
             InitializeDatabase();
@@ -119,14 +123,14 @@ public class AlarmFileWatcherService : BackgroundService
     {
         try
         {
-            var dbDir = Path.GetDirectoryName(_config.DatabasePath);
+            var dbDir = Path.GetDirectoryName(_databasePath);
             if (!string.IsNullOrEmpty(dbDir))
             {
                 Directory.CreateDirectory(dbDir);
             }
             
             _dbConnection = new System.Data.SQLite.SQLiteConnection(
-                $"Data Source={_config.DatabasePath};Version=3;");
+                $"Data Source={_databasePath};Version=3;");
             _dbConnection.Open();
             
             using var cmd = _dbConnection.CreateCommand();
@@ -157,7 +161,7 @@ public class AlarmFileWatcherService : BackgroundService
     {
         try
         {
-            _fileWatcher = new FileSystemWatcher(_config.WatchFolder)
+            _fileWatcher = new FileSystemWatcher(_watchFolder)
             {
                 NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.CreationTime,
                 Filter = "*.*",
@@ -203,8 +207,8 @@ public class AlarmFileWatcherService : BackgroundService
     {
         try
         {
-            var files = Directory.GetFiles(_config.WatchFolder, "*.csv")
-                .Concat(Directory.GetFiles(_config.WatchFolder, "*.txt"))
+            var files = Directory.GetFiles(_watchFolder, "*.csv")
+                .Concat(Directory.GetFiles(_watchFolder, "*.txt"))
                 .OrderBy(f => File.GetLastWriteTime(f))
                 .ToList();
             
@@ -283,7 +287,8 @@ public class AlarmFileWatcherService : BackgroundService
                 // Skip header row if present
                 if (trimmed.StartsWith("Time", StringComparison.OrdinalIgnoreCase) ||
                     trimmed.StartsWith("Timestamp", StringComparison.OrdinalIgnoreCase) ||
-                    trimmed.StartsWith("Occurred", StringComparison.OrdinalIgnoreCase))
+                    trimmed.StartsWith("Occurred", StringComparison.OrdinalIgnoreCase) ||
+                    trimmed.StartsWith("Date", StringComparison.OrdinalIgnoreCase))
                     continue;
                 
                 // Split on first comma only (message can contain commas)
@@ -291,9 +296,9 @@ public class AlarmFileWatcherService : BackgroundService
                 if (commaIndex > 0)
                 {
                     var occurred = trimmed.Substring(0, commaIndex).Trim();
-                    var message = trimmed.Substring(commaIndex + 1).Trim();
+                    var restOfLine = trimmed.Substring(commaIndex + 1).Trim();
                     
-                    alarms.Add((occurred, message));
+                    alarms.Add((occurred, restOfLine));
                 }
                 else
                 {
@@ -391,24 +396,30 @@ public class AlarmFileWatcherService : BackgroundService
             
             // Validate Firebase configuration
             _firebaseConfig.Validate();
+            var serviceAccountPath = _firebaseConfig.ResolveServiceAccountJsonPath();
             
             // Initialize Firebase App if not already initialized
             if (FirebaseApp.DefaultInstance == null)
             {
                 FirebaseApp.Create(new AppOptions()
                 {
-                    Credential = Google.Apis.Auth.OAuth2.GoogleCredential.FromFile(_firebaseConfig.ServiceAccountJsonPath),
+                    Credential = Google.Apis.Auth.OAuth2.GoogleCredential.FromFile(serviceAccountPath),
                     ProjectId = _firebaseConfig.ProjectId
                 });
             }
-            
-            // Initialize Firestore
-            _firestoreDb = FirestoreDb.Create(_firebaseConfig.ProjectId);
+             
+            // Initialize Firestore with the same explicit credentials used for FirebaseApp.
+            _firestoreDb = new FirestoreDbBuilder
+            {
+                ProjectId = _firebaseConfig.ProjectId,
+                JsonCredentials = File.ReadAllText(serviceAccountPath)
+            }.Build();
             _firebaseInitialized = true;
-            
+             
             _logger.LogInformation("✅ Firebase initialized successfully");
             _logger.LogInformation($"   Project: {_firebaseConfig.ProjectId}");
             _logger.LogInformation($"   Collection: {_firebaseConfig.ActiveAlertsCollection}");
+            _logger.LogInformation($"   Service Account: {serviceAccountPath}");
         }
         catch (Exception ex)
         {
@@ -438,33 +449,74 @@ public class AlarmFileWatcherService : BackgroundService
             
             // Determine severity from message or use default
             string severity = DetermineSeverity(message);
-            
+            var alertTitle = ExtractTitle(message);
+            var equipment = ExtractEquipment(message);
+            var eventTimestamp = timestamp.ToUniversalTime();
+            var nowUtc = DateTime.UtcNow;
+             
             // Create alert document
             var alertId = Guid.NewGuid().ToString("N");
-            var alertData = new Dictionary<string, object>
+            var hasEquipment = !string.IsNullOrWhiteSpace(equipment);
+            var source = hasEquipment ? equipment : fileName;
+            var tagName = hasEquipment ? equipment : alertTitle;
+            var alertData = new Dictionary<string, object?>
             {
                 ["id"] = alertId,
-                ["title"] = ExtractTitle(message),
+                ["alertId"] = alertId,
+                ["alert"] = alertTitle,
+                ["name"] = alertTitle,
+                ["detail"] = message,
                 ["description"] = message,
                 ["severity"] = severity.ToLower(),
-                ["source"] = "File Watcher",
+                ["source"] = source,
                 ["location"] = fileName,
-                ["equipment"] = ExtractEquipment(message),
-                ["timestamp"] = Timestamp.FromDateTime(timestamp.ToUniversalTime()),
+                ["equipment"] = equipment,
+                ["tagName"] = tagName,
+                ["nodeId"] = tagName,
+                ["timestamp"] = Timestamp.FromDateTime(eventTimestamp),
+                ["raisedAt"] = Timestamp.FromDateTime(eventTimestamp),
                 ["status"] = "active",
+                ["approvalStatus"] = "pending",
+                ["isActive"] = true,
+                ["isAcknowledged"] = false,
                 ["acknowledged"] = false,
+                ["acknowledgedBy"] = null,
                 ["acknowledged_by"] = null,
+                ["acknowledgedAt"] = null,
                 ["acknowledged_at"] = null,
+                ["acknowledgedComment"] = null,
+                ["acknowledgement_detail"] = null,
+                ["alertType"] = "file_alarm",
+                ["condition"] = "file_alarm",
+                ["currentValue"] = 0.0,
+                ["triggerValue"] = 0.0,
+                ["threshold"] = 0.0,
                 ["notes"] = $"Detected from file: {fileName}",
-                ["created_at"] = Timestamp.FromDateTime(DateTime.UtcNow),
-                ["updated_at"] = Timestamp.FromDateTime(DateTime.UtcNow)
+                ["approvedBy"] = null,
+                ["approvedAt"] = null,
+                ["rejectedBy"] = null,
+                ["rejectedAt"] = null,
+                ["rejectionReason"] = null,
+                ["clearedAt"] = null,
+                ["clearedTime"] = null,
+                ["created_at"] = Timestamp.FromDateTime(nowUtc),
+                ["updated_at"] = Timestamp.FromDateTime(nowUtc),
+                ["lastUpdatedTime"] = Timestamp.FromDateTime(nowUtc)
             };
             
             // Push to Firebase Firestore
             if (_firebaseInitialized && _firestoreDb != null)
             {
                 await PushToFirestoreAsync(alertId, alertData);
-                await SendPushNotificationAsync(alertData);
+                
+                try 
+                {
+                    await SendPushNotificationAsync(alertData);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Push notification failed but alert was saved to Firestore");
+                }
                 
                 _logger.LogInformation($"✅ Alert pushed to Firebase Cloud: {alertId}");
             }
@@ -482,11 +534,13 @@ public class AlarmFileWatcherService : BackgroundService
     /// <summary>
     /// Pushes alert to Firestore database.
     /// </summary>
-    private async Task PushToFirestoreAsync(string alertId, Dictionary<string, object> alertData)
+    private async Task PushToFirestoreAsync(string alertId, Dictionary<string, object?> alertData)
     {
         try
         {
-            var collection = _firebaseConfig.ActiveAlertsCollection ?? "alerts";
+            var collection = string.IsNullOrWhiteSpace(_firebaseConfig.ActiveAlertsCollection)
+                ? "alerts_active"
+                : _firebaseConfig.ActiveAlertsCollection;
             var docRef = _firestoreDb!.Collection(collection).Document(alertId);
             await docRef.SetAsync(alertData);
             
@@ -501,13 +555,15 @@ public class AlarmFileWatcherService : BackgroundService
     /// <summary>
     /// Sends push notification to mobile devices.
     /// </summary>
-    private async Task SendPushNotificationAsync(Dictionary<string, object> alertData)
+    private async Task SendPushNotificationAsync(Dictionary<string, object?> alertData)
     {
         try
         {
-            var severity = alertData["severity"].ToString()!;
-            var title = alertData["title"].ToString()!;
-            var description = alertData["description"].ToString()!;
+            var severity = alertData["severity"]?.ToString() ?? "info";
+            var alert = alertData["alert"]?.ToString() ?? "SCADA Alarm";
+            var detail = alertData["detail"]?.ToString() ?? string.Empty;
+            var alertId = alertData["id"]?.ToString() ?? string.Empty;
+            var source = alertData["source"]?.ToString() ?? "File Watcher";
             
             // Determine if notification should be sent based on severity
             bool shouldSend = severity switch
@@ -530,14 +586,14 @@ public class AlarmFileWatcherService : BackgroundService
                 Topic = _firebaseConfig.NotificationTopic ?? "scada_alerts",
                 Notification = new Notification
                 {
-                    Title = $"🚨 {severity.ToUpper()}: {title}",
-                    Body = description
+                    Title = $"🚨 {severity.ToUpper()}: {alert}",
+                    Body = detail
                 },
                 Data = new Dictionary<string, string>
                 {
-                    ["alert_id"] = alertData["id"].ToString()!,
+                    ["alert_id"] = alertId,
                     ["severity"] = severity,
-                    ["source"] = alertData["source"].ToString()!,
+                    ["source"] = source,
                     ["timestamp"] = DateTime.UtcNow.ToString("o")
                 },
                 Android = new AndroidConfig
@@ -569,14 +625,14 @@ public class AlarmFileWatcherService : BackgroundService
     {
         var lower = message.ToLower();
         
-        if (lower.Contains("critical") || lower.Contains("emergency") || lower.Contains("danger"))
+        if (lower.Contains("critical") || lower.Contains("emergency") || lower.Contains("danger") || lower.Contains("fail") || lower.Contains("error"))
             return "Critical";
-        if (lower.Contains("warning") || lower.Contains("alert") || lower.Contains("caution"))
+        if (lower.Contains("warning") || lower.Contains("alert") || lower.Contains("caution") || lower.Contains("medium"))
             return "Warning";
-        if (lower.Contains("info") || lower.Contains("notice"))
+        if (lower.Contains("info") || lower.Contains("notice") || lower.Contains("low"))
             return "Info";
         
-        return _config.DefaultSeverity ?? "Warning";
+        return _config.DefaultSeverity.ToString();
     }
     
     /// <summary>
@@ -618,7 +674,7 @@ public class AlarmFileWatcherService : BackgroundService
                 return match.Groups[1].Value;
         }
         
-        return "Unknown";
+        return string.Empty;
     }
 }
 
@@ -634,15 +690,15 @@ public class AlarmFileWatcherConfiguration
     
     /// <summary>
     /// Folder to watch for alarm files (CSV/TXT).
-    /// Example: "C:\\GOT_Alarms"
+    /// Relative paths are resolved from the deployed service folder.
     /// </summary>
     public string WatchFolder { get; set; } = @"C:\GOT_Alarms";
     
     /// <summary>
     /// SQLite database path for tracking processed alarms.
-    /// Example: "C:\\AlarmSystem\\alarm_history.db"
+    /// Relative paths are resolved from the deployed service folder.
     /// </summary>
-    public string DatabasePath { get; set; } = @"C:\AlarmSystem\alarm_history.db";
+    public string DatabasePath { get; set; } = @"runtime\alarm-file-watcher\alarm_history.db";
     
     /// <summary>
     /// Polling interval in seconds.
@@ -676,4 +732,8 @@ public class AlarmFileWatcherConfiguration
         if (PollIntervalSeconds < 1)
             throw new InvalidOperationException("PollIntervalSeconds must be >= 1");
     }
+
+    public string ResolveWatchFolder() => ServicePathResolver.ResolvePath(WatchFolder);
+
+    public string ResolveDatabasePath() => ServicePathResolver.ResolvePath(DatabasePath);
 }

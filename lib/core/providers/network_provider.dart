@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 
 /// Network connectivity status
 enum NetworkStatus { online, offline, unknown }
@@ -22,7 +23,7 @@ class NetworkConnectivity extends StateNotifier<NetworkStatus> {
       final result = await _connectivity.checkConnectivity();
       _updateConnectionStatus(result);
     } catch (e) {
-      print('⚠️ Failed to get connectivity: $e');
+      debugPrint('⚠️ Failed to get connectivity: $e');
       state = NetworkStatus.unknown;
     }
   }
@@ -32,12 +33,12 @@ class NetworkConnectivity extends StateNotifier<NetworkStatus> {
         results.contains(ConnectivityResult.wifi) ||
         results.contains(ConnectivityResult.ethernet)) {
       if (state != NetworkStatus.online) {
-        print('🌐 Network: Online');
+        debugPrint('🌐 Network: Online');
         state = NetworkStatus.online;
       }
     } else {
       if (state != NetworkStatus.offline) {
-        print('📡 Network: Offline');
+        debugPrint('📡 Network: Offline');
         state = NetworkStatus.offline;
       }
     }
